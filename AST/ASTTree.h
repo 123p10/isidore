@@ -1,0 +1,36 @@
+#ifndef ASTTREE_H
+#define ASTTREE_H
+#include <string>
+#include <memory>
+#include <vector>
+#include "ASTNodes.h"
+#include "../parsing/lexer.h"
+#include "../files/file_handler.h"
+class ASTTree{
+    private:
+        ProgramFile source_file;
+        Token currToken;
+        int token_i;
+
+    public:
+        ASTTree();
+        ASTTree(ProgramFile source_file);
+        std::unique_ptr<ExprAST> ParseNumberExpr();
+        std::unique_ptr<ExprAST> ParseParenExpr();
+        std::unique_ptr<ExprAST> ParseIdentifierExpr();
+        std::unique_ptr<ExprAST> ParsePrimary();
+        std::unique_ptr<ExprAST> ParseExpression();
+        std::unique_ptr<ExprAST> ParseBinOpRHS(int ExprPrec,std::unique_ptr<ExprAST> LHS);
+        std::unique_ptr<PrototypeAST> ParsePrototype();
+        std::unique_ptr<FunctionAST> ParseDefinition();
+        std::unique_ptr<PrototypeAST> ParseExtern();
+        std::unique_ptr<FunctionAST> ParseTopLevelExpr();
+        int GetTokPrecedence();
+        Token getCurrToken();
+        Token nextToken();
+
+};
+std::unique_ptr<ExprAST> LogError(const char *Str);
+std::unique_ptr<PrototypeAST> LogErrorP(const char *Str);
+
+#endif
