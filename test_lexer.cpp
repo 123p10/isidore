@@ -33,16 +33,18 @@ int main(){
                 std::cout << "Parsed a function \n";
             }
             else{
-                std::cout << "function error";
                 source_tree.nextToken();
             }
+        }
+        else if(source_tree.getCurrToken().type == "extern"){
+            std::cout << "Parsed an extern\n";
+            source_tree.ParseExtern();
         }
         else{
             if(source_tree.ParseTopLevelExpr()){
                 std::cout << "Parsed a top level expr \n";
             }
             else{
-                std::cout << "top level error";
                 source_tree.nextToken();
             }
         }

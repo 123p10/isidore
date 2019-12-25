@@ -9,7 +9,8 @@ std::map<std::string,std::string> keywords_list = {
     {"string","data_string"},
     //May insert partial type inferencing to kill float but we shall see
     {"float","data_float"},
-    {"void","data_void"}
+    {"void","data_void"},
+    {"extern","extern"}
 
     
 };
