@@ -1,6 +1,6 @@
 #include "main_driver.h"
 #include "llvm/Support/raw_ostream.h"
-
+#include <cstdint>
 void HandleDefinition(ASTTree & source_tree){
     if(auto FnAST = source_tree.ParseDefinition()){
         if(auto *FnIR = FnAST->codegen()){
@@ -25,12 +25,17 @@ void HandleExtern(ASTTree & source_tree){
         source_tree.nextToken();
     }
 }
-void HandleTopLevelExpression(ASTTree & source_tree){
+void HandleTopLevelExpression(ASTTree & source_tree, CodeGenerator * code_gen){
     if(auto FnAST = source_tree.ParseTopLevelExpr()){
-        if(auto *FnIR = FnAST->codegen()){
-            fprintf(stderr,"Read top-level expression:");
-            FnIR->print(llvm::errs());
-            fprintf(stderr, "\n");
+        if(FnAST->codegen()){
+            auto H = code_gen->TheJIT->get()->addModule(std::move(*(code_gen->TheModule)));
+            code_gen->InitializeModuleAndPassManager();
+
+            auto ExprSymbol = code_gen->TheJIT->get()->findSymbol("__anon__expr");
+            assert(ExprSymbol && "Function not found");
+            double (*FP)() = (double(*)())(intptr_t)llvm::cantFail(ExprSymbol.getAddress());
+            fprintf(stderr,"Evaluated to %f \n",FP());
+            code_gen->TheJIT->get()->removeModule(H);
         }
     }
     else{

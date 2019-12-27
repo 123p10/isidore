@@ -166,7 +166,7 @@ std::unique_ptr<PrototypeAST> ASTTree::ParseExtern() {
 }
 std::unique_ptr<FunctionAST> ASTTree::ParseTopLevelExpr() {
   if (auto E = ParseExpression()) {
-    auto Proto = llvm::make_unique<PrototypeAST>("", std::vector<std::string>(),code_gen);
+    auto Proto = llvm::make_unique<PrototypeAST>("__anon__expr", std::vector<std::string>(),code_gen);
     return llvm::make_unique<FunctionAST>(std::move(Proto), std::move(E),code_gen);
   }
   return nullptr;

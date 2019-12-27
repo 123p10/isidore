@@ -1,1 +1,4 @@
-void test(x) 1+2+x;
+void foo(x) x + 1;
+foo(2);
+void foo(x) x + 2;
+foo(2);

@@ -6,5 +6,5 @@
 
 void HandleDefinition(ASTTree & source_tree);
 void HandleExtern(ASTTree & source_tree);
-void HandleTopLevelExpression(ASTTree & source_tree);
+void HandleTopLevelExpression(ASTTree & source_tree, CodeGenerator * code_gen);
 #endif

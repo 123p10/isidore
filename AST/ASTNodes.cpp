@@ -92,8 +92,9 @@ llvm::Function *FunctionAST::codegen(){
     if(!TheFunction){
         return nullptr;
     }
-    if (!TheFunction->empty())
+/*     if (!TheFunction->empty())
         return (llvm::Function*)LogErrorV("Function cannot be redefined.");
+ */    
     llvm::BasicBlock *BB = llvm::BasicBlock::Create(*(code_gen->TheContext),"entry",TheFunction);
     code_gen->Builder->SetInsertPoint(BB);
 
@@ -104,6 +105,7 @@ llvm::Function *FunctionAST::codegen(){
     if(llvm::Value *RetVal = Body->codegen()){
         code_gen->Builder->CreateRet(RetVal);
         llvm::verifyFunction(*TheFunction);
+        code_gen->TheFPM->get()->run(*TheFunction);
         return TheFunction;
     }
     TheFunction->eraseFromParent();

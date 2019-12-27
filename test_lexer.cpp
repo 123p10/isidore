@@ -32,16 +32,7 @@ int main(){
                 HandleExtern(source_tree);
             }
             else{
-                if(auto FnAST = source_tree.ParseTopLevelExpr()){
-                    if(auto *FnIR = FnAST->codegen()){
-                        fprintf(stderr,"Read top-level expression:");
-                        FnIR->print(llvm::errs());
-                        fprintf(stderr, "\n");
-                    }
-                }
-                else{
-                    source_tree.nextToken();
-                }
+                HandleTopLevelExpression(source_tree,code_gen);
             }
         }
     }
