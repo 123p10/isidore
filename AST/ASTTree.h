@@ -6,15 +6,18 @@
 #include "ASTNodes.h"
 #include "../parsing/lexer.h"
 #include "../files/file_handler.h"
+#include "llvm/ADT/STLExtras.h"
+#include "../code_generation/code_gen.h"
 class ASTTree{
     private:
         ProgramFile source_file;
         Token currToken;
         int token_i;
-
     public:
+        CodeGenerator *code_gen;
         ASTTree();
         ASTTree(ProgramFile source_file);
+        ASTTree(ProgramFile source_file,CodeGenerator *code_gen);
         std::unique_ptr<ExprAST> ParseNumberExpr();
         std::unique_ptr<ExprAST> ParseParenExpr();
         std::unique_ptr<ExprAST> ParseIdentifierExpr();

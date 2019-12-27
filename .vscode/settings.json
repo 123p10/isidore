@@ -1,4 +1,5 @@
 {
+    "C_Cpp.default.includePath": ["/usr/lib/llvm-9/include/"],
     "files.associations": {
         "iosfwd": "cpp",
         "vector": "cpp",
@@ -43,6 +44,16 @@
         "stdexcept": "cpp",
         "streambuf": "cpp",
         "typeinfo": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "bitset": "cpp",
+        "chrono": "cpp",
+        "cinttypes": "cpp",
+        "condition_variable": "cpp",
+        "cstring": "cpp",
+        "ctime": "cpp",
+        "list": "cpp",
+        "ratio": "cpp",
+        "mutex": "cpp",
+        "thread": "cpp"
     }
 }

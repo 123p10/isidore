@@ -13,6 +13,18 @@
             "options": {
                 "cwd": "/usr/bin"
             }
+        },
+        {
+            "type": "shell",
+            "label": "run sh file",
+            "command": "./build.sh",
+            "options": {
+                "cwd": "/home/owen/Desktop/isidore/isidore"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         }
     ],
     "version": "2.0.0"

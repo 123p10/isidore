@@ -1,4 +1,1 @@
-void foo(x y) x+foo(y, 4.0);
-void foo(x y) x+y y;
-void foo(x y) x+y );
-extern sin(a);
+4+5;

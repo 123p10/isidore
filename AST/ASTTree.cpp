@@ -24,8 +24,15 @@ ASTTree::ASTTree(ProgramFile source_file){
     currToken = (*this).source_file.GetToken(token_i);
 }
 
+ASTTree::ASTTree(ProgramFile source_file, CodeGenerator *code_gen){
+    (*this).source_file = source_file;
+    token_i = 0;
+    currToken = (*this).source_file.GetToken(token_i);
+    (*this).code_gen = code_gen;
+}
+
 std::unique_ptr<ExprAST> ASTTree::ParseNumberExpr() {
-    auto Result = std::make_unique<NumberExprAST>(getCurrToken().value);
+    auto Result = llvm::make_unique<NumberExprAST>(getCurrToken().value);
     nextToken();
     return std::move(Result);
 }
@@ -47,7 +54,7 @@ std::unique_ptr<ExprAST> ASTTree::ParseIdentifierExpr() {
 
     //This is a variable
     if(getCurrToken().value != "("){
-        return std::make_unique<VariableExprAST>(IdName);
+        return llvm::make_unique<VariableExprAST>(IdName);
     }
     //This is a function
     nextToken();
@@ -70,7 +77,7 @@ std::unique_ptr<ExprAST> ASTTree::ParseIdentifierExpr() {
         }
     }
     nextToken();
-    return std::make_unique<CallExprAST>(IdName, std::move(args));
+    return llvm::make_unique<CallExprAST>(IdName, std::move(args));
 }
 
 std::unique_ptr<ExprAST> ASTTree::ParsePrimary() {
@@ -119,7 +126,7 @@ std::unique_ptr<ExprAST> ASTTree::ParseBinOpRHS(int ExprPrec,std::unique_ptr<Exp
                 return nullptr;
             }
         }
-        LHS = std::make_unique<BinaryExprAST>(binOp.value,std::move(LHS),std::move(RHS));
+        LHS = llvm::make_unique<BinaryExprAST>(binOp.value,std::move(LHS),std::move(RHS));
 
     }
 }
@@ -142,7 +149,7 @@ std::unique_ptr<PrototypeAST> ASTTree::ParsePrototype() {
     }
     // success.
     nextToken();
-    return std::make_unique<PrototypeAST>(FnName, std::move(ArgNames));
+    return llvm::make_unique<PrototypeAST>(FnName, std::move(ArgNames));
 }
 std::unique_ptr<FunctionAST> ASTTree::ParseDefinition() {
     nextToken();
@@ -150,7 +157,7 @@ std::unique_ptr<FunctionAST> ASTTree::ParseDefinition() {
     if (!Proto) return nullptr;
 
     if (auto E = ParseExpression())
-        return std::make_unique<FunctionAST>(std::move(Proto), std::move(E));
+        return llvm::make_unique<FunctionAST>(std::move(Proto), std::move(E));
     return nullptr;
 }
 std::unique_ptr<PrototypeAST> ASTTree::ParseExtern() {
@@ -159,8 +166,8 @@ std::unique_ptr<PrototypeAST> ASTTree::ParseExtern() {
 }
 std::unique_ptr<FunctionAST> ASTTree::ParseTopLevelExpr() {
   if (auto E = ParseExpression()) {
-    auto Proto = std::make_unique<PrototypeAST>("", std::vector<std::string>());
-    return std::make_unique<FunctionAST>(std::move(Proto), std::move(E));
+    auto Proto = llvm::make_unique<PrototypeAST>("__anon_expr", std::vector<std::string>());
+    return llvm::make_unique<FunctionAST>(std::move(Proto), std::move(E));
   }
   return nullptr;
 }

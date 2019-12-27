@@ -22,7 +22,7 @@ void tokenize_file(ProgramFile & source_file){
     std::vector<char> current_line = source_file.GetLine(0);
     while(current_line.size() != 0){
         char_number = 0;
-        while(char_number < current_line.size()){
+        while(char_number < (int)current_line.size()){
             char_stack += current_line.at(char_number);
             if(char_stack[0] == ' '){
                 char_stack = "";
@@ -79,10 +79,10 @@ bool isNumber(char first_char){
 std::string loadNumberToken(std::vector<char> current_line, std::string & char_stack , int & char_number){
     std::string type = "int";
     char_number++;
-    if(char_number >= current_line.size()){ char_number--; return type;}
+    if(char_number >= (int)current_line.size()){ char_number--; return type;}
     char current_char = current_line.at(char_number);
     char_number++;
-    while(char_number < current_line.size() && (isNumber(current_char) || current_char == '.')){
+    while(char_number < (int)current_line.size() && (isNumber(current_char) || current_char == '.')){
         if(current_char == '.'){
             type="float";
         }
@@ -106,10 +106,10 @@ bool isIdentifierLegal(char ch){
 }
 void loadLetterToken(std::vector<char> current_line, std::string & char_stack , int & char_number){
     char_number++;
-    if(char_number >= current_line.size()){ char_number--; return;}
+    if(char_number >= (int)current_line.size()){ char_number--; return;}
     char current_char = current_line.at(char_number);
     char_number++;
-    while(char_number < current_line.size() && (isIdentifierLegal(current_char))){
+    while(char_number < (int)current_line.size() && (isIdentifierLegal(current_char))){
         char_stack += current_char;
         current_char = current_line.at(char_number);
         char_number++;
@@ -117,7 +117,7 @@ void loadLetterToken(std::vector<char> current_line, std::string & char_stack , 
     char_number-=2;
 }
 bool isComment(std::vector<char> current_line, std::string & char_stack , int & char_number){
-    if(char_number+1 >= current_line.size()){return false;}
+    if(char_number+1 >= (int)current_line.size()){return false;}
     if(current_line.at(char_number) == '/' && current_line.at(char_number+1) == '/'){return true;}
     return false;
 }
@@ -145,6 +145,7 @@ std::string loadSpecialToken(char specialChar){
     if(specialChar == '[' || specialChar == ']'){return "square_brace";}
     if(specialChar == ','){return "comma";}
     if(specialChar == '.'){return "dot_accessor";}
+    return "N/A";
 }
 std::string loadStringToken(ProgramFile source_file, int & line_number, int & char_number){
     std::string char_stack = "";
@@ -155,7 +156,7 @@ std::string loadStringToken(ProgramFile source_file, int & line_number, int & ch
     while(current_char != init_char){
         char_stack += current_char;
         char_number++;
-        if(char_number >= current_line.size()){
+        if(char_number >= (int)current_line.size()){
             line_number++;
             current_line = source_file.GetLine(line_number);
             char_number = 0;
