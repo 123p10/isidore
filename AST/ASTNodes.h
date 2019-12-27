@@ -11,6 +11,7 @@ class CodeGenerator;
 void init();
 class ExprAST {
 public:
+    CodeGenerator * code_gen;
     virtual ~ExprAST() = default;
     virtual llvm::Value *codegen() = 0;
 };
@@ -18,8 +19,8 @@ class NumberExprAST : public ExprAST {
     CodeGenerator *code_gen;
     double Val;
     public:
-        NumberExprAST(std::string numToken);
-        llvm::Value *codegen() override;
+        NumberExprAST(std::string numToken, CodeGenerator * code_gen);
+        llvm::Value *codegen();
 
 };
 
@@ -28,49 +29,52 @@ class VariableExprAST : public ExprAST{
 
     std::string Name;
     public:
-        VariableExprAST(const std::string &Name);
+        VariableExprAST(const std::string &Name, CodeGenerator * code_gen);
         llvm::Value *codegen() override;
 
 };
 class BinaryExprAST : public ExprAST {
     std::string Op;
     std::unique_ptr<ExprAST> LHS, RHS;
-
+    CodeGenerator * code_gen;
     public:
         BinaryExprAST(std::string op, std::unique_ptr<ExprAST> LHS,
-                        std::unique_ptr<ExprAST> RHS);
+                        std::unique_ptr<ExprAST> RHS, CodeGenerator * code_gen);
         llvm::Value *codegen() override;
 };
 class CallExprAST : public ExprAST {
     std::string Callee;
     std::vector<std::unique_ptr<ExprAST>> Args;
+    CodeGenerator * code_gen;
 
     public:
         CallExprAST(const std::string &Callee,
-                std::vector<std::unique_ptr<ExprAST>> Args)
-        : Callee(Callee), Args(std::move(Args)) {}
+                std::vector<std::unique_ptr<ExprAST>> Args, CodeGenerator * code_gen)
+        : Callee(Callee), Args(std::move(Args)), code_gen(code_gen) {}
         llvm::Value *codegen() override;
 };
 
 class PrototypeAST {
   std::string Name;
   std::vector<std::string> Args;
+    CodeGenerator * code_gen;
 
-public:
-  PrototypeAST(const std::string &Name, std::vector<std::string> Args)
-      : Name(Name), Args(std::move(Args)) {}
+  public:
+    PrototypeAST(const std::string &Name, std::vector<std::string> Args, CodeGenerator * code_gen)
+        : Name(Name), Args(std::move(Args)), code_gen(code_gen) {}
 
-  llvm::Function *codegen();
-  const std::string &getName() const { return Name; }
+    llvm::Function *codegen();
+    const std::string &getName() const { return Name; }
 };
 class FunctionAST {
   std::unique_ptr<PrototypeAST> Proto;
   std::unique_ptr<ExprAST> Body;
+    CodeGenerator * code_gen;
 
 public:
   FunctionAST(std::unique_ptr<PrototypeAST> Proto,
-              std::unique_ptr<ExprAST> Body)
-      : Proto(std::move(Proto)), Body(std::move(Body)) {}
+              std::unique_ptr<ExprAST> Body, CodeGenerator * code_gen)
+      : Proto(std::move(Proto)), Body(std::move(Body)), code_gen(code_gen) {}
 
   llvm::Function *codegen();
 };

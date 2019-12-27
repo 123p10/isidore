@@ -5,7 +5,11 @@
 #include "llvm/IR/Module.h"
 class CodeGenerator{
     public:
-
+        std::unique_ptr<llvm::Module> *TheModule;
+        llvm::LLVMContext *TheContext;
+        llvm::IRBuilder<> *Builder;
+        std::map<std::string, llvm::Value *> NamedValues;
+        ~CodeGenerator();
         CodeGenerator();
 };
 

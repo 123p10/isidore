@@ -6,31 +6,29 @@
 #include "llvm/IR/BasicBlock.h"
 #include "llvm/IR/Verifier.h"
 #include "../code_generation/code_gen.h"
-NumberExprAST::NumberExprAST(std::string numString){
+NumberExprAST::NumberExprAST(std::string numString, CodeGenerator * code_gen){
     Val = stod(numString);
+    (*this).code_gen = code_gen;
 }
 
-VariableExprAST::VariableExprAST(const std::string &Name) : Name(Name){}
-BinaryExprAST::BinaryExprAST(std::string op, std::unique_ptr<ExprAST> LHS, std::unique_ptr<ExprAST> RHS){
+VariableExprAST::VariableExprAST(const std::string &Name, CodeGenerator * code_gen){
+    (*this).Name = Name;
+    (*this).code_gen = code_gen;
+}
+BinaryExprAST::BinaryExprAST(std::string op, std::unique_ptr<ExprAST> LHS, std::unique_ptr<ExprAST> RHS, CodeGenerator * code_gen){
     Op = op;
     (*this).LHS = std::move(LHS);
     (*this).RHS = std::move(RHS);
-}
-static llvm::LLVMContext TheContext;
-static llvm::IRBuilder<> Builder(TheContext);
-static std::unique_ptr<llvm::Module> TheModule;
-static std::map<std::string, llvm::Value *> NamedValues;
-void init(){
-      TheModule = llvm::make_unique<llvm::Module>("my cool jit", TheContext);
+    (*this).code_gen = code_gen;
 }
 
 //Code_gen
 //To improve this remove these persistent references to getContext or getModule, replace with temp variables or better method, pointers
 llvm::Value *NumberExprAST::codegen(){
-    return llvm::ConstantFP::get(TheContext,llvm::APFloat(Val));
+    return llvm::ConstantFP::get(*(code_gen->TheContext),llvm::APFloat(Val));
 }
 llvm::Value *VariableExprAST::codegen(){
-    llvm::Value *V = NamedValues[Name];
+    llvm::Value *V = code_gen->NamedValues[Name];
     if(!V){
         LogErrorV("Unknown Variable Name");
     }
@@ -42,24 +40,24 @@ llvm::Value *BinaryExprAST::codegen() {
     if (!L || !R)
         return nullptr;
     if(Op == "+"){
-        return Builder.CreateFAdd(L,R, "addtmp");
+        return code_gen->Builder->CreateFAdd(L,R, "addtmp");
     }
     else if(Op == "-"){
-        return Builder.CreateFSub(L,R, "subtmp");
+        return code_gen->Builder->CreateFSub(L,R, "subtmp");
     }
     else if(Op == "*"){
-        return Builder.CreateFMul(L,R, "multmp");
+        return code_gen->Builder->CreateFMul(L,R, "multmp");
     }
     else if(Op == "<"){
-        L = Builder.CreateFCmpULT(L,R,"cmptmp");
-        return Builder.CreateUIToFP(L,llvm::Type::getDoubleTy(TheContext),"booltmp");
+        L = code_gen->Builder->CreateFCmpULT(L,R,"cmptmp");
+        return code_gen->Builder->CreateUIToFP(L,llvm::Type::getDoubleTy(*(code_gen->TheContext)),"booltmp");
     }
     else{
         return LogErrorV("Invalid Binary Operator");
     }
 }
 llvm::Value *CallExprAST::codegen(){
-    llvm::Function *CalleeF = TheModule->getFunction(Callee);
+    llvm::Function *CalleeF = code_gen->TheModule->get()->getFunction(Callee);
     if(!CalleeF){
         return LogErrorV("Unknown Function Referenced");
     }
@@ -73,12 +71,12 @@ llvm::Value *CallExprAST::codegen(){
             return nullptr;
         }
     }
-    return Builder.CreateCall(CalleeF,ArgsV,"calltmp");
+    return code_gen->Builder->CreateCall(CalleeF,ArgsV,"calltmp");
 }
 llvm::Function *PrototypeAST::codegen(){
-    std::vector<llvm::Type*> Doubles(Args.size(),llvm::Type::getDoubleTy(TheContext));
-    llvm::FunctionType *FT = llvm::FunctionType::get(llvm::Type::getDoubleTy(TheContext),Doubles,false);
-    llvm::Function *F = llvm::Function::Create(FT, llvm::Function::ExternalLinkage,Name,TheModule.get());
+    std::vector<llvm::Type*> Doubles(Args.size(),llvm::Type::getDoubleTy(*(code_gen->TheContext)));
+    llvm::FunctionType *FT = llvm::FunctionType::get(llvm::Type::getDoubleTy(*(code_gen->TheContext)),Doubles,false);
+    llvm::Function *F = llvm::Function::Create(FT, llvm::Function::ExternalLinkage,Name,code_gen->TheModule->get());
     unsigned Idx = 0;
     for(auto &Arg : F->args()){
         Arg.setName(Args[Idx++]);
@@ -87,7 +85,7 @@ llvm::Function *PrototypeAST::codegen(){
 }
 
 llvm::Function *FunctionAST::codegen(){
-    llvm::Function *TheFunction = TheModule->getFunction(Proto->getName());
+    llvm::Function *TheFunction = code_gen->TheModule->get()->getFunction(Proto->getName());
     if(!TheFunction){
         TheFunction = Proto->codegen();
     }
@@ -96,15 +94,15 @@ llvm::Function *FunctionAST::codegen(){
     }
     if (!TheFunction->empty())
         return (llvm::Function*)LogErrorV("Function cannot be redefined.");
-    llvm::BasicBlock *BB = llvm::BasicBlock::Create(TheContext,"entry",TheFunction);
-    Builder.SetInsertPoint(BB);
+    llvm::BasicBlock *BB = llvm::BasicBlock::Create(*(code_gen->TheContext),"entry",TheFunction);
+    code_gen->Builder->SetInsertPoint(BB);
 
-    NamedValues.clear();
+    code_gen->NamedValues.clear();
     for(auto &Arg : TheFunction->args()){
-        NamedValues[Arg.getName()] = &Arg;
+        code_gen->NamedValues[Arg.getName()] = &Arg;
     }
     if(llvm::Value *RetVal = Body->codegen()){
-        Builder.CreateRet(RetVal);
+        code_gen->Builder->CreateRet(RetVal);
         llvm::verifyFunction(*TheFunction);
         return TheFunction;
     }

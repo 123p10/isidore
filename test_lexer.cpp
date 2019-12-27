@@ -11,13 +11,13 @@
 
 int main(){
     std::ifstream my_file("test.isd");
+    CodeGenerator * code_gen = new CodeGenerator();
     ProgramFile test_file(my_file);
-    init();
     tokenize_file(test_file);
     int index = 0;
 
     while(test_file.GetLine(index).size() != 0){
-        ASTTree source_tree(test_file);
+        ASTTree source_tree(test_file,code_gen);
         while(1){
             if(source_tree.getCurrToken().value == "EOF"){
                 return 1;
@@ -32,7 +32,6 @@ int main(){
                 HandleExtern(source_tree);
             }
             else{
-                std::cout << "Here";
                 if(auto FnAST = source_tree.ParseTopLevelExpr()){
                     if(auto *FnIR = FnAST->codegen()){
                         fprintf(stderr,"Read top-level expression:");
@@ -46,5 +45,7 @@ int main(){
             }
         }
     }
-    //TheModule->print(llvm::errs(), nullptr);
+    code_gen->TheModule->get()->print(llvm::errs(), nullptr);
+        delete code_gen;
+
 }
