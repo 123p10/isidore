@@ -1,4 +1,2 @@
-void foo(x) x + 1;
-foo(2);
-void foo(x) x + 2;
-foo(2);
+extern printd(x);
+printd((0-5));

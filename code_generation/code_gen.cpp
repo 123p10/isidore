@@ -4,6 +4,7 @@
 #include "llvm/Transforms/Scalar.h"
 #include "llvm/Transforms/Scalar/GVN.h"
 #include "llvm/Support/TargetSelect.h"
+#include "clang/AST/Type.h"
 llvm::Value *LogErrorV(const char *Str){
     LogError(Str);
     return nullptr;
@@ -16,6 +17,7 @@ CodeGenerator::CodeGenerator(){
     Builder = new llvm::IRBuilder<>(*TheContext);
     TheJIT = new std::unique_ptr<llvm::orc::KaleidoscopeJIT>;
     *TheJIT = llvm::make_unique<llvm::orc::KaleidoscopeJIT>();
+    FunctionProtos = new std::map<std::string, std::unique_ptr<PrototypeAST>>;
     InitializeModuleAndPassManager();
 }
 CodeGenerator::~CodeGenerator(){
@@ -23,6 +25,8 @@ CodeGenerator::~CodeGenerator(){
     delete Builder;
     delete TheModule;
     delete TheFPM;
+    delete TheJIT;
+    delete FunctionProtos;
 }
 void CodeGenerator::InitializeModuleAndPassManager(void){
     TheModule = new std::unique_ptr<llvm::Module>;
@@ -35,4 +39,15 @@ void CodeGenerator::InitializeModuleAndPassManager(void){
     TheFPM->get()->add(llvm::createGVNPass());
     TheFPM->get()->add(llvm::createCFGSimplificationPass());
     TheFPM->get()->doInitialization();
+}
+llvm::Function *CodeGenerator::getFunction(std::string Name){
+    if(auto *F = TheModule->get()->getFunction(Name)){
+        return F;
+    }
+    
+    auto FI = FunctionProtos->find(Name);
+    if(FI != FunctionProtos->end()){
+        return FI->second->codegen();
+    }
+    return nullptr;
 }

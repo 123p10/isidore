@@ -7,7 +7,7 @@
 #include "driver/main_driver.h"
 #include "code_generation/code_gen.h"
 #include "llvm/Support/raw_ostream.h"
-
+#include "extern/extern.h"
 
 int main(){
     std::ifstream my_file("test.isd");
@@ -26,10 +26,10 @@ int main(){
                 source_tree.nextToken();
             }
             else if(source_tree.getCurrToken().type == "data_void"){
-                HandleDefinition(source_tree);
+                HandleDefinition(source_tree,code_gen);
             }
             else if(source_tree.getCurrToken().type == "extern"){
-                HandleExtern(source_tree);
+                HandleExtern(source_tree,code_gen);
             }
             else{
                 HandleTopLevelExpression(source_tree,code_gen);
@@ -37,6 +37,6 @@ int main(){
         }
     }
     code_gen->TheModule->get()->print(llvm::errs(), nullptr);
-        delete code_gen;
+    delete code_gen;
 
 }

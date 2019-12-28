@@ -8,7 +8,7 @@
 #include <vector>
 #include "llvm/IR/Function.h"
 class CodeGenerator;
-void init();
+
 class ExprAST {
 public:
     CodeGenerator * code_gen;
