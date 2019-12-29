@@ -5,7 +5,6 @@ Syntax Definition
     -Proper type definitions for functions
 Develop proper source build system
 Develop proper compilation system
-User defined operators
 Compile to object files
 Debugger Compatibility
 Proper type systems
@@ -17,3 +16,4 @@ Define arrays
 Proper Error Handling!(Define is Syntax error or pointer error etc, line numbers, Expected x got y)
 Reduce runtime by converting getCurrToken() to proper storage of currentToken
 Multi-char operators, ==, ===, <=, >=
+Mutable Variables
