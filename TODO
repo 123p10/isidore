@@ -1,0 +1,15 @@
+Syntax Definition
+    -Establish return keyword/statements
+    -Redefine if and for statements to utilize {}
+    -redefine functions to utilize {}
+Develop proper source build system
+Develop proper compilation system
+User defined operators
+Compile to object files
+Debugger Compatibility
+Proper type systems
+String type
+Char type
+Remove automatic type inferencing
+Define while loop
+Define arrays
