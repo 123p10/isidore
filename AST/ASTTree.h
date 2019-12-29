@@ -8,6 +8,7 @@
 #include "../files/file_handler.h"
 #include "llvm/ADT/STLExtras.h"
 #include "../code_generation/code_gen.h"
+
 class ASTTree{
     private:
         ProgramFile source_file;
@@ -30,11 +31,13 @@ class ASTTree{
         std::unique_ptr<FunctionAST> ParseTopLevelExpr();
         std::unique_ptr<ExprAST> ParseIfExpr();
         std::unique_ptr<ExprAST> ParseForExpr();
+        std::unique_ptr<ExprAST> ParseUnary();
         int GetTokPrecedence();
         Token getCurrToken();
         Token nextToken();
 
 };
+
 std::unique_ptr<ExprAST> LogError(const char *Str);
 std::unique_ptr<PrototypeAST> LogErrorP(const char *Str);
 

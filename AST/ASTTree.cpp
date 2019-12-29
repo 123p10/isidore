@@ -2,12 +2,6 @@
 //I have a feeling this should all be in our program file class??!!
 
 
-std::map<std::string, int> BinopPrecedence = {
-    {"<",10},
-    {"+",20},
-    {"-",20},
-    {"*",40},
-};
 Token ASTTree::nextToken() {
     (*this).token_i++;
     return getCurrToken();
@@ -101,13 +95,13 @@ std::unique_ptr<ExprAST> ASTTree::ParsePrimary() {
     }
 }
 int ASTTree::GetTokPrecedence(){
-    int tokPrec = BinopPrecedence[getCurrToken().value];
+    int tokPrec = code_gen->BinopPrecedence[getCurrToken().value];
     if(tokPrec <= 0){return -1;}
     return tokPrec;
 }
 
 std::unique_ptr<ExprAST> ASTTree::ParseExpression() {
-  auto LHS = ParsePrimary();
+  auto LHS = ParseUnary();
   if (!LHS)
     return nullptr;
 
@@ -121,7 +115,7 @@ std::unique_ptr<ExprAST> ASTTree::ParseBinOpRHS(int ExprPrec,std::unique_ptr<Exp
         }
         Token binOp = getCurrToken();
         nextToken();
-        auto RHS = ParsePrimary();
+        auto RHS = ParseUnary();
         if(!RHS){
             return nullptr;
         }
@@ -137,25 +131,53 @@ std::unique_ptr<ExprAST> ASTTree::ParseBinOpRHS(int ExprPrec,std::unique_ptr<Exp
     }
 }
 std::unique_ptr<PrototypeAST> ASTTree::ParsePrototype() {
-    if (getCurrToken().type != "identifier")
-        return LogErrorP("Expected function name in prototype");
-
-    std::string FnName = getCurrToken().value;
-    nextToken();
-    if (getCurrToken().value != "(")
+    std::string FnName;
+    unsigned Kind = 0; //0-iden, 1=unary, 2=binary
+    unsigned BinaryPrecedence = 30;
+    if(getCurrToken().type == "identifier"){
+        FnName = getCurrToken().value;
+        Kind = 0;
+        nextToken();
+    }
+    else if(getCurrToken().type == "unary"){
+        nextToken();
+        FnName = "unary";
+        FnName += getCurrToken().value;
+        Kind = 1;
+        nextToken();
+    }
+    else if(getCurrToken().type == "binary"){
+        nextToken();
+        FnName = "binary";
+        FnName += getCurrToken().value;
+        Kind = 2;
+        nextToken();
+        if(getCurrToken().type == "int" || getCurrToken().type == "float"){
+            if(std::stod(getCurrToken().value) < 1 || std::stod(getCurrToken().value) > 100){
+                return LogErrorP("Invalid precedence: must be >1 and <100");
+            }
+            BinaryPrecedence = (unsigned)std::stod(getCurrToken().value);
+            nextToken();
+        }
+    }
+    else{
+        return LogErrorP("Expected function name in Prototype");
+    }
+    if(getCurrToken().value != "("){
         return LogErrorP("Expected '(' in prototype");
-
-    // Read the list of argument names.
+    }
     std::vector<std::string> ArgNames;
-    while (nextToken().type == "identifier"){
+    while(nextToken().type == "identifier"){
         ArgNames.push_back(getCurrToken().value);
     }
-    if (getCurrToken().value != ")"){
+    if(getCurrToken().value != ")"){
         return LogErrorP("Expected ')' in prototype");
     }
-    // success.
     nextToken();
-    return llvm::make_unique<PrototypeAST>(FnName, std::move(ArgNames),code_gen);
+    if(Kind && ArgNames.size() != Kind){
+        return LogErrorP("Invalid number of operands for operator");
+    }
+    return llvm::make_unique<PrototypeAST>(FnName,std::move(ArgNames),code_gen,Kind != 0, BinaryPrecedence);
 }
 std::unique_ptr<FunctionAST> ASTTree::ParseDefinition() {
     nextToken();
@@ -240,6 +262,17 @@ std::unique_ptr<ExprAST> ASTTree::ParseForExpr(){
         return nullptr;
     }
     return llvm::make_unique<ForExprAST>(IdName,std::move(Start),std::move(End),std::move(Step),std::move(Body),code_gen);
+}
+std::unique_ptr<ExprAST> ASTTree::ParseUnary(){
+    if(getCurrToken().type != "operator" || getCurrToken().value == "(" || getCurrToken().value == ","){
+        return ParsePrimary();
+    }
+    int Opc = (getCurrToken().value[0]);
+    nextToken();
+    if(auto Operand = ParseUnary()){
+        return llvm::make_unique<UnaryExprAST>(Opc, std::move(Operand),code_gen);
+    }
+    return nullptr;
 }
 
 

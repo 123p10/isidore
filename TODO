@@ -2,6 +2,7 @@ Syntax Definition
     -Establish return keyword/statements
     -Redefine if and for statements to utilize {}
     -redefine functions to utilize {}
+    -Proper type definitions for functions
 Develop proper source build system
 Develop proper compilation system
 User defined operators
@@ -13,3 +14,6 @@ Char type
 Remove automatic type inferencing
 Define while loop
 Define arrays
+Proper Error Handling!(Define is Syntax error or pointer error etc, line numbers, Expected x got y)
+Reduce runtime by converting getCurrToken() to proper storage of currentToken
+Multi-char operators, ==, ===, <=, >=

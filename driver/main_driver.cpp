@@ -3,7 +3,10 @@
 #include <cstdint>
 void HandleDefinition(ASTTree & source_tree, CodeGenerator * code_gen){
     if(auto FnAST = source_tree.ParseDefinition()){
-        if(FnAST->codegen()){
+        if(auto *FnIR = FnAST->codegen()){
+            fprintf(stderr, "Read function definition:");
+            FnIR->print(llvm::errs());
+            fprintf(stderr, "\n");
             code_gen->TheJIT->get()->addModule(std::move(*(code_gen->TheModule)));
             code_gen->InitializeModuleAndPassManager();
         }

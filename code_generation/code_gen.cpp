@@ -10,6 +10,7 @@ llvm::Value *LogErrorV(const char *Str){
     return nullptr;
 }
 CodeGenerator::CodeGenerator(){
+    initPrecedence();
     llvm::InitializeNativeTarget();
     llvm::InitializeNativeTargetAsmPrinter();
     llvm::InitializeNativeTargetAsmParser();
@@ -19,6 +20,12 @@ CodeGenerator::CodeGenerator(){
     *TheJIT = llvm::make_unique<llvm::orc::KaleidoscopeJIT>();
     FunctionProtos = new std::map<std::string, std::unique_ptr<PrototypeAST>>;
     InitializeModuleAndPassManager();
+}
+void CodeGenerator::initPrecedence(){
+    BinopPrecedence["<"] = 10;
+    BinopPrecedence["+"] = 20;
+    BinopPrecedence["-"] = 20;
+    BinopPrecedence["*"] = 40; // highest.
 }
 CodeGenerator::~CodeGenerator(){
     delete TheContext;

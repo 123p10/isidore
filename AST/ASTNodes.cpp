@@ -6,6 +6,7 @@
 #include "llvm/IR/BasicBlock.h"
 #include "llvm/IR/Verifier.h"
 #include "../code_generation/code_gen.h"
+#include "ASTTree.h"
 NumberExprAST::NumberExprAST(std::string numString, CodeGenerator * code_gen){
     Val = stod(numString);
     (*this).code_gen = code_gen;
@@ -34,6 +35,17 @@ llvm::Value *VariableExprAST::codegen(){
     }
     return V;
 }
+llvm::Value *UnaryExprAST::codegen(){
+    llvm::Value *OperandV = Operand->codegen();
+    if(!OperandV){
+        return nullptr;
+    }
+    llvm::Function *F = code_gen->getFunction(std::string("unary") + Opcode);
+    if(!F){
+        return LogErrorV("Unknown unary operator");
+    }
+    return code_gen->Builder->CreateCall(F,OperandV,"unop");
+}
 llvm::Value *BinaryExprAST::codegen() {
     llvm::Value *L = LHS->codegen();
     llvm::Value *R = RHS->codegen();
@@ -54,7 +66,10 @@ llvm::Value *BinaryExprAST::codegen() {
         return code_gen->Builder->CreateUIToFP(L,llvm::Type::getDoubleTy(*(code_gen->TheContext)),"booltmp");
     }
     else{
-        return LogErrorV("Invalid Binary Operator");
+        llvm::Function *F = code_gen->getFunction(std::string("binary") + Op);
+        assert(F && "binary operator not found!");
+        llvm::Value *Ops[2] = {L, R};
+        return code_gen->Builder->CreateCall(F,Ops,"binop");
     }
 }
 llvm::Value *CallExprAST::codegen(){
@@ -186,9 +201,9 @@ llvm::Function *FunctionAST::codegen(){
     if(!TheFunction){
         return nullptr;
     }
-/*     if (!TheFunction->empty())
-        return (llvm::Function*)LogErrorV("Function cannot be redefined.");
- */    
+    if(P.isBinaryOp()){
+        code_gen->BinopPrecedence[std::string(1,P.getOperatorName())] = P.getBinaryPrecedence();
+    }
     llvm::BasicBlock *BB = llvm::BasicBlock::Create(*(code_gen->TheContext),"entry",TheFunction);
     code_gen->Builder->SetInsertPoint(BB);
 
@@ -205,4 +220,3 @@ llvm::Function *FunctionAST::codegen(){
     TheFunction->eraseFromParent();
     return nullptr;
 }
-

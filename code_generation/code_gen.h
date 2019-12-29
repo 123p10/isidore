@@ -10,6 +10,7 @@ class PrototypeAST;
 
 class CodeGenerator{
     public:
+        void initPrecedence();
         std::unique_ptr<llvm::Module> *TheModule;
         llvm::LLVMContext *TheContext;
         llvm::IRBuilder<> *Builder;
@@ -19,11 +20,10 @@ class CodeGenerator{
         std::map<std::string, std::unique_ptr<PrototypeAST>> *FunctionProtos;
         llvm::Function *getFunction(std::string Name);
         void InitializeModuleAndPassManager(void);
-
+        std::map<std::string, int> BinopPrecedence;
         CodeGenerator();
         ~CodeGenerator();
 
 };
-
 llvm::Value *LogErrorV(const char *Str);
 #endif

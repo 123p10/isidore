@@ -73,17 +73,37 @@ class ForExprAST : public ExprAST{
     llvm::Value *codegen() override;
 };
 
+class UnaryExprAST : public ExprAST{
+  char Opcode;
+  std::unique_ptr<ExprAST> Operand;
+  CodeGenerator * code_gen;
+  public:
+      UnaryExprAST(char Opcode, std::unique_ptr<ExprAST> Operand, CodeGenerator * code_gen)
+    : Opcode(Opcode), Operand(std::move(Operand)), code_gen(code_gen) {}
+      llvm::Value *codegen() override;
+};
+
 class PrototypeAST {
   std::string Name;
   std::vector<std::string> Args;
     CodeGenerator * code_gen;
-
+  bool IsOperator;
+  unsigned Precedence;
   public:
-    PrototypeAST(const std::string &Name, std::vector<std::string> Args, CodeGenerator * code_gen)
-        : Name(Name), Args(std::move(Args)), code_gen(code_gen) {}
-
+  PrototypeAST(const std::string &name, std::vector<std::string> Args,
+                CodeGenerator * code_gen, bool IsOperator = false, unsigned Prec = 0)
+  : Name(name), Args(std::move(Args)), IsOperator(IsOperator),
+    Precedence(Prec), code_gen(code_gen) {}
     llvm::Function *codegen();
     const std::string &getName() const { return Name; }
+    bool isUnaryOp() const { return IsOperator && Args.size() == 1; }
+    bool isBinaryOp() const { return IsOperator && Args.size() == 2; }
+    char getOperatorName() const {
+      assert(isUnaryOp() || isBinaryOp());
+      return Name[Name.size() - 1];
+    }
+    unsigned getBinaryPrecedence() const { return Precedence; }
+
 };
 class FunctionAST {
   std::unique_ptr<PrototypeAST> Proto;
