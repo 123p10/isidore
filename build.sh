@@ -1,4 +1,4 @@
-g++ -g -O3 -rdynamic -pipe -Wall \
+g++ -g -O0 -rdynamic -pipe -Wall \
                 files/file_handler.cpp \
                 parsing/lexer.cpp \
                 test_lexer.cpp \

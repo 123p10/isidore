@@ -54,6 +54,25 @@ class CallExprAST : public ExprAST {
         llvm::Value *codegen() override;
 };
 
+class IfExprAST : public ExprAST{
+  std::unique_ptr<ExprAST> Cond, Then, Else;
+  CodeGenerator * code_gen;
+  public:
+    IfExprAST(std::unique_ptr<ExprAST> Cond, std::unique_ptr<ExprAST> Then, std::unique_ptr<ExprAST> Else, CodeGenerator * code_gen)
+    : Cond(std::move(Cond)), Then(std::move(Then)), Else(std::move(Else)), code_gen(code_gen){}
+    llvm::Value *codegen() override;
+};
+class ForExprAST : public ExprAST{
+  std::string VarName;
+  std::unique_ptr<ExprAST> Start, End, Step, Body;
+  CodeGenerator * code_gen;
+  public:
+
+    ForExprAST(const std::string &VarName, std::unique_ptr<ExprAST> Start, std::unique_ptr<ExprAST> End, std::unique_ptr<ExprAST> Step, std::unique_ptr<ExprAST> Body, CodeGenerator * code_gen)
+    : VarName(VarName), Start(std::move(Start)), End(std::move(End)), Step(std::move(Step)), Body(std::move(Body)),code_gen(code_gen){}
+    llvm::Value *codegen() override;
+};
+
 class PrototypeAST {
   std::string Name;
   std::vector<std::string> Args;

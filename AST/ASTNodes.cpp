@@ -48,6 +48,7 @@ llvm::Value *BinaryExprAST::codegen() {
     else if(Op == "*"){
         return code_gen->Builder->CreateFMul(L,R, "multmp");
     }
+    //Implement > operator using userdefined operators
     else if(Op == "<"){
         L = code_gen->Builder->CreateFCmpULT(L,R,"cmptmp");
         return code_gen->Builder->CreateUIToFP(L,llvm::Type::getDoubleTy(*(code_gen->TheContext)),"booltmp");
@@ -73,6 +74,100 @@ llvm::Value *CallExprAST::codegen(){
     }
     return code_gen->Builder->CreateCall(CalleeF,ArgsV,"calltmp");
 }
+llvm::Value *IfExprAST::codegen(){
+    llvm::Value *CondV = Cond->codegen();
+    if(!CondV){
+        return nullptr;
+    }
+    CondV = code_gen->Builder->CreateFCmpONE(CondV, llvm::ConstantFP::get(*code_gen->TheContext,llvm::APFloat(0.0)),"ifcond");
+    llvm::Function *TheFunction = code_gen->Builder->GetInsertBlock()->getParent();
+    
+    llvm::BasicBlock *ThenBB = llvm::BasicBlock::Create(*code_gen->TheContext,"then",TheFunction);
+    llvm::BasicBlock *ElseBB = llvm::BasicBlock::Create(*code_gen->TheContext,"else");
+    llvm::BasicBlock *MergeBB = llvm::BasicBlock::Create(*code_gen->TheContext,"ifcont");
+    code_gen->Builder->CreateCondBr(CondV, ThenBB, ElseBB);
+    code_gen->Builder->SetInsertPoint(ThenBB);
+
+    llvm::Value *ThenV = Then->codegen();
+    if(!ThenV){
+        return nullptr;
+    }
+    code_gen->Builder->CreateBr(MergeBB);
+    ThenBB = code_gen->Builder->GetInsertBlock();
+
+    TheFunction->getBasicBlockList().push_back(ElseBB);
+    code_gen->Builder->SetInsertPoint(ElseBB);
+
+    llvm::Value *ElseV = Else->codegen();
+    if(!ElseV){
+        return nullptr;
+    }
+    code_gen->Builder->CreateBr(MergeBB);
+    ElseBB = code_gen->Builder->GetInsertBlock();
+
+    TheFunction->getBasicBlockList().push_back(MergeBB);
+    code_gen->Builder->SetInsertPoint(MergeBB);
+    llvm::PHINode *PN = code_gen->Builder->CreatePHI(llvm::Type::getDoubleTy(*code_gen->TheContext),2,"iftmp");
+    PN->addIncoming(ThenV,ThenBB);
+    PN->addIncoming(ElseV,ElseBB);
+    return PN;
+}
+
+llvm::Value *ForExprAST::codegen(){
+    llvm::Value *StartVal = Start->codegen();
+    if(!StartVal){
+        return nullptr;
+    }
+
+    llvm::Function *TheFunction = code_gen->Builder->GetInsertBlock()->getParent();
+    llvm::BasicBlock *PreheaderBB = code_gen->Builder->GetInsertBlock();
+    llvm::BasicBlock *LoopBB = llvm::BasicBlock::Create(*code_gen->TheContext, "loop", TheFunction);
+
+    code_gen->Builder->CreateBr(LoopBB);
+
+    code_gen->Builder->SetInsertPoint(LoopBB);
+    llvm::PHINode *Variable = code_gen->Builder->CreatePHI(llvm::Type::getDoubleTy(*code_gen->TheContext),2, VarName.c_str());
+    Variable->addIncoming(StartVal, PreheaderBB);
+
+    llvm::Value *OldVal = code_gen->NamedValues[VarName];
+    code_gen->NamedValues[VarName] = Variable;
+    if(!Body->codegen()){
+        return nullptr;
+    }
+
+    llvm::Value *StepVal = nullptr;
+    if(Step){
+        StepVal = Step->codegen();
+        if(!StepVal){
+            return nullptr;
+        }
+    }
+    else{
+        StepVal = llvm::ConstantFP::get(*code_gen->TheContext,llvm::APFloat(1.0));
+    }
+    llvm::Value *NextVar = code_gen->Builder->CreateFAdd(Variable, StepVal, "nextvar");
+
+    llvm::Value *EndCond = End->codegen();
+    if(!EndCond){
+        return nullptr;
+    }
+    EndCond = code_gen->Builder->CreateFCmpONE(EndCond,llvm::ConstantFP::get(*code_gen->TheContext,llvm::APFloat(0.0)),"loopcond");
+
+    llvm::BasicBlock *LoopEndBB = code_gen->Builder->GetInsertBlock();
+    llvm::BasicBlock *AfterBB = llvm::BasicBlock::Create(*code_gen->TheContext,"afterloop",TheFunction);
+    code_gen->Builder->CreateCondBr(EndCond, LoopBB, AfterBB);
+    code_gen->Builder->SetInsertPoint(AfterBB);
+
+    Variable->addIncoming(NextVar, LoopEndBB);
+    if(OldVal){
+        code_gen->NamedValues[VarName] = OldVal;
+    }
+    else{
+        code_gen->NamedValues.erase(VarName);
+    }
+    return llvm::Constant::getNullValue(llvm::Type::getDoubleTy(*code_gen->TheContext));
+}
+
 llvm::Function *PrototypeAST::codegen(){
     std::vector<llvm::Type*> Doubles(Args.size(),llvm::Type::getDoubleTy(*(code_gen->TheContext)));
     llvm::FunctionType *FT = llvm::FunctionType::get(llvm::Type::getDoubleTy(*(code_gen->TheContext)),Doubles,false);

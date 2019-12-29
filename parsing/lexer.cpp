@@ -10,7 +10,12 @@ std::map<std::string,std::string> keywords_list = {
     //May insert partial type inferencing to kill float but we shall see
     {"float","data_float"},
     {"void","data_void"},
-    {"extern","extern"}
+    {"extern","extern"},
+    {"if","if"},
+    {"else","else"},
+    {"then","then"},
+    {"for","for"},
+    {"in","in"}
 
     
 };
@@ -101,7 +106,7 @@ bool isLegalLetter(char letter){
 bool isIdentifierLegal(char ch){
     if(isLegalLetter(ch)){return true;}
     if(isNumber(ch)){return true;}
-    if(ch == '_' || ch == '-'){return true;}
+    if(ch == '_'){return true;}
     return false;
 }
 void loadLetterToken(std::vector<char> current_line, std::string & char_stack , int & char_number){
@@ -122,7 +127,7 @@ bool isComment(std::vector<char> current_line, std::string & char_stack , int & 
     return false;
 }
 bool isOperator(char op){
-    if(op == '*' || op == '+' || op == '-' || op == '=' || op == '/' || op == '&' || op == '|'){
+    if(op == '*' || op == '+' || op == '-' || op == '=' || op == '/' || op == '&' || op == '|' || op == '<' || op == '>'){
         return true;
     }
     return false;

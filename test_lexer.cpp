@@ -16,7 +16,7 @@ int main(){
     tokenize_file(test_file);
     int index = 0;
 
-    while(test_file.GetLine(index).size() != 0){
+    //while(test_file.GetLine(index).size() != 0){
         ASTTree source_tree(test_file,code_gen);
         while(1){
             if(source_tree.getCurrToken().value == "EOF"){
@@ -35,7 +35,7 @@ int main(){
                 HandleTopLevelExpression(source_tree,code_gen);
             }
         }
-    }
+    //}
     code_gen->TheModule->get()->print(llvm::errs(), nullptr);
     delete code_gen;
 

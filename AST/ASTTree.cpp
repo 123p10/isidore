@@ -90,6 +90,12 @@ std::unique_ptr<ExprAST> ASTTree::ParsePrimary() {
     else if(getCurrToken().value == "("){
         return ParseParenExpr();
     }
+    else if(getCurrToken().type == "if"){
+        return ParseIfExpr();
+    }
+    else if(getCurrToken().type == "for"){
+        return ParseForExpr();
+    }
     else{
         return LogError("unknown token when resolving expression");
     }
@@ -171,6 +177,72 @@ std::unique_ptr<FunctionAST> ASTTree::ParseTopLevelExpr() {
   }
   return nullptr;
 }
+std::unique_ptr<ExprAST> ASTTree::ParseIfExpr(){
+    nextToken();
+    auto Cond = ParseExpression();
+    if(!Cond){
+        return nullptr;
+    }
+    if(getCurrToken().type != "then"){
+        return LogError("expected then");
+    }
+    nextToken();
+    auto Then = ParseExpression();
+    if(!Then){
+        return nullptr;
+    }
+    if(getCurrToken().type != "else"){
+        return LogError("expected else");
+    }
+    nextToken();
+    auto Else = ParseExpression();
+    if(!Else){
+        return nullptr;
+    }
+    return llvm::make_unique<IfExprAST>(std::move(Cond),std::move(Then),std::move(Else),code_gen);
+}
+std::unique_ptr<ExprAST> ASTTree::ParseForExpr(){
+    nextToken();
+    if(getCurrToken().type != "identifier"){
+        return LogError("expected identifier after for");
+    }
+    std::string IdName = getCurrToken().value;
+    if(nextToken().value != "="){
+        return LogError("expected '=' after for");
+    }
+    nextToken();
+    auto Start = ParseExpression();
+    if(!Start){
+        return nullptr;
+    }
+    if(getCurrToken().value != ","){
+        return LogError("expected ',' after for init value");
+    }
+    nextToken();
+    auto End = ParseExpression();
+    if(!End){
+        return nullptr;
+    }
+    std::unique_ptr<ExprAST> Step;
+    if(getCurrToken().value == ","){
+        nextToken();
+        Step = ParseExpression();
+        if(!Step){
+            return nullptr;
+        }
+    }
+    if(getCurrToken().type != "in"){
+        return LogError("expected 'in' after for");
+    }
+    nextToken();
+    auto Body = ParseExpression();
+    if(!Body){
+        return nullptr;
+    }
+    return llvm::make_unique<ForExprAST>(IdName,std::move(Start),std::move(End),std::move(Step),std::move(Body),code_gen);
+}
+
+
 std::unique_ptr<ExprAST> LogError(const char *Str) {
   fprintf(stderr, "LogError: %s\n", Str);
   return nullptr;

@@ -1,2 +1,7 @@
-extern printd(x);
-printd((0-5));
+extern putchard(ch);
+void printstar(n)
+  for i = 1 , i < n , 1.0 in
+    for i = 1, i < n, 1.0 in
+      putchard(42)
+    putchard(10);
+printstar(5);
