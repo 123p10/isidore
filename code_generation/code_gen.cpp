@@ -5,6 +5,7 @@
 #include "llvm/Transforms/Scalar/GVN.h"
 #include "llvm/Support/TargetSelect.h"
 #include "clang/AST/Type.h"
+ #include "llvm/Transforms/Utils.h"
 llvm::Value *LogErrorV(const char *Str){
     LogError(Str);
     return nullptr;
@@ -22,6 +23,7 @@ CodeGenerator::CodeGenerator(){
     InitializeModuleAndPassManager();
 }
 void CodeGenerator::initPrecedence(){
+    BinopPrecedence["="] = 2;
     BinopPrecedence["<"] = 10;
     BinopPrecedence["+"] = 20;
     BinopPrecedence["-"] = 20;
@@ -41,6 +43,7 @@ void CodeGenerator::InitializeModuleAndPassManager(void){
     TheModule->get()->setDataLayout(TheJIT->get()->getTargetMachine().createDataLayout());
     TheFPM = new std::unique_ptr<llvm::legacy::FunctionPassManager>;
     *TheFPM = llvm::make_unique<llvm::legacy::FunctionPassManager>(TheModule->get());
+    TheFPM->get()->add(llvm::createPromoteMemoryToRegisterPass());
     TheFPM->get()->add(llvm::createInstructionCombiningPass());
     TheFPM->get()->add(llvm::createReassociatePass());
     TheFPM->get()->add(llvm::createGVNPass());
@@ -57,4 +60,9 @@ llvm::Function *CodeGenerator::getFunction(std::string Name){
         return FI->second->codegen();
     }
     return nullptr;
+}
+
+llvm::AllocaInst *CodeGenerator::CreateEntryBlockAlloca(llvm::Function *TheFunction, const std::string &VarName){
+    llvm::IRBuilder<> TmpB(&TheFunction->getEntryBlock(), TheFunction->getEntryBlock().begin());
+    return TmpB.CreateAlloca(llvm::Type::getDoubleTy(*TheContext),0,VarName.c_str());
 }

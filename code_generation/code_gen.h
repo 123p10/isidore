@@ -11,16 +11,20 @@ class PrototypeAST;
 class CodeGenerator{
     public:
         void initPrecedence();
+        std::map<std::string, int> BinopPrecedence;
+
         std::unique_ptr<llvm::Module> *TheModule;
         llvm::LLVMContext *TheContext;
         llvm::IRBuilder<> *Builder;
-        std::map<std::string, llvm::Value *> NamedValues;
+        std::map<std::string, llvm::AllocaInst *> NamedValues;
         std::unique_ptr<llvm::legacy::FunctionPassManager> *TheFPM;
         std::unique_ptr<llvm::orc::KaleidoscopeJIT> *TheJIT;
         std::map<std::string, std::unique_ptr<PrototypeAST>> *FunctionProtos;
+        
         llvm::Function *getFunction(std::string Name);
         void InitializeModuleAndPassManager(void);
-        std::map<std::string, int> BinopPrecedence;
+        llvm::AllocaInst *CreateEntryBlockAlloca(llvm::Function *TheFunction, const std::string &VarName);
+        
         CodeGenerator();
         ~CodeGenerator();
 

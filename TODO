@@ -16,4 +16,4 @@ Define arrays
 Proper Error Handling!(Define is Syntax error or pointer error etc, line numbers, Expected x got y)
 Reduce runtime by converting getCurrToken() to proper storage of currentToken
 Multi-char operators, ==, ===, <=, >=
-Mutable Variables
+Improve Kaleidiscope JIT for better optimizations

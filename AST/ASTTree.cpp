@@ -90,6 +90,9 @@ std::unique_ptr<ExprAST> ASTTree::ParsePrimary() {
     else if(getCurrToken().type == "for"){
         return ParseForExpr();
     }
+    else if(getCurrToken().type == "var"){
+        return ParseVarExpr();
+    }
     else{
         return LogError("unknown token when resolving expression");
     }
@@ -273,6 +276,38 @@ std::unique_ptr<ExprAST> ASTTree::ParseUnary(){
         return llvm::make_unique<UnaryExprAST>(Opc, std::move(Operand),code_gen);
     }
     return nullptr;
+}
+std::unique_ptr<ExprAST> ASTTree::ParseVarExpr(){
+    nextToken();
+    std::vector<std::pair<std::string, std::unique_ptr<ExprAST>>> VarNames;
+
+    if(getCurrToken().type != "identifier"){
+        return LogError("expected identifier after var");
+    }
+    while(1){
+        std::string Name = getCurrToken().value;
+        nextToken();
+        std::unique_ptr<ExprAST> Init;
+        if(getCurrToken().value == "="){
+            nextToken();
+            Init = ParseExpression();
+            if(!Init){return nullptr;}
+        }
+        VarNames.push_back(std::make_pair(Name, std::move(Init)));
+
+        if(getCurrToken().value != ","){break;}
+        nextToken();
+        if(getCurrToken().type != "identifier"){return LogError("expected identifier list after var");}
+    }
+    if(getCurrToken().type != "in"){
+        return LogError("expected 'in' keyword after 'var' keyword");
+    }
+    nextToken();
+    auto Body = ParseExpression();
+    if(!Body){
+        return nullptr;
+    }
+    return llvm::make_unique<VarExprAST>(std::move(VarNames),std::move(Body),code_gen);
 }
 
 

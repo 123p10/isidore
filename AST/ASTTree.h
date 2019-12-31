@@ -32,6 +32,7 @@ class ASTTree{
         std::unique_ptr<ExprAST> ParseIfExpr();
         std::unique_ptr<ExprAST> ParseForExpr();
         std::unique_ptr<ExprAST> ParseUnary();
+        std::unique_ptr<ExprAST> ParseVarExpr();
         int GetTokPrecedence();
         Token getCurrToken();
         Token nextToken();
