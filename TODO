@@ -17,3 +17,6 @@ Proper Error Handling!(Define is Syntax error or pointer error etc, line numbers
 Reduce runtime by converting getCurrToken() to proper storage of currentToken
 Multi-char operators, ==, ===, <=, >=
 Improve Kaleidiscope JIT for better optimizations
+
+
+ALWAYS REMOVE WARNINGS

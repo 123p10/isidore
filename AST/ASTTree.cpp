@@ -208,23 +208,44 @@ std::unique_ptr<ExprAST> ASTTree::ParseIfExpr(){
     if(!Cond){
         return nullptr;
     }
-    if(getCurrToken().type != "then"){
-        return LogError("expected then");
+    if(getCurrToken().type != "curly_brace"){
+        return LogError("expected '{'");
     }
     nextToken();
-    auto Then = ParseExpression();
-    if(!Then){
-        return nullptr;
+    std::vector<std::unique_ptr<ExprAST>> thenList;
+    while(getCurrToken().value != "}"){
+        std::unique_ptr<ExprAST> Then = ParseExpression();
+        if(!Then){
+            return nullptr;
+        }
+        if(getCurrToken().type != "semicolon"){
+            return LogError("expected ';'");
+        }
+        nextToken(); // eat ;
+        thenList.push_back(std::move(Then));
     }
+    nextToken();
     if(getCurrToken().type != "else"){
         return LogError("expected else");
     }
-    nextToken();
-    auto Else = ParseExpression();
-    if(!Else){
-        return nullptr;
+    if(nextToken().type != "curly_brace"){
+        return LogError("expected '{'");
     }
-    return llvm::make_unique<IfExprAST>(std::move(Cond),std::move(Then),std::move(Else),code_gen);
+    nextToken();
+    std::vector<std::unique_ptr<ExprAST>> elseThenList;
+    while(getCurrToken().value != "}"){
+        std::unique_ptr<ExprAST> ElseThen = ParseExpression();
+        if(!ElseThen){
+            return nullptr;
+        }
+        if(getCurrToken().type != "semicolon"){
+            return LogError("expected ';'");
+        }
+        nextToken(); // eat ;
+        elseThenList.push_back(std::move(ElseThen));
+    }
+    nextToken();
+    return llvm::make_unique<IfExprAST>(std::move(Cond),std::move(thenList),std::move(elseThenList),code_gen);
 }
 std::unique_ptr<ExprAST> ASTTree::ParseForExpr(){
     nextToken();

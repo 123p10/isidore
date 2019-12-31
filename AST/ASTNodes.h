@@ -56,11 +56,12 @@ class CallExprAST : public ExprAST {
 };
 
 class IfExprAST : public ExprAST{
-  std::unique_ptr<ExprAST> Cond, Then, Else;
+  std::unique_ptr<ExprAST> Cond, Else;
+  std::vector<std::unique_ptr<ExprAST>> ThenList;
+  std::vector<std::unique_ptr<ExprAST>> ElseThenList;
   CodeGenerator * code_gen;
   public:
-    IfExprAST(std::unique_ptr<ExprAST> Cond, std::unique_ptr<ExprAST> Then, std::unique_ptr<ExprAST> Else, CodeGenerator * code_gen)
-    : Cond(std::move(Cond)), Then(std::move(Then)), Else(std::move(Else)), code_gen(code_gen){}
+    IfExprAST(std::unique_ptr<ExprAST> Cond,std::vector<std::unique_ptr<ExprAST>> Then, std::vector<std::unique_ptr<ExprAST>> ElseThen, CodeGenerator * code_gen);
     llvm::Value *codegen() override;
 };
 class ForExprAST : public ExprAST{

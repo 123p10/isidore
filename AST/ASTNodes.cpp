@@ -22,6 +22,13 @@ BinaryExprAST::BinaryExprAST(std::string op, std::unique_ptr<ExprAST> LHS, std::
     (*this).RHS = std::move(RHS);
     (*this).code_gen = code_gen;
 }
+IfExprAST::IfExprAST(std::unique_ptr<ExprAST> Cond,std::vector<std::unique_ptr<ExprAST>> Then, std::vector<std::unique_ptr<ExprAST>> ElseThen, CodeGenerator * code_gen){
+    (*this).Cond = std::move(Cond);
+    (*this).ThenList = std::move(Then);
+    (*this).ElseThenList = std::move(ElseThen);
+    (*this).code_gen = code_gen;
+}
+
 
 //Code_gen
 //To improve this remove these persistent references to getContext or getModule, replace with temp variables or better method, pointers
@@ -118,29 +125,26 @@ llvm::Value *IfExprAST::codegen(){
     llvm::BasicBlock *MergeBB = llvm::BasicBlock::Create(*code_gen->TheContext,"ifcont");
     code_gen->Builder->CreateCondBr(CondV, ThenBB, ElseBB);
     code_gen->Builder->SetInsertPoint(ThenBB);
-
-    llvm::Value *ThenV = Then->codegen();
-    if(!ThenV){
-        return nullptr;
-    }
     code_gen->Builder->CreateBr(MergeBB);
     ThenBB = code_gen->Builder->GetInsertBlock();
 
     TheFunction->getBasicBlockList().push_back(ElseBB);
     code_gen->Builder->SetInsertPoint(ElseBB);
 
-    llvm::Value *ElseV = Else->codegen();
-    if(!ElseV){
-        return nullptr;
-    }
     code_gen->Builder->CreateBr(MergeBB);
     ElseBB = code_gen->Builder->GetInsertBlock();
 
     TheFunction->getBasicBlockList().push_back(MergeBB);
     code_gen->Builder->SetInsertPoint(MergeBB);
     llvm::PHINode *PN = code_gen->Builder->CreatePHI(llvm::Type::getDoubleTy(*code_gen->TheContext),2,"iftmp");
-    PN->addIncoming(ThenV,ThenBB);
-    PN->addIncoming(ElseV,ElseBB);
+    PN->addIncoming(ThenList.at(ThenList.size()-1)->codegen(),ThenBB);
+    for(std::vector<std::unique_ptr<ExprAST>>::iterator it = ThenList.begin(); it != ThenList.end()-1; ++it) {
+        PN->addIncoming(it->get()->codegen(),ThenBB);
+    }
+    PN->addIncoming(ElseThenList.at(ElseThenList.size()-1)->codegen(),ElseBB);
+    for(std::vector<std::unique_ptr<ExprAST>>::iterator it = ElseThenList.begin(); it != ElseThenList.end()-1; ++it) {
+        PN->addIncoming(it->get()->codegen(),ElseBB);    
+    }
     return PN;
 }
 
