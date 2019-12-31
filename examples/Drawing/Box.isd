@@ -7,3 +7,4 @@ void box(x)
     for i = 1, i < x, 1.0 in
         line(x) : putchard(10);
 box(5);
+These are out of date btw

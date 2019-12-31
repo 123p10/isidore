@@ -1,0 +1,22 @@
+Double branched if statements can print variables but not check them in if statements.
+extern printd(x);
+void foo(x)
+    if 1 < x {
+        printd(9);
+        5;
+    }
+    else{
+        printd(2);
+        if 1 < 2 {
+            printd(x);
+            2;
+        }
+        else{
+            printd(x);
+            3;
+        };
+    }
+
+foo(0);
+^^This seg faults
+Deal with this when we do variable scopes.

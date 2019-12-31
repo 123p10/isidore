@@ -1,6 +1,6 @@
 Syntax Definition
     -Establish return keyword/statements
-    -Redefine if and for statements to utilize {}
+    -Redefine for statements to utilize {}(rewrite for statements)
     -redefine functions to utilize {}
     -Proper type definitions for functions
 Develop proper source build system

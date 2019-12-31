@@ -1,14 +1,14 @@
 extern printd(x);
-void foo(x)
-    if 1 < x {
-        printd(10);
-        printd(9);
-        printd(8);
-        7;
+
+void loop(x m)
+    if x < m {
+        printd(x);
+        loop(x+1,m);
+
+        0;
     }
     else{
-        printd(7);
-        printd(2);
+        0;
     }
 
-foo(0);
+loop(1,11);

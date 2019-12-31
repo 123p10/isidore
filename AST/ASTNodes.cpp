@@ -125,11 +125,16 @@ llvm::Value *IfExprAST::codegen(){
     llvm::BasicBlock *MergeBB = llvm::BasicBlock::Create(*code_gen->TheContext,"ifcont");
     code_gen->Builder->CreateCondBr(CondV, ThenBB, ElseBB);
     code_gen->Builder->SetInsertPoint(ThenBB);
-    code_gen->Builder->CreateBr(MergeBB);
     ThenBB = code_gen->Builder->GetInsertBlock();
-
+    for(std::vector<std::unique_ptr<ExprAST>>::iterator it = ThenList.begin(); it != ThenList.end()-1; ++it) {
+        it->get()->codegen();
+    }
+    code_gen->Builder->CreateBr(MergeBB);
     TheFunction->getBasicBlockList().push_back(ElseBB);
     code_gen->Builder->SetInsertPoint(ElseBB);
+    for(std::vector<std::unique_ptr<ExprAST>>::iterator it = ElseThenList.begin(); it != ElseThenList.end()-1; ++it) {
+        it->get()->codegen();    
+    }
 
     code_gen->Builder->CreateBr(MergeBB);
     ElseBB = code_gen->Builder->GetInsertBlock();
@@ -138,13 +143,7 @@ llvm::Value *IfExprAST::codegen(){
     code_gen->Builder->SetInsertPoint(MergeBB);
     llvm::PHINode *PN = code_gen->Builder->CreatePHI(llvm::Type::getDoubleTy(*code_gen->TheContext),2,"iftmp");
     PN->addIncoming(ThenList.at(ThenList.size()-1)->codegen(),ThenBB);
-    for(std::vector<std::unique_ptr<ExprAST>>::iterator it = ThenList.begin(); it != ThenList.end()-1; ++it) {
-        PN->addIncoming(it->get()->codegen(),ThenBB);
-    }
     PN->addIncoming(ElseThenList.at(ElseThenList.size()-1)->codegen(),ElseBB);
-    for(std::vector<std::unique_ptr<ExprAST>>::iterator it = ElseThenList.begin(); it != ElseThenList.end()-1; ++it) {
-        PN->addIncoming(it->get()->codegen(),ElseBB);    
-    }
     return PN;
 }
 
