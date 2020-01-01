@@ -1,0 +1,12 @@
+extern printd(x);
+
+void loop(x m)
+    if x < m {
+        printd(x);
+        return loop(x+1,m);
+    }
+    else{
+        return 7;
+    }
+
+loop(1,11);

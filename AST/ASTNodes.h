@@ -95,6 +95,14 @@ class VarExprAST : public ExprAST{
     llvm::Value *codegen() override;
 };
 
+class ReturnExprAST : public ExprAST{
+  CodeGenerator * code_gen;
+  std::unique_ptr<ExprAST> returnExpr;
+    public:
+          ReturnExprAST(std::unique_ptr<ExprAST> returnExpr,CodeGenerator * code_gen);
+        llvm::Value *codegen() override;
+
+};
 
 class PrototypeAST {
   std::string Name;

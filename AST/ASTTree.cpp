@@ -93,6 +93,9 @@ std::unique_ptr<ExprAST> ASTTree::ParsePrimary() {
     else if(getCurrToken().type == "var"){
         return ParseVarExpr();
     }
+    else if(getCurrToken().type == "return"){
+        return ParseReturnExpr();
+    }
     else{
         return LogError("unknown token when resolving expression");
     }
@@ -331,6 +334,14 @@ std::unique_ptr<ExprAST> ASTTree::ParseVarExpr(){
     return llvm::make_unique<VarExprAST>(std::move(VarNames),std::move(Body),code_gen);
 }
 
+std::unique_ptr<ExprAST> ASTTree::ParseReturnExpr(){
+    nextToken();
+    if(auto returnExpr = ParseExpression()){
+        return llvm::make_unique<ReturnExprAST>(std::move(returnExpr),code_gen);
+    }
+    LogErrorP("Error in Return Expression");
+    return nullptr;
+}
 
 std::unique_ptr<ExprAST> LogError(const char *Str) {
   fprintf(stderr, "LogError: %s\n", Str);

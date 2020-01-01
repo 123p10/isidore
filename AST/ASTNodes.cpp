@@ -28,6 +28,10 @@ IfExprAST::IfExprAST(std::unique_ptr<ExprAST> Cond,std::vector<std::unique_ptr<E
     (*this).ElseThenList = std::move(ElseThen);
     (*this).code_gen = code_gen;
 }
+ReturnExprAST::ReturnExprAST(std::unique_ptr<ExprAST> returnExpr,CodeGenerator * code_gen){
+    (*this).returnExpr = std::move(returnExpr);
+    (*this).code_gen = code_gen;
+}
 
 
 //Code_gen
@@ -121,30 +125,20 @@ llvm::Value *IfExprAST::codegen(){
     llvm::Function *TheFunction = code_gen->Builder->GetInsertBlock()->getParent();
     
     llvm::BasicBlock *ThenBB = llvm::BasicBlock::Create(*code_gen->TheContext,"then",TheFunction);
-    llvm::BasicBlock *ElseBB = llvm::BasicBlock::Create(*code_gen->TheContext,"else");
-    llvm::BasicBlock *MergeBB = llvm::BasicBlock::Create(*code_gen->TheContext,"ifcont");
+    llvm::BasicBlock *ElseBB = llvm::BasicBlock::Create(*code_gen->TheContext,"else",TheFunction);
     code_gen->Builder->CreateCondBr(CondV, ThenBB, ElseBB);
     code_gen->Builder->SetInsertPoint(ThenBB);
     ThenBB = code_gen->Builder->GetInsertBlock();
-    for(std::vector<std::unique_ptr<ExprAST>>::iterator it = ThenList.begin(); it != ThenList.end()-1; ++it) {
+    for(std::vector<std::unique_ptr<ExprAST>>::iterator it = ThenList.begin(); it != ThenList.end(); ++it) {
         it->get()->codegen();
     }
-    code_gen->Builder->CreateBr(MergeBB);
-    TheFunction->getBasicBlockList().push_back(ElseBB);
     code_gen->Builder->SetInsertPoint(ElseBB);
-    for(std::vector<std::unique_ptr<ExprAST>>::iterator it = ElseThenList.begin(); it != ElseThenList.end()-1; ++it) {
+    for(std::vector<std::unique_ptr<ExprAST>>::iterator it = ElseThenList.begin(); it != ElseThenList.end(); ++it) {
         it->get()->codegen();    
     }
-
-    code_gen->Builder->CreateBr(MergeBB);
     ElseBB = code_gen->Builder->GetInsertBlock();
 
-    TheFunction->getBasicBlockList().push_back(MergeBB);
-    code_gen->Builder->SetInsertPoint(MergeBB);
-    llvm::PHINode *PN = code_gen->Builder->CreatePHI(llvm::Type::getDoubleTy(*code_gen->TheContext),2,"iftmp");
-    PN->addIncoming(ThenList.at(ThenList.size()-1)->codegen(),ThenBB);
-    PN->addIncoming(ElseThenList.at(ElseThenList.size()-1)->codegen(),ElseBB);
-    return PN;
+    return llvm::ConstantFP::get(*(code_gen->TheContext),llvm::APFloat(0.0));
 }
 
 llvm::Value *ForExprAST::codegen(){
@@ -268,11 +262,16 @@ llvm::Function *FunctionAST::codegen(){
         code_gen->NamedValues[Arg.getName()] = Alloca;
     }
     if(llvm::Value *RetVal = Body->codegen()){
-        code_gen->Builder->CreateRet(RetVal);
-        llvm::verifyFunction(*TheFunction);
+        if(P.getName() == "__anon__expr"){
+            code_gen->Builder->CreateRet(RetVal);
+        }
+        llvm::verifyFunction(*TheFunction,&llvm::errs());
         code_gen->TheFPM->get()->run(*TheFunction);
         return TheFunction;
     }
     TheFunction->eraseFromParent();
     return nullptr;
+}
+llvm::Value *ReturnExprAST::codegen(){
+    return code_gen->Builder->CreateRet(returnExpr->codegen());
 }

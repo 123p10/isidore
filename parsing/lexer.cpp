@@ -18,7 +18,8 @@ std::map<std::string,std::string> keywords_list = {
     {"in","in"},
     {"binary","binary"},
     {"unary","unary"},
-    {"var","var"}
+    {"var","var"},
+    {"return","return"}
     
 };
 

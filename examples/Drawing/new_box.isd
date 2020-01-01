@@ -1,0 +1,19 @@
+extern putchard(x);
+
+void loop(r c rm cm)
+    if r < rm {
+        if(c < cm){
+            putchard(42);
+            return loop(r,c+1,rm,cm);
+        }
+        else{
+            putchard(10);
+            return loop(r+1,0,rm,cm);
+        };
+    }
+    else{
+        return 0;
+    }
+
+loop(0,0,10,10);
+//Really didn't think it would work but it does
