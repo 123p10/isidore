@@ -3,6 +3,7 @@ extern printd(x);
 void loop(x){
     if(x < 10){
         printd(10);
+        return 0;
     }
     else{
         printd(12);
@@ -11,4 +12,4 @@ void loop(x){
     return 10;
     printd(2);
 }
-loop(2);
+loop(12);

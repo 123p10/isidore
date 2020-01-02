@@ -136,17 +136,31 @@ llvm::Value *IfExprAST::codegen(){
     TheFunction->getBasicBlockList().push_back(ThenBB);
     code_gen->Builder->CreateCondBr(CondV, ThenBB, ElseBB);
     code_gen->Builder->SetInsertPoint(ThenBB);
+    bool hasReturn = false;
     for(std::vector<std::unique_ptr<ExprAST>>::iterator it = ThenList.begin(); it != ThenList.end(); ++it) {
         it->get()->codegen();
+        if(it->get()->isReturn == true){
+            hasReturn = true;
+            break;
+        }
     }
-    code_gen->Builder->CreateBr(MergeBB);
+    if(!hasReturn){
+        code_gen->Builder->CreateBr(MergeBB);
+    }
     ThenBB = code_gen->Builder->GetInsertBlock();
     TheFunction->getBasicBlockList().push_back(ElseBB);
     code_gen->Builder->SetInsertPoint(ElseBB);
+    hasReturn = false;
     for(std::vector<std::unique_ptr<ExprAST>>::iterator it = ElseThenList.begin(); it != ElseThenList.end(); ++it) {
-        it->get()->codegen();    
+        it->get()->codegen();
+        if(it->get()->isReturn == true){
+            hasReturn = true;
+            break;
+        }
     }
-    code_gen->Builder->CreateBr(MergeBB);
+    if(!hasReturn){
+        code_gen->Builder->CreateBr(MergeBB);
+    }
     ElseBB = code_gen->Builder->GetInsertBlock();
     TheFunction->getBasicBlockList().push_back(MergeBB);
     code_gen->Builder->SetInsertPoint(MergeBB);
