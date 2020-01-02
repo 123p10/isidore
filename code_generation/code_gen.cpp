@@ -24,6 +24,8 @@ CodeGenerator::CodeGenerator(){
 }
 void CodeGenerator::initPrecedence(){
     BinopPrecedence["="] = 2;
+    BinopPrecedence["&&"] = 5;
+    BinopPrecedence["||"] = 5;
     BinopPrecedence["<"] = 10;
     BinopPrecedence[">"] = 10;
     BinopPrecedence["=="] = 10;

@@ -58,6 +58,7 @@ llvm::Value *UnaryExprAST::codegen(){
         return nullptr;
     }
     if(Opcode == "-"){
+        //Probably better to use CreateNeg
         return code_gen->Builder->CreateFSub(llvm::ConstantFP::get(*(code_gen->TheContext),llvm::APFloat(0.0)),OperandV, "subtmp");
     }
     else{
@@ -123,7 +124,16 @@ llvm::Value *BinaryExprAST::codegen() {
         L = code_gen->Builder->CreateFCmpUNE(L,R,"cmptmp");
         return code_gen->Builder->CreateUIToFP(L,llvm::Type::getDoubleTy(*(code_gen->TheContext)),"booltmp");
     }
-
+    else if(Op == "&&"){
+        //No short circuit
+        L = code_gen->Builder->CreateAnd(L,R,"cmptmp");
+        return code_gen->Builder->CreateUIToFP(L,llvm::Type::getDoubleTy(*(code_gen->TheContext)),"booltmp");
+    }
+    else if(Op == "||"){
+        //No short circuit
+        L = code_gen->Builder->CreateOr(L,R,"cmptmp");
+        return code_gen->Builder->CreateUIToFP(L,llvm::Type::getDoubleTy(*(code_gen->TheContext)),"booltmp");
+    }
 
     else{
         llvm::Function *F = code_gen->getFunction(std::string("binary") + Op);

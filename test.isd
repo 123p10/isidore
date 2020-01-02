@@ -1,7 +1,7 @@
 extern printd(x);
-if(0 != 0){
-    printd(2);
+if(0 == 1){
+    printd(10);
 }
 else{
-    printd(3);
+    printd(0);
 }

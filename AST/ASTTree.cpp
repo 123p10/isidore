@@ -273,7 +273,7 @@ std::unique_ptr<ExprAST> ASTTree::ParseForExpr(){
     return llvm::make_unique<ForExprAST>(IdName,std::move(Start),std::move(End),std::move(Step),std::move(Body),code_gen);
 }
 std::unique_ptr<ExprAST> ASTTree::ParseUnary(){
-    if((getCurrToken().type != "operator" && getCurrToken().type != "equals_operator") || getCurrToken().value == "(" || getCurrToken().value == ","){
+    if((getCurrToken().type != "operator") || getCurrToken().value == "(" || getCurrToken().value == ","){
         return ParsePrimary();
     }
     std::string Opc = getCurrToken().value;

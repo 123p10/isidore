@@ -41,3 +41,5 @@ Low Level TODO
     Not so quick Fixes 
         Develop proper handling of semi colons(right now they are checked on a case by case basis)
         Remove necessity of else statement
+        Short circuit boolean evaluation
+        Fix boolean expressions(|| &&)
