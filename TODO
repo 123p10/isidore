@@ -17,6 +17,7 @@ High Level TODO
         String
         Char
         Arrays
+        Define variables and scope
     Error Handling(SO much todo here)
         Proper error handling functions
         Develop verbose error outputs, line numbering, keywords, etc.
@@ -26,6 +27,7 @@ High Level TODO
         How to build source
         How to compile files
         How to write Isidore code
+        Define Isidore, purpose of naming and why certain features are the way they are
 Low Level TODO
     Function/operators(very easy to make but develop a proper way to insert into standard library)
         >

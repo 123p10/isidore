@@ -10,6 +10,5 @@ void loop(x){
     };
     printd(1);
     return 10;
-    printd(2);
 }
 loop(12);
