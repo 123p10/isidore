@@ -114,8 +114,8 @@ class PrototypeAST {
   public:
   PrototypeAST(const std::string &name, std::vector<std::string> Args,
                 CodeGenerator * code_gen, bool IsOperator = false, unsigned Prec = 0)
-  : Name(name), Args(std::move(Args)), IsOperator(IsOperator),
-    Precedence(Prec), code_gen(code_gen) {}
+  : Name(name), Args(std::move(Args)), code_gen(code_gen), IsOperator(IsOperator),
+    Precedence(Prec) {}
     llvm::Function *codegen();
     const std::string &getName() const { return Name; }
     bool isUnaryOp() const { return IsOperator && Args.size() == 1; }

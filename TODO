@@ -1,24 +1,43 @@
-Syntax Definition
-    -Establish return keyword for functions
-    -Redefine for statements to utilize {}(rewrite for statements)
-    -redefine functions to utilize {}
-    -Proper type definitions for functions
-Develop proper source build system
-Develop proper compilation system
-Compile to object files
-Debugger Compatibility
-Proper type systems
-String type
-Char type
-Remove automatic type inferencing
-Define while loop
-Define arrays
-Proper Error Handling!(Define is Syntax error or pointer error etc, line numbers, Expected x got y)
-Reduce runtime by converting getCurrToken() to proper storage of currentToken
-Multi-char operators, ==, ===, <=, >=
-Improve Kaleidiscope JIT for better optimizations
-Change and establish proper handling of semicolons, should prob not be handled directly in if
-Make return statements terminate, not be changeable(this causes some major issues so gonna have to fix this soon)
-Remove requirement of else statement for if statements
-
 ALWAYS REMOVE WARNINGS
+Constant TODOS
+    Always ensure no warnings are outputted by g++
+    Convert and maintain codebase to follow: https://www.perforce.com/blog/kw/NASA-rules-for-developing-safety-critical-code
+
+High Level TODO 
+    Syntax Definition
+        Redefine for statements for {} syntax
+        Implement while statements
+        Proper type definition(no inferencing)
+    Workflow/compilation
+        Develop production(for user use) compiler framework
+        Build proper language source build system(should be quicker and show status)
+        Compile to object files
+        Debugger
+    Data
+        String
+        Char
+        Arrays
+    Error Handling(SO much todo here)
+        Proper error handling functions
+        Develop verbose error outputs, line numbering, keywords, etc.
+    Compile Time
+        Improve standard Kaleidiscope JIT
+    Documentation
+        How to build source
+        How to compile files
+        How to write Isidore code
+Low Level TODO
+    Function/operators(very easy to make but develop a proper way to insert into standard library)
+        >
+        ==
+        -(unary)
+        ++/--
+        +=/-=
+        !=
+        &&/||
+    Quick Fixes
+        Better storage of getCurrToken()
+        Remove semi colons from if statements
+    Not so quick Fixes 
+        Develop proper handling of semi colons(right now they are checked on a case by case basis)
+        Remove necessity of else statement
