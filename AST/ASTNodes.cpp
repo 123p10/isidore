@@ -31,6 +31,7 @@ IfExprAST::IfExprAST(std::unique_ptr<ExprAST> Cond,std::vector<std::unique_ptr<E
 ReturnExprAST::ReturnExprAST(std::unique_ptr<ExprAST> returnExpr,CodeGenerator * code_gen){
     (*this).returnExpr = std::move(returnExpr);
     (*this).code_gen = code_gen;
+    (*this).isReturn = true;
 }
 
 FunctionAST::FunctionAST(std::unique_ptr<PrototypeAST> Proto,
@@ -272,15 +273,6 @@ llvm::Function *FunctionAST::codegen(){
         code_gen->Builder->CreateStore(&Arg,Alloca);
         code_gen->NamedValues[Arg.getName()] = Alloca;
     }
-/*     if(llvm::Value *RetVal = Body->codegen()){
-        if(P.getName() == "__anon__expr"){
-            code_gen->Builder->CreateRet(RetVal);
-        }
-        llvm::verifyFunction(*TheFunction,&llvm::errs());
-        code_gen->TheFPM->get()->run(*TheFunction);
-        return TheFunction;
-    }
- */    
     if(P.getName() == "__anon__expr"){
         llvm::Value *RetVal = Body.at(0)->codegen();
         code_gen->Builder->CreateRet(RetVal);
@@ -288,15 +280,15 @@ llvm::Function *FunctionAST::codegen(){
     else{
         for(std::vector<std::unique_ptr<ExprAST>>::iterator it = Body.begin(); it != Body.end(); ++it) {
             it->get()->codegen();
+            if(it->get()->isReturn == true){
+                break;
+            }
         }
     }
     llvm::verifyFunction(*TheFunction,&llvm::errs());
     code_gen->TheFPM->get()->run(*TheFunction);
     return TheFunction;
 
-/*     TheFunction->eraseFromParent();
-    return nullptr;
- */
 }
 llvm::Value *ReturnExprAST::codegen(){
     return code_gen->Builder->CreateRet(returnExpr->codegen());

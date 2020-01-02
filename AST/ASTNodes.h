@@ -13,6 +13,7 @@ class ExprAST {
 public:
     CodeGenerator * code_gen;
     virtual ~ExprAST() = default;
+    bool isReturn = false;
     virtual llvm::Value *codegen() = 0;
 };
 class NumberExprAST : public ExprAST {
