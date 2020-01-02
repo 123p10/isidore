@@ -12,7 +12,7 @@ void loop(r c rm cm)
         };
     }
     else{
-        return 0;
+        return 9;
     }
 
 loop(0,0,10,10);
