@@ -129,20 +129,26 @@ llvm::Value *IfExprAST::codegen(){
     CondV = code_gen->Builder->CreateFCmpONE(CondV, llvm::ConstantFP::get(*code_gen->TheContext,llvm::APFloat(0.0)),"ifcond");
     llvm::Function *TheFunction = code_gen->Builder->GetInsertBlock()->getParent();
     
-    llvm::BasicBlock *ThenBB = llvm::BasicBlock::Create(*code_gen->TheContext,"then",TheFunction);
-    llvm::BasicBlock *ElseBB = llvm::BasicBlock::Create(*code_gen->TheContext,"else",TheFunction);
+    llvm::BasicBlock *ThenBB = llvm::BasicBlock::Create(*code_gen->TheContext,"then");
+    llvm::BasicBlock *ElseBB = llvm::BasicBlock::Create(*code_gen->TheContext,"else");
+    llvm::BasicBlock *MergeBB = llvm::BasicBlock::Create(*code_gen->TheContext,"ifcont");
+    TheFunction->getBasicBlockList().push_back(ThenBB);
     code_gen->Builder->CreateCondBr(CondV, ThenBB, ElseBB);
     code_gen->Builder->SetInsertPoint(ThenBB);
-    ThenBB = code_gen->Builder->GetInsertBlock();
     for(std::vector<std::unique_ptr<ExprAST>>::iterator it = ThenList.begin(); it != ThenList.end(); ++it) {
         it->get()->codegen();
     }
+    code_gen->Builder->CreateBr(MergeBB);
+    ThenBB = code_gen->Builder->GetInsertBlock();
+    TheFunction->getBasicBlockList().push_back(ElseBB);
     code_gen->Builder->SetInsertPoint(ElseBB);
     for(std::vector<std::unique_ptr<ExprAST>>::iterator it = ElseThenList.begin(); it != ElseThenList.end(); ++it) {
         it->get()->codegen();    
     }
+    code_gen->Builder->CreateBr(MergeBB);
     ElseBB = code_gen->Builder->GetInsertBlock();
-
+    TheFunction->getBasicBlockList().push_back(MergeBB);
+    code_gen->Builder->SetInsertPoint(MergeBB);
     return llvm::ConstantFP::get(*(code_gen->TheContext),llvm::APFloat(0.0));
 }
 
