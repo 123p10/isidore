@@ -1,2 +1,7 @@
 extern printd(x);
-1-(-2+3);
+if(0 != 0){
+    printd(2);
+}
+else{
+    printd(3);
+}

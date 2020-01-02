@@ -119,6 +119,11 @@ llvm::Value *BinaryExprAST::codegen() {
         L = code_gen->Builder->CreateFCmpULE(L,R,"cmptmp");
         return code_gen->Builder->CreateUIToFP(L,llvm::Type::getDoubleTy(*(code_gen->TheContext)),"booltmp");
     }
+    else if(Op == "!="){
+        L = code_gen->Builder->CreateFCmpUNE(L,R,"cmptmp");
+        return code_gen->Builder->CreateUIToFP(L,llvm::Type::getDoubleTy(*(code_gen->TheContext)),"booltmp");
+    }
+
 
     else{
         llvm::Function *F = code_gen->getFunction(std::string("binary") + Op);
