@@ -1,7 +1,2 @@
 extern printd(x);
-if(1 <= 2){
-    printd(1);
-}
-else{
-    printd(0);
-};
+1-(-2+3);

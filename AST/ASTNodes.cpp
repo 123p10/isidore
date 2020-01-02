@@ -57,11 +57,16 @@ llvm::Value *UnaryExprAST::codegen(){
     if(!OperandV){
         return nullptr;
     }
-    llvm::Function *F = code_gen->getFunction(std::string("unary") + Opcode);
-    if(!F){
-        return LogErrorV("Unknown unary operator");
+    if(Opcode == '-'){
+        return code_gen->Builder->CreateFSub(llvm::ConstantFP::get(*(code_gen->TheContext),llvm::APFloat(0.0)),OperandV, "subtmp");
     }
-    return code_gen->Builder->CreateCall(F,OperandV,"unop");
+    else{
+        llvm::Function *F = code_gen->getFunction(std::string("unary") + Opcode);
+        if(!F){
+            return LogErrorV("Unknown unary operator");
+        }
+        return code_gen->Builder->CreateCall(F,OperandV,"unop");
+    }
 }
 llvm::Value *BinaryExprAST::codegen() {
     if(Op == "="){

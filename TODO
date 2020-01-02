@@ -31,12 +31,12 @@ High Level TODO
         Define Isidore, purpose of naming and why certain features are the way they are
 Low Level TODO
     Function/operators(very easy to make but develop a proper way to insert into standard library)
-        ==
         -(unary)
         ++/--
         +=/-=
         !=
         &&/||
+        Multi char Unary
     Quick Fixes
         Better storage of getCurrToken()
         Remove semi colons from if statements
