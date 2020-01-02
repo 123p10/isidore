@@ -99,10 +99,22 @@ llvm::Value *BinaryExprAST::codegen() {
         return code_gen->Builder->CreateUIToFP(L,llvm::Type::getDoubleTy(*(code_gen->TheContext)),"booltmp");
     }
     else if(Op == ">"){
-        L = code_gen->Builder->CreateFCmpULT(R,L,"cmptmp");
+        L = code_gen->Builder->CreateFCmpUGT(L,R,"cmptmp");
         return code_gen->Builder->CreateUIToFP(L,llvm::Type::getDoubleTy(*(code_gen->TheContext)),"booltmp");
-
     }
+    else if(Op == "=="){
+        L = code_gen->Builder->CreateFCmpUEQ(L,R,"cmptmp");
+        return code_gen->Builder->CreateUIToFP(L,llvm::Type::getDoubleTy(*(code_gen->TheContext)),"booltmp");
+    }
+    else if(Op == ">="){
+        L = code_gen->Builder->CreateFCmpUGE(L,R,"cmptmp");
+        return code_gen->Builder->CreateUIToFP(L,llvm::Type::getDoubleTy(*(code_gen->TheContext)),"booltmp");
+    }
+    else if(Op == "<="){
+        L = code_gen->Builder->CreateFCmpULE(L,R,"cmptmp");
+        return code_gen->Builder->CreateUIToFP(L,llvm::Type::getDoubleTy(*(code_gen->TheContext)),"booltmp");
+    }
+
     else{
         llvm::Function *F = code_gen->getFunction(std::string("binary") + Op);
         assert(F && "binary operator not found!");

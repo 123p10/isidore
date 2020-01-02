@@ -54,7 +54,14 @@ void tokenize_file(ProgramFile & source_file){
                 break;
             }
             else if(isOperator(char_stack[0])){
-                source_file.AddToken("operator",char_stack);
+                if(current_line.at(char_number+1) == '='){
+                    char_stack += current_line.at(char_number+1);
+                    source_file.AddToken("equals_operator",char_stack);
+                    char_number++;
+                }
+                else{
+                    source_file.AddToken("operator",char_stack);
+                }
                 char_stack="";
             }
             else if(char_stack[0] == ';'){
