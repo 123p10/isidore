@@ -25,6 +25,7 @@ CodeGenerator::CodeGenerator(){
 void CodeGenerator::initPrecedence(){
     BinopPrecedence["="] = 2;
     BinopPrecedence["<"] = 10;
+    BinopPrecedence[">"] = 10;
     BinopPrecedence["+"] = 20;
     BinopPrecedence["-"] = 20;
     BinopPrecedence["*"] = 40; // highest.
