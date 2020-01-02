@@ -77,11 +77,11 @@ class ForExprAST : public ExprAST{
 };
 
 class UnaryExprAST : public ExprAST{
-  char Opcode;
+  std::string Opcode;
   std::unique_ptr<ExprAST> Operand;
   CodeGenerator * code_gen;
   public:
-      UnaryExprAST(char Opcode, std::unique_ptr<ExprAST> Operand, CodeGenerator * code_gen)
+      UnaryExprAST(std::string Opcode, std::unique_ptr<ExprAST> Operand, CodeGenerator * code_gen)
     : Opcode(Opcode), Operand(std::move(Operand)), code_gen(code_gen) {}
       llvm::Value *codegen() override;
 };

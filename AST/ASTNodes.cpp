@@ -57,7 +57,7 @@ llvm::Value *UnaryExprAST::codegen(){
     if(!OperandV){
         return nullptr;
     }
-    if(Opcode == '-'){
+    if(Opcode == "-"){
         return code_gen->Builder->CreateFSub(llvm::ConstantFP::get(*(code_gen->TheContext),llvm::APFloat(0.0)),OperandV, "subtmp");
     }
     else{

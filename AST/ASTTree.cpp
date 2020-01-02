@@ -276,7 +276,7 @@ std::unique_ptr<ExprAST> ASTTree::ParseUnary(){
     if((getCurrToken().type != "operator" && getCurrToken().type != "equals_operator") || getCurrToken().value == "(" || getCurrToken().value == ","){
         return ParsePrimary();
     }
-    int Opc = (getCurrToken().value[0]);
+    std::string Opc = getCurrToken().value;
     nextToken();
     if(auto Operand = ParseUnary()){
         return llvm::make_unique<UnaryExprAST>(Opc, std::move(Operand),code_gen);
