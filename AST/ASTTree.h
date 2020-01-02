@@ -38,6 +38,8 @@ class ASTTree{
         int GetTokPrecedence();
         Token getCurrToken();
         Token nextToken();
+        std::vector<std::unique_ptr<ExprAST>> ParseStatementList();
+
 
 };
 

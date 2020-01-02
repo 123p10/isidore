@@ -33,7 +33,12 @@ ReturnExprAST::ReturnExprAST(std::unique_ptr<ExprAST> returnExpr,CodeGenerator *
     (*this).code_gen = code_gen;
 }
 
-
+FunctionAST::FunctionAST(std::unique_ptr<PrototypeAST> Proto,
+              std::vector<std::unique_ptr<ExprAST>> Body, CodeGenerator * code_gen){
+    (*this).Proto = std::move(Proto);
+    (*this).Body = std::move(Body);
+    (*this).code_gen = code_gen;
+}
 //Code_gen
 //To improve this remove these persistent references to getContext or getModule, replace with temp variables or better method, pointers
 llvm::Value *NumberExprAST::codegen(){
@@ -261,7 +266,7 @@ llvm::Function *FunctionAST::codegen(){
         code_gen->Builder->CreateStore(&Arg,Alloca);
         code_gen->NamedValues[Arg.getName()] = Alloca;
     }
-    if(llvm::Value *RetVal = Body->codegen()){
+/*     if(llvm::Value *RetVal = Body->codegen()){
         if(P.getName() == "__anon__expr"){
             code_gen->Builder->CreateRet(RetVal);
         }
@@ -269,8 +274,23 @@ llvm::Function *FunctionAST::codegen(){
         code_gen->TheFPM->get()->run(*TheFunction);
         return TheFunction;
     }
-    TheFunction->eraseFromParent();
+ */    
+    if(P.getName() == "__anon__expr"){
+        llvm::Value *RetVal = Body.at(0)->codegen();
+        code_gen->Builder->CreateRet(RetVal);
+    }
+    else{
+        for(std::vector<std::unique_ptr<ExprAST>>::iterator it = Body.begin(); it != Body.end(); ++it) {
+            it->get()->codegen();
+        }
+    }
+    llvm::verifyFunction(*TheFunction,&llvm::errs());
+    code_gen->TheFPM->get()->run(*TheFunction);
+    return TheFunction;
+
+/*     TheFunction->eraseFromParent();
     return nullptr;
+ */
 }
 llvm::Value *ReturnExprAST::codegen(){
     return code_gen->Builder->CreateRet(returnExpr->codegen());

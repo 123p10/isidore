@@ -128,14 +128,12 @@ class PrototypeAST {
 };
 class FunctionAST {
   std::unique_ptr<PrototypeAST> Proto;
-  std::unique_ptr<ExprAST> Body;
+  std::vector<std::unique_ptr<ExprAST>> Body;
     CodeGenerator * code_gen;
 
 public:
   FunctionAST(std::unique_ptr<PrototypeAST> Proto,
-              std::unique_ptr<ExprAST> Body, CodeGenerator * code_gen)
-      : Proto(std::move(Proto)), Body(std::move(Body)), code_gen(code_gen) {}
-
+              std::vector<std::unique_ptr<ExprAST>> Body, CodeGenerator * code_gen);
   llvm::Function *codegen();
 };
 #endif

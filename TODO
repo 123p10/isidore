@@ -1,5 +1,5 @@
 Syntax Definition
-    -Establish return keyword/statements
+    -Establish return keyword for functions
     -Redefine for statements to utilize {}(rewrite for statements)
     -redefine functions to utilize {}
     -Proper type definitions for functions
@@ -19,6 +19,6 @@ Multi-char operators, ==, ===, <=, >=
 Improve Kaleidiscope JIT for better optimizations
 Change and establish proper handling of semicolons, should prob not be handled directly in if
 Make return statements terminate, not be changeable(this causes some major issues so gonna have to fix this soon)
-
+Remove requirement of else statement for if statements
 
 ALWAYS REMOVE WARNINGS

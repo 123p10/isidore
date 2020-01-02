@@ -189,10 +189,14 @@ std::unique_ptr<FunctionAST> ASTTree::ParseDefinition() {
     nextToken();
     auto Proto = ParsePrototype();
     if (!Proto) return nullptr;
-
-    if (auto E = ParseExpression())
-        return llvm::make_unique<FunctionAST>(std::move(Proto), std::move(E),code_gen);
-    return nullptr;
+    if(getCurrToken().value != "{"){
+        LogErrorP("Missing semi-colon");
+        return nullptr;
+    }
+    nextToken();
+    std::vector<std::unique_ptr<ExprAST>> functionStatements = ParseStatementList();
+    return llvm::make_unique<FunctionAST>(std::move(Proto), std::move(functionStatements),code_gen);
+    //return nullptr;
 }
 std::unique_ptr<PrototypeAST> ASTTree::ParseExtern() {
   nextToken();
@@ -200,8 +204,10 @@ std::unique_ptr<PrototypeAST> ASTTree::ParseExtern() {
 }
 std::unique_ptr<FunctionAST> ASTTree::ParseTopLevelExpr() {
   if (auto E = ParseExpression()) {
+    std::vector<std::unique_ptr<ExprAST>> statement;
+    statement.push_back(std::move(E));
     auto Proto = llvm::make_unique<PrototypeAST>("__anon__expr", std::vector<std::string>(),code_gen);
-    return llvm::make_unique<FunctionAST>(std::move(Proto), std::move(E),code_gen);
+    return llvm::make_unique<FunctionAST>(std::move(Proto), std::move(statement),code_gen);
   }
   return nullptr;
 }
@@ -215,19 +221,7 @@ std::unique_ptr<ExprAST> ASTTree::ParseIfExpr(){
         return LogError("expected '{'");
     }
     nextToken();
-    std::vector<std::unique_ptr<ExprAST>> thenList;
-    while(getCurrToken().value != "}"){
-        std::unique_ptr<ExprAST> Then = ParseExpression();
-        if(!Then){
-            return nullptr;
-        }
-        if(getCurrToken().type != "semicolon"){
-            return LogError("expected ';'");
-        }
-        nextToken(); // eat ;
-        thenList.push_back(std::move(Then));
-    }
-    nextToken();
+    std::vector<std::unique_ptr<ExprAST>> thenList = ParseStatementList();
     if(getCurrToken().type != "else"){
         return LogError("expected else");
     }
@@ -235,19 +229,7 @@ std::unique_ptr<ExprAST> ASTTree::ParseIfExpr(){
         return LogError("expected '{'");
     }
     nextToken();
-    std::vector<std::unique_ptr<ExprAST>> elseThenList;
-    while(getCurrToken().value != "}"){
-        std::unique_ptr<ExprAST> ElseThen = ParseExpression();
-        if(!ElseThen){
-            return nullptr;
-        }
-        if(getCurrToken().type != "semicolon"){
-            return LogError("expected ';'");
-        }
-        nextToken(); // eat ;
-        elseThenList.push_back(std::move(ElseThen));
-    }
-    nextToken();
+    std::vector<std::unique_ptr<ExprAST>> elseThenList = ParseStatementList();
     return llvm::make_unique<IfExprAST>(std::move(Cond),std::move(thenList),std::move(elseThenList),code_gen);
 }
 std::unique_ptr<ExprAST> ASTTree::ParseForExpr(){
@@ -352,3 +334,21 @@ std::unique_ptr<PrototypeAST> LogErrorP(const char *Str) {
   return nullptr;
 }
 
+std::vector<std::unique_ptr<ExprAST>> ASTTree::ParseStatementList(){
+    std::vector<std::unique_ptr<ExprAST>> statementList;
+    while(getCurrToken().value != "}"){
+        std::unique_ptr<ExprAST> statement = ParseExpression();
+        if(!statement){
+            LogError("Expression failed to parse");
+            break;
+        }
+        if(getCurrToken().type != "semicolon"){
+            LogError("expected ';'");
+            break;
+        }
+        nextToken(); // eat ;
+        statementList.push_back(std::move(statement));
+    }
+    nextToken();
+    return statementList;
+}
