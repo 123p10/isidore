@@ -29,12 +29,11 @@ High Level TODO
         How to write Isidore code
         Show outputs of example file
         Define Isidore, purpose of naming and why certain features are the way they are
+    Linting
 Low Level TODO
     Function/operators(very easy to make but develop a proper way to insert into standard library)
-        -(unary)
         ++/--
         +=/-=
-        &&/||
     Quick Fixes
         Better storage of getCurrToken()
         Remove semi colons from if statements

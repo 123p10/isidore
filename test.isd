@@ -1,7 +1,32 @@
-extern printd(x);
-if(0 == 1){
-    printd(10);
+extern putchard(x);
+void line(x m){
+    if(x < m){
+        putchard(42);
+        line(x+1,m);
+    }
+    else{
+        putchard(10);
+    };
+    return 0;
 }
-else{
-    printd(0);
+void triangle(x m){
+    if(x < m){
+        line(0,x+1);
+        triangle(x+1,m);
+    }
+    else{
+    };
+    return 0;
 }
+triangle(0,10);
+//output:
+//*
+//**
+//***
+//****
+//*****
+//******
+//*******
+//********
+//*********
+//**********
