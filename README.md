@@ -31,15 +31,15 @@ The things I am working on in the near future are listed in TODO. I won't be pos
 1. Type inferencing should only be used with similar types at most. Static type definitions are important for clarity.
 2. Constructs should be labeled simply and given unpretentious names. 
  
- a. Dynamic arrays should not be called "vectors" they should be called lists
+    * Dynamic arrays should not be called "vectors" they should be called lists
 
- b. push_back() should be append() or insert()
+    * push_back() should be append() or insert()
 3. Curly braces should be used for most if not all blocks to clearly show the start and end of the blocks.
 4. Number of built-in, core constructs should be limited. Allows new users and all readers of code to understand code completely without research.
 
- a.  One function to output to console
+    *  One function to output to console
 
- b. One type for dynamic arrays
+    * One type for dynamic arrays
 
 5. Functions should be able to return multiple values, not by pass by reference in parameters.
 6. Semicolons should be placed at end of every non block statement to clarify end of statement.

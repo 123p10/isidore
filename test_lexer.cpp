@@ -17,7 +17,7 @@ int main(){
     ASTTree source_tree(test_file,code_gen);
     while(1){
         if(source_tree.getCurrToken().value == "EOF"){
-            return 1;
+            break;
         }
         else if(source_tree.getCurrToken().type == "semicolon"){
             source_tree.nextToken();
@@ -32,7 +32,8 @@ int main(){
             HandleTopLevelExpression(source_tree,code_gen);
         }
     }
-    code_gen->TheModule->get()->print(llvm::errs(), nullptr);
-    delete code_gen;
-
+    //code_gen->TheModule->get()->print(llvm::errs(), nullptr);
+    //wonder if this will cause memory leak?
+    //delete code_gen;
+    return 0;
 }
