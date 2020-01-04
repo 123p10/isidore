@@ -238,8 +238,11 @@ llvm::Value *ForExprAST::codegen(){
 
     llvm::AllocaInst *OldVal = code_gen->NamedValues[VarName];
     code_gen->NamedValues[VarName] = Alloca;
-    if(!Body->codegen()){
-        return nullptr;
+    for(std::vector<std::unique_ptr<ExprAST>>::iterator it = BodyList.begin(); it != BodyList.end(); ++it) {
+        it->get()->codegen();
+        if(it->get()->isReturn == true){
+            break;
+        }
     }
 
     llvm::Value *StepVal = nullptr;

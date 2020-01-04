@@ -236,6 +236,9 @@ std::unique_ptr<ExprAST> ASTTree::ParseIfExpr(){
     return llvm::make_unique<IfExprAST>(std::move(Cond),std::move(thenList),std::move(elseThenList),code_gen);
 }
 std::unique_ptr<ExprAST> ASTTree::ParseForExpr(){
+    if(nextToken().value != "("){
+        return LogError("expected '(' after for");
+    }
     nextToken();
     if(getCurrToken().type != "identifier"){
         return LogError("expected identifier after for");
@@ -265,15 +268,15 @@ std::unique_ptr<ExprAST> ASTTree::ParseForExpr(){
             return nullptr;
         }
     }
-    if(getCurrToken().type != "in"){
-        return LogError("expected 'in' after for");
+    if(getCurrToken().value != ")"){
+        return LogError("expected ') after for cond");
+    }
+    if(nextToken().value != "{"){
+        return LogError("expected '{' after for");
     }
     nextToken();
-    auto Body = ParseExpression();
-    if(!Body){
-        return nullptr;
-    }
-    return llvm::make_unique<ForExprAST>(IdName,std::move(Start),std::move(End),std::move(Step),std::move(Body),code_gen);
+    std::vector<std::unique_ptr<ExprAST>> bodyList = ParseStatementList();    
+    return llvm::make_unique<ForExprAST>(IdName,std::move(Start),std::move(End),std::move(Step),std::move(bodyList),code_gen);
 }
 std::unique_ptr<ExprAST> ASTTree::ParseUnary(){
     if((getCurrToken().type != "operator") || getCurrToken().value == "(" || getCurrToken().value == ","){

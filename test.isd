@@ -1,31 +1,11 @@
-extern printd(x);
-extern putchard(x)
-void prime_check(curr,num){
-    if(num == curr){
-        return 1;
+extern putchard(ch);
+void printstar(n){
+    for(i = 1, i < n, 1.0){
+        putchard(42); 
+        if(i % 10 == 0){
+            putchard(10);
+        };
     };
-    if(num % curr == 0){
-        return 0;
-    };
-    return prime_check(curr+2,num);
+    return 0;
 }
-void is_prime(num){
-    if(num == 2){
-        return 1;
-    };
-    if(num % 2 == 0){
-        return 0;
-    };
-    return prime_check(3,num);
-}
-void find_nth_prime(curr_num,curr_prime,max_prime){
-    if(is_prime(curr_num)){
-      curr_prime += 1;  
-    };
-    if(curr_prime == max_prime){
-        return curr_num;
-    };
-    return find_nth_prime(curr_num+1,curr_prime,max_prime);
-}
-printd(find_nth_prime(2,0,10001));
-//Output:104743.000000
+printstar(100);
