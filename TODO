@@ -49,7 +49,8 @@ Low Level TODO
         Update docs
     Quick Fixes
         Better storage of getCurrToken()
-        Remove semi colons from if statements
+        Remove semi colons from if,for statements
+        Fix for statements always running once
 
     Not so quick Fixes 
         Develop proper handling of semi colons(right now they are checked on a case by case basis)

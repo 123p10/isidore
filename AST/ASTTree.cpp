@@ -96,6 +96,9 @@ std::unique_ptr<ExprAST> ASTTree::ParsePrimary() {
     else if(getCurrToken().type == "return"){
         return ParseReturnExpr();
     }
+    else if(getCurrToken().type == "semicolon"){
+        return nullptr;
+    }
     else{
         return LogError("unknown token when resolving expression");
     }
@@ -240,20 +243,12 @@ std::unique_ptr<ExprAST> ASTTree::ParseForExpr(){
         return LogError("expected '(' after for");
     }
     nextToken();
-    if(getCurrToken().type != "identifier"){
-        return LogError("expected identifier after for");
-    }
-    std::string IdName = getCurrToken().value;
-    if(nextToken().value != "="){
-        return LogError("expected '=' after for");
-    }
-    nextToken();
     auto Start = ParseExpression();
     if(!Start){
         return nullptr;
     }
-    if(getCurrToken().value != ","){
-        return LogError("expected ',' after for init value");
+    if(getCurrToken().value != ";"){
+        return LogError("expected ';' after for init value");
     }
     nextToken();
     auto End = ParseExpression();
@@ -261,7 +256,7 @@ std::unique_ptr<ExprAST> ASTTree::ParseForExpr(){
         return nullptr;
     }
     std::unique_ptr<ExprAST> Step;
-    if(getCurrToken().value == ","){
+    if(getCurrToken().value == ";"){
         nextToken();
         Step = ParseExpression();
         if(!Step){
@@ -276,7 +271,7 @@ std::unique_ptr<ExprAST> ASTTree::ParseForExpr(){
     }
     nextToken();
     std::vector<std::unique_ptr<ExprAST>> bodyList = ParseStatementList();    
-    return llvm::make_unique<ForExprAST>(IdName,std::move(Start),std::move(End),std::move(Step),std::move(bodyList),code_gen);
+    return llvm::make_unique<ForExprAST>(std::move(Start),std::move(End),std::move(Step),std::move(bodyList),code_gen);
 }
 std::unique_ptr<ExprAST> ASTTree::ParseUnary(){
     if((getCurrToken().type != "operator") || getCurrToken().value == "(" || getCurrToken().value == ","){
