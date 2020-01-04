@@ -1,0 +1,22 @@
+extern printd(x);
+
+void int_div(num,divisor){
+    return ((num-num%divisor)/divisor);
+}
+
+void conv_dec_to_bin(x){
+    if(x == 0){
+        return 0;
+    }
+    else{};
+    return (10*conv_dec_to_bin(int_div(x,2))) + x % 2;
+}
+void print_first_n(x,n){
+    printd(conv_dec_to_bin(x));
+    if(x != n){
+        print_first_n(x+1,n);
+    }else{};
+    return 0;
+}
+
+print_first_n(0,20);

@@ -44,5 +44,6 @@ The things I am working on in the near future are listed in TODO. I won't be pos
 
     * One type for dynamic arrays
 
+    * No stupid operators like << or >>
 5. Functions should be able to return multiple values, not by pass by reference in parameters.
 6. Semicolons should be placed at end of every non block statement to clarify end of statement.

@@ -1,0 +1,33 @@
+extern printd(x);
+extern putchard(x);
+
+void int_div(num,divisor){
+    return ((num-num%divisor)/divisor);
+}
+
+void conv_dec_to_hex(x){
+    if(x == 0){
+        return 0;
+    }
+    else{};
+    conv_dec_to_hex(int_div(x,16));
+    var out = x%16;
+    if(out < 10){
+        out = 48+out;
+    }
+    else{
+        out=55+out;
+    };
+    putchard(out);
+
+    return 0;
+}
+void print_first_n(x,n){
+    conv_dec_to_hex(x);
+    putchard(10);
+    if(x != n){
+        print_first_n(x+1,n);
+    }else{};
+    return 0;
+}
+print_first_n(0,50);

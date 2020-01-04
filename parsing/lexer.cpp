@@ -143,7 +143,7 @@ bool isComment(std::vector<char> current_line, std::string & char_stack , int & 
     return false;
 }
 bool isOperator(char op){
-    if(op == '*' || op == '+' || op == '-' || op == ':' || op == '=' || op == '/'  || op == '&' || op == '|' || op == '!' || op == '<' || op == '>' || op == '='){
+    if(op == '*' || op == '+' || op == '-' || op == ':' || op == '=' || op == '/' || op == '%'  || op == '&' || op == '|' || op == '!' || op == '<' || op == '>' || op == '='){
         return true;
     }
     return false;
