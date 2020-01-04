@@ -4,6 +4,7 @@ Operators that perform an action utilizing two operands.
 
 ## Precedence Chart
 Table. Precedence of binary operators. Precedence increasing from bottom to top
+
 |Operator|
 |:--------:|
 |*|
@@ -218,6 +219,7 @@ will resolve to be true as both 1 is equal to 1 and 2 is equal to 2 are true sta
 will resolve to be false as 1 is equal to 1 but 1 is not equal to 2
 
 Table. && operator truth table
+
 | Left Hand Operand        | Right Hand Operand           | &&  |
 | ------------- |:-------------:| -----:|
 | False      | False | False |
@@ -239,6 +241,7 @@ will resolve to be true as both 1 is equal to 1 and 2 is equal to 2 are true sta
 will resolve to be false as 3 is not equal to 2 and 1 is not equal to 2
 
 Table. || operator truth table
+
 | Left Hand Operand        | Right Hand Operand           | \| \|  |
 | ------------- |:-------------:| -----:|
 | False      | False | False |
