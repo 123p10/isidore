@@ -1,10 +1,6 @@
 extern printd(x);
-void test(x){
-    printd(x);
-    x += 3;
-    printd(x);
-    x-=2;
-    printd(x);
-    return x;
+
+void unary | (op){
+    return op*op;
 }
-test(1);
+|3;

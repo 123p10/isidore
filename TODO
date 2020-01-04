@@ -2,7 +2,7 @@ ALWAYS REMOVE WARNINGS
 Constant TODOS
     Always ensure no warnings are outputted by g++
     Convert and maintain codebase to follow: https://www.perforce.com/blog/kw/NASA-rules-for-developing-safety-critical-code
-
+    Update Documentation
 High Level TODO 
     Syntax Definition
         Redefine for statements for {} syntax
@@ -10,6 +10,7 @@ High Level TODO
         Proper type definition(no inferencing)
         Think about whether we use int main() or compile inline commands
         Change syntax of function definition
+        foreach loop
     Workflow/compilation
         Develop production(for user use) compiler framework
         Build proper language source build system(should be quicker and show status)
@@ -17,7 +18,7 @@ High Level TODO
         Debugger
     Data
         Should we add globals?
-        Take certain constructs out of expressions(if,var,for)
+        Take certain constructs out of expressions, make instructions(if,var,for)
         Fix variable scopage(vars declared inside ifs should not be accessible after)
         String
         Char
@@ -40,11 +41,17 @@ Low Level TODO
         Review level of precedence
         Add postfix
         !
+        /
+        *
+        *= /=
+        ^
+        Update docs
     Quick Fixes
         Better storage of getCurrToken()
         Remove semi colons from if statements
     Not so quick Fixes 
         Develop proper handling of semi colons(right now they are checked on a case by case basis)
         Remove necessity of else statement
+        If else statement exists we shouldn't need to return at the end
         Short circuit boolean evaluation
         Fix boolean expressions(|| &&)
