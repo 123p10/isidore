@@ -88,11 +88,10 @@ class UnaryExprAST : public ExprAST{
 
 class VarExprAST : public ExprAST{
   std::vector<std::pair<std::string, std::unique_ptr<ExprAST>>> VarNames;
-  std::unique_ptr<ExprAST> Body;
   CodeGenerator * code_gen;
   public:
-    VarExprAST(std::vector<std::pair<std::string, std::unique_ptr<ExprAST>>> VarNames, std::unique_ptr<ExprAST> Body, CodeGenerator * code_gen)
-    : VarNames(std::move(VarNames)), Body(std::move(Body)),code_gen(code_gen) {}
+    VarExprAST(std::vector<std::pair<std::string, std::unique_ptr<ExprAST>>> VarNames,  CodeGenerator * code_gen)
+    : VarNames(std::move(VarNames)), code_gen(code_gen) {}
     llvm::Value *codegen() override;
 };
 

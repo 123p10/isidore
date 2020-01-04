@@ -305,15 +305,7 @@ std::unique_ptr<ExprAST> ASTTree::ParseVarExpr(){
         nextToken();
         if(getCurrToken().type != "identifier"){return LogError("expected identifier list after var");}
     }
-    if(getCurrToken().type != "in"){
-        return LogError("expected 'in' keyword after 'var' keyword");
-    }
-    nextToken();
-    auto Body = ParseExpression();
-    if(!Body){
-        return nullptr;
-    }
-    return llvm::make_unique<VarExprAST>(std::move(VarNames),std::move(Body),code_gen);
+    return llvm::make_unique<VarExprAST>(std::move(VarNames),code_gen);
 }
 
 std::unique_ptr<ExprAST> ASTTree::ParseReturnExpr(){

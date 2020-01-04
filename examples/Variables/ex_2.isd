@@ -1,0 +1,9 @@
+extern printd(x);
+void test(x){
+    var a = x, b = x+1, c= a+b;
+    printd(a);
+    printd(b);
+    printd(c);
+    return 0;
+}
+test(7);

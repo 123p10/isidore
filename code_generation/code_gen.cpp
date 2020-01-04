@@ -45,16 +45,19 @@ CodeGenerator::~CodeGenerator(){
     delete FunctionProtos;
 }
 void CodeGenerator::InitializeModuleAndPassManager(void){
+    bool isDebug = false;
     TheModule = new std::unique_ptr<llvm::Module>;
     *TheModule = llvm::make_unique<llvm::Module>("my cool jit", *TheContext);
     TheModule->get()->setDataLayout(TheJIT->get()->getTargetMachine().createDataLayout());
     TheFPM = new std::unique_ptr<llvm::legacy::FunctionPassManager>;
     *TheFPM = llvm::make_unique<llvm::legacy::FunctionPassManager>(TheModule->get());
-    TheFPM->get()->add(llvm::createPromoteMemoryToRegisterPass());
-    TheFPM->get()->add(llvm::createInstructionCombiningPass());
-    TheFPM->get()->add(llvm::createReassociatePass());
-    TheFPM->get()->add(llvm::createGVNPass());
-    TheFPM->get()->add(llvm::createCFGSimplificationPass());
+    if(!isDebug){
+        TheFPM->get()->add(llvm::createPromoteMemoryToRegisterPass());
+        TheFPM->get()->add(llvm::createInstructionCombiningPass());
+        TheFPM->get()->add(llvm::createReassociatePass());
+        TheFPM->get()->add(llvm::createGVNPass());
+        TheFPM->get()->add(llvm::createCFGSimplificationPass());
+    }
     TheFPM->get()->doInitialization();
 }
 llvm::Function *CodeGenerator::getFunction(std::string Name){

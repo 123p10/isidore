@@ -282,14 +282,7 @@ llvm::Value *VarExprAST::codegen(){
         OldBindings.push_back(code_gen->NamedValues[VarName]);
         code_gen->NamedValues[VarName] = Alloca;
     }
-    llvm::Value *BodyVal = Body->codegen();
-    if(!BodyVal){
-        return nullptr;
-    }
-    for(unsigned i = 0, e = VarNames.size();i != e; ++i){
-        code_gen->NamedValues[VarNames[i].first] = OldBindings[i];
-    }
-    return BodyVal;
+    return llvm::ConstantFP::get(*(code_gen->TheContext),llvm::APFloat(0.0));
 }
 
 
@@ -316,7 +309,7 @@ llvm::Function *FunctionAST::codegen(){
     }
     llvm::BasicBlock *BB = llvm::BasicBlock::Create(*(code_gen->TheContext),"entry",TheFunction);
     code_gen->Builder->SetInsertPoint(BB);
-
+    //Maybe we change this
     code_gen->NamedValues.clear();
     for(auto &Arg : TheFunction->args()){
 
