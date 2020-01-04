@@ -1,6 +1,9 @@
 extern printd(x);
 
-void unary | (op){
-    return op*op;
+void print_list(x y z){
+    printd(x);
+    printd(y);
+    printd(z);
+    return 0;
 }
-|3;
+print_list(1,2,3);
