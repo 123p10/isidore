@@ -37,7 +37,9 @@ High Level TODO
 Low Level TODO
     Function/operators(very easy to make but develop a proper way to insert into standard library)
         ++/--
-        +=/-=
+        Review level of precedence
+        Add postfix
+        !
     Quick Fixes
         Better storage of getCurrToken()
         Remove semi colons from if statements

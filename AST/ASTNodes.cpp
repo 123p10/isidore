@@ -70,7 +70,7 @@ llvm::Value *UnaryExprAST::codegen(){
     }
 }
 llvm::Value *BinaryExprAST::codegen() {
-    if(Op == "="){
+    if(Op == "=" || Op == "+=" || Op == "-="){
         VariableExprAST *LHSE = dynamic_cast<VariableExprAST*>(LHS.get());
         if(!LHSE){
             return LogErrorV("destination of '=' must be a variable");
@@ -83,7 +83,18 @@ llvm::Value *BinaryExprAST::codegen() {
         if(!Variable){
             return LogErrorV("Unknown Variable name");
         }
-        code_gen->Builder->CreateStore(Val, Variable);
+        if(Op == "="){
+            code_gen->Builder->CreateStore(Val, Variable);
+        }
+        else if(Op == "+="){
+            Val = code_gen->Builder->CreateFAdd(LHSE->codegen(),Val,"add_equal_tmp");
+            code_gen->Builder->CreateStore(Val,Variable);
+        }
+        else if(Op == "-="){
+            Val = code_gen->Builder->CreateFSub(LHSE->codegen(),Val,"sub_equal_tmp");
+            code_gen->Builder->CreateStore(Val,Variable);
+        }
+
         return Val;
     }
     llvm::Value *L = LHS->codegen();
