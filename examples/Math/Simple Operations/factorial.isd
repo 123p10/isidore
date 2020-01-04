@@ -1,0 +1,14 @@
+extern printd(x);
+extern putchard(x)
+
+void factorial_loop(curr,number){
+    if(curr == number){
+        return number;
+    };
+    return curr * factorial_loop(curr+1,number);
+}
+
+void factorial(number){
+    return factorial_loop(1,number);
+}
+factorial(5);

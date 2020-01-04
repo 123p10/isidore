@@ -1,0 +1,18 @@
+extern printd(x);
+extern putchard(x)
+
+
+void fibonacci(number){
+    if(number <= 1){
+        return 1;
+    };
+    return fibonacci(number-1) + fibonacci(number-2);
+}
+void loop(curr,x){
+    printd(fibonacci(curr));
+    if(curr != x){
+        loop(curr+1,x);
+    };
+    return 0;
+}
+loop(0,20);
