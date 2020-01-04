@@ -110,7 +110,12 @@ llvm::Value *BinaryExprAST::codegen() {
     else if(Op == "*"){
         return code_gen->Builder->CreateFMul(L,R, "multmp");
     }
-    //Implement > operator using userdefined operators
+    else if(Op == "/"){
+        return code_gen->Builder->CreateFDiv(L,R,"divtmp");
+    }
+    else if(Op == "%"){
+        return code_gen->Builder->CreateFRem(L,R,"modtmp");
+    }
     else if(Op == "<"){
         L = code_gen->Builder->CreateFCmpULT(L,R,"cmptmp");
         return code_gen->Builder->CreateUIToFP(L,llvm::Type::getDoubleTy(*(code_gen->TheContext)),"booltmp");

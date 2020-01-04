@@ -175,6 +175,9 @@ std::unique_ptr<PrototypeAST> ASTTree::ParsePrototype() {
     std::vector<std::string> ArgNames;
     while(nextToken().type == "identifier"){
         ArgNames.push_back(getCurrToken().value);
+        if(nextToken().value != ","){
+            break;
+        }
     }
     if(getCurrToken().value != ")"){
         return LogErrorP("Expected ')' in prototype");
