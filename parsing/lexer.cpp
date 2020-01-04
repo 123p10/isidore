@@ -56,7 +56,7 @@ void tokenize_file(ProgramFile & source_file){
             else if(isMultiLineComment(current_line,char_stack,char_number)){
                 char_stack = "";
                 while(current_line.size() != 0){
-                    if(char_number+1 >= current_line.size()){
+                    if(char_number+1 >= (int)current_line.size()){
                         char_number = 0;
                         line_num++;
                         current_line = source_file.GetLine(line_num);
