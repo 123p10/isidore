@@ -67,12 +67,14 @@ class IfExprAST : public ExprAST{
 };
 class ForExprAST : public ExprAST{
   std::string VarName;
-  std::unique_ptr<ExprAST> Start, End, Step, Body;
+  std::unique_ptr<ExprAST> Start, End, Step;
+  std::vector<std::unique_ptr<ExprAST>> BodyList;
+
   CodeGenerator * code_gen;
   public:
 
-    ForExprAST(const std::string &VarName, std::unique_ptr<ExprAST> Start, std::unique_ptr<ExprAST> End, std::unique_ptr<ExprAST> Step, std::unique_ptr<ExprAST> Body, CodeGenerator * code_gen)
-    : VarName(VarName), Start(std::move(Start)), End(std::move(End)), Step(std::move(Step)), Body(std::move(Body)),code_gen(code_gen){}
+    ForExprAST(const std::string &VarName, std::unique_ptr<ExprAST> Start, std::unique_ptr<ExprAST> End, std::unique_ptr<ExprAST> Step, std::vector<std::unique_ptr<ExprAST>> BodyList, CodeGenerator * code_gen)
+    : VarName(VarName), Start(std::move(Start)), End(std::move(End)), Step(std::move(Step)), BodyList(std::move(BodyList)),code_gen(code_gen){}
     llvm::Value *codegen() override;
 };
 
