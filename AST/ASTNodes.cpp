@@ -222,13 +222,10 @@ llvm::Value *IfExprAST::codegen(){
 
 llvm::Value *ForExprAST::codegen(){
     llvm::Function *TheFunction = code_gen->Builder->GetInsertBlock()->getParent();
-    llvm::AllocaInst *Alloca = code_gen->CreateEntryBlockAlloca(TheFunction,VarName);
-    
     llvm::Value *StartVal = Start->codegen();
     if(!StartVal){
         return nullptr;
     }
-    code_gen->Builder->CreateStore(StartVal, Alloca);
 
     llvm::BasicBlock *LoopBB = llvm::BasicBlock::Create(*code_gen->TheContext, "loop", TheFunction);
 
@@ -236,8 +233,6 @@ llvm::Value *ForExprAST::codegen(){
 
     code_gen->Builder->SetInsertPoint(LoopBB);
 
-    llvm::AllocaInst *OldVal = code_gen->NamedValues[VarName];
-    code_gen->NamedValues[VarName] = Alloca;
     for(std::vector<std::unique_ptr<ExprAST>>::iterator it = BodyList.begin(); it != BodyList.end(); ++it) {
         it->get()->codegen();
         if(it->get()->isReturn == true){
@@ -252,29 +247,17 @@ llvm::Value *ForExprAST::codegen(){
             return nullptr;
         }
     }
-    else{
-        StepVal = llvm::ConstantFP::get(*code_gen->TheContext,llvm::APFloat(1.0));
-    }
 
     llvm::Value *EndCond = End->codegen();
     if(!EndCond){
         return nullptr;
     }
-    llvm::Value *CurVar = code_gen->Builder->CreateLoad(Alloca, VarName.c_str());
-    llvm::Value *NextVar = code_gen->Builder->CreateFAdd(CurVar, StepVal, "nextvar");
-    code_gen->Builder->CreateStore(NextVar,Alloca);
     EndCond = code_gen->Builder->CreateFCmpONE(EndCond,llvm::ConstantFP::get(*code_gen->TheContext,llvm::APFloat(0.0)),"loopcond");
 
     llvm::BasicBlock *AfterBB = llvm::BasicBlock::Create(*code_gen->TheContext,"afterloop",TheFunction);
     code_gen->Builder->CreateCondBr(EndCond, LoopBB, AfterBB);
     code_gen->Builder->SetInsertPoint(AfterBB);
 
-    if(OldVal){
-        code_gen->NamedValues[VarName] = OldVal;
-    }
-    else{
-        code_gen->NamedValues.erase(VarName);
-    }
     return llvm::Constant::getNullValue(llvm::Type::getDoubleTy(*code_gen->TheContext));
 }
 
