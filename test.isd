@@ -1,16 +1,16 @@
 extern printd(x);
 extern putchard(x)
-//Test commenting
-void foo(x/*comments can be here*/){
-    printd(3);
-    /*Weird*/
-    /*
-    HMM
-    */
+
+void foo(x){
+    if(x == 1){
+        printd(1);
+    }
+    else{
+        printd(0);
+    };
+    if(x < 10){
+        printd(5);
+    };
     return 0;
 }
-/*
-Big comment
-*/
-/**/printd(1);
 foo(1);

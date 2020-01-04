@@ -225,14 +225,14 @@ std::unique_ptr<ExprAST> ASTTree::ParseIfExpr(){
     }
     nextToken();
     std::vector<std::unique_ptr<ExprAST>> thenList = ParseStatementList();
-    if(getCurrToken().type != "else"){
-        return LogError("expected else");
+    std::vector<std::unique_ptr<ExprAST>> elseThenList;
+    if(getCurrToken().type == "else"){
+        if(nextToken().type != "curly_brace"){
+            return LogError("expected '{'");
+        }
+        nextToken();
+        elseThenList = ParseStatementList();
     }
-    if(nextToken().type != "curly_brace"){
-        return LogError("expected '{'");
-    }
-    nextToken();
-    std::vector<std::unique_ptr<ExprAST>> elseThenList = ParseStatementList();
     return llvm::make_unique<IfExprAST>(std::move(Cond),std::move(thenList),std::move(elseThenList),code_gen);
 }
 std::unique_ptr<ExprAST> ASTTree::ParseForExpr(){
