@@ -1,2 +1,0 @@
-extern printd(x);
-printd(10);

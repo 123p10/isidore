@@ -5,16 +5,13 @@ Constant TODOS
     Update Documentation
 High Level TODO 
     Syntax Definition
-        Redefine for statements for {} syntax
         Implement while statements
         Proper type definition(no inferencing)
         Think about whether we use int main() or compile inline commands
-        Change syntax of function definition
+        Change syntax of function definition(not void)
         foreach loop
     Workflow/compilation
         Develop production(for user use) compiler framework
-        Build proper language source build system(should be quicker and show status)
-        Compile to object files
         Debugger
     Data
         Should we add globals?
@@ -45,7 +42,6 @@ Low Level TODO
         !
         /
         *
-        *= /=
         ^
         Update docs
     Quick Fixes
