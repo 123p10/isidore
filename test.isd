@@ -1,8 +1,2 @@
-extern putchard(ch);
-void printstar(n){
-    for(1;0;n+=1){
-        putchard(42);
-    };
-    return 0;
-}
-printstar(1);
+extern printd(x);
+printd(10);
