@@ -1,0 +1,15 @@
+extern printd(ch);
+void int_div(num,divisor){
+    return ((num-num%divisor)/divisor);
+}
+void mul(x){
+    var sum = 0;
+    for(var i = 1;i < x;i+=1){
+        if(i % 3 == 0 || i % 5 == 0){
+            sum += i;
+        };
+    };
+    return sum;
+}
+printd(mul(1000));
+

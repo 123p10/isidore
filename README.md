@@ -16,9 +16,9 @@ Isidore is currently under heavy development and is certainly not complete. The 
 
 #### How to Build Isidore Programs
 1. Pull this repo
-2. Give run permissions to build.sh(Linux: chmod +x build.sh)
-3. Run build.sh (Linux: ./build.sh)
-4. Run the output file a.out (Linux: ./a.out)
+2. `cd` to the local repo
+3. Run `make`
+4. Run the output file main (Linux: ./main)
 
 *Note: this will compile and run the isidore program "test.isd" located at the current directory, you can attempt to change this by editing test_lexer.cpp before building the main source code. Proper compiler will be available in production release.*
 
