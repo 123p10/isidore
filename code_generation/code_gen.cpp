@@ -26,6 +26,8 @@ void CodeGenerator::initPrecedence(){
     BinopPrecedence["="] = 2;
     BinopPrecedence["+="] = 2;
     BinopPrecedence["-="] = 2;
+    BinopPrecedence["*="] = 2;
+    BinopPrecedence["/="] = 2;
     BinopPrecedence["&&"] = 5;
     BinopPrecedence["||"] = 5;
     BinopPrecedence["<"] = 10;
