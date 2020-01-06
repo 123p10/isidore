@@ -308,7 +308,7 @@ llvm::Value *VarExprAST::codegen(){
 
 llvm::Function *PrototypeAST::codegen(){
     std::vector<llvm::Type*> Doubles(Args.size(),llvm::Type::getDoubleTy(*(code_gen->TheContext)));
-    llvm::FunctionType *FT = llvm::FunctionType::get(llvm::Type::getDoubleTy(*(code_gen->TheContext)),Doubles,false);
+    llvm::FunctionType *FT = llvm::FunctionType::get(std::move(type),Doubles,false);
     llvm::Function *F = llvm::Function::Create(FT, llvm::Function::ExternalLinkage,Name,code_gen->TheModule->get());
     unsigned Idx = 0;
     for(auto &Arg : F->args()){

@@ -110,13 +110,14 @@ class ReturnExprAST : public ExprAST{
 class PrototypeAST {
   std::string Name;
   std::vector<std::string> Args;
-    CodeGenerator * code_gen;
+  CodeGenerator * code_gen;
+  llvm::Type * type;
   bool IsOperator;
   unsigned Precedence;
   public:
   PrototypeAST(const std::string &name, std::vector<std::string> Args,
-                CodeGenerator * code_gen, bool IsOperator = false, unsigned Prec = 0)
-  : Name(name), Args(std::move(Args)), code_gen(code_gen), IsOperator(IsOperator),
+                CodeGenerator * code_gen, llvm::Type * type, bool IsOperator = false, unsigned Prec = 0)
+  : Name(name),Args(std::move(Args)), code_gen(code_gen), type(std::move(type)),IsOperator(IsOperator),
     Precedence(Prec) {}
     llvm::Function *codegen();
     const std::string &getName() const { return Name; }

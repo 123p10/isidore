@@ -140,7 +140,22 @@ std::unique_ptr<ExprAST> ASTTree::ParseBinOpRHS(int ExprPrec,std::unique_ptr<Exp
     }
 }
 std::unique_ptr<PrototypeAST> ASTTree::ParsePrototype() {
+    llvm::Type * type = std::move(llvm::Type::getDoubleTy(*code_gen->TheContext));
+    Token type_tok;
     std::string FnName;
+    type_tok = getCurrToken();
+    if(type_tok.type == "data_type"){
+       if(type_tok.value == "double"){
+           type = std::move(llvm::Type::getDoubleTy(*code_gen->TheContext));
+       } 
+       else if(type_tok.value == "int"){
+           type = std::move(llvm::Type::getInt64Ty(*code_gen->TheContext));
+       }
+    }
+    else{
+        return LogErrorP("Please specify a data type for the function");
+    }
+    nextToken();
     unsigned Kind = 0; //0-iden, 1=unary, 2=binary
     unsigned BinaryPrecedence = 30;
     if(getCurrToken().type == "identifier"){
@@ -189,10 +204,9 @@ std::unique_ptr<PrototypeAST> ASTTree::ParsePrototype() {
     if(Kind && ArgNames.size() != Kind){
         return LogErrorP("Invalid number of operands for operator");
     }
-    return llvm::make_unique<PrototypeAST>(FnName,std::move(ArgNames),code_gen,Kind != 0, BinaryPrecedence);
+    return llvm::make_unique<PrototypeAST>(FnName,std::move(ArgNames),code_gen, std::move(type), Kind != 0, BinaryPrecedence);
 }
 std::unique_ptr<FunctionAST> ASTTree::ParseDefinition() {
-    nextToken();
     auto Proto = ParsePrototype();
     if (!Proto) return nullptr;
     if(getCurrToken().value != "{"){
@@ -205,14 +219,14 @@ std::unique_ptr<FunctionAST> ASTTree::ParseDefinition() {
     //return nullptr;
 }
 std::unique_ptr<PrototypeAST> ASTTree::ParseExtern() {
-  nextToken();
+    nextToken();
   return ParsePrototype();
 }
 std::unique_ptr<FunctionAST> ASTTree::ParseTopLevelExpr() {
   if (auto E = ParseExpression()) {
     std::vector<std::unique_ptr<ExprAST>> statement;
     statement.push_back(std::move(E));
-    auto Proto = llvm::make_unique<PrototypeAST>("__anon__expr", std::vector<std::string>(),code_gen);
+    auto Proto = llvm::make_unique<PrototypeAST>("__anon__expr", std::vector<std::string>(),code_gen,llvm::Type::getDoubleTy(*code_gen->TheContext));
     return llvm::make_unique<FunctionAST>(std::move(Proto), std::move(statement),code_gen);
   }
   return nullptr;

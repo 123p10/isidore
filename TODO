@@ -8,6 +8,7 @@ High Level TODO
         Implement while statements
         Proper type definition(no inferencing)
         Think about whether we use int main() or compile inline commands
+            deprecate TopLevelExpressions
         Change syntax of function definition(not void)
         foreach loop
     Workflow/compilation
