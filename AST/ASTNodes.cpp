@@ -355,5 +355,8 @@ llvm::Function *FunctionAST::codegen(){
 
 }
 llvm::Value *ReturnExprAST::codegen(){
-    return code_gen->Builder->CreateRet(returnExpr->codegen());
+    llvm::Value * return_val = returnExpr->codegen();
+    llvm::Function *TheFunction = code_gen->Builder->GetInsertBlock()->getParent();
+    return_val = code_gen->castToType(return_val,TheFunction->getReturnType());
+    return code_gen->Builder->CreateRet(return_val);
 }
