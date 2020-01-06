@@ -28,8 +28,9 @@ class CodeGenerator{
         
         llvm::Function *getFunction(std::string Name);
         void InitializeModuleAndPassManager(void);
-        llvm::AllocaInst *CreateEntryBlockAlloca(llvm::Function *TheFunction, const std::string &VarName);
-        
+        llvm::AllocaInst *CreateEntryBlockAlloca(llvm::Function *TheFunction,llvm::Type * type, const std::string &VarName);
+        llvm::Value * castToType(llvm::Value *value, llvm::Type * type);
+
         CodeGenerator();
         ~CodeGenerator();
 

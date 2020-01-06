@@ -58,7 +58,6 @@ llvm::Value *UnaryExprAST::codegen(){
         return nullptr;
     }
     if(Opcode == "-"){
-        //Probably better to use CreateNeg
         return code_gen->Builder->CreateFSub(llvm::ConstantFP::get(*(code_gen->TheContext),llvm::APFloat(0.0)),OperandV, "subtmp");
     }
     else{
@@ -80,6 +79,7 @@ llvm::Value *BinaryExprAST::codegen() {
             return nullptr;
         }
         llvm::Value *Variable = code_gen->NamedValues[LHSE->getName()].value;
+        Val = code_gen->castToType(Val,code_gen->NamedValues[LHSE->getName()].type);
         if(!Variable){
             return LogErrorV("Unknown Variable name");
         }
@@ -107,6 +107,14 @@ llvm::Value *BinaryExprAST::codegen() {
     }
     llvm::Value *L = LHS->codegen();
     llvm::Value *R = RHS->codegen();
+    if(L->getType() != R->getType()){
+        if(L->getType()->isFloatingPointTy() && !(R->getType()->isFloatingPointTy())){
+            R = code_gen->castToType(R,L->getType());
+        }
+        else{
+            L = code_gen->castToType(L,R->getType());
+        }
+    }
     if (!L || !R)
         return nullptr;
     if(Op == "+"){
@@ -270,9 +278,10 @@ llvm::Value *ForExprAST::codegen(){
 }
 
 llvm::Value *VarExprAST::codegen(){
-    std::vector<Variable> OldBindings;
 
     llvm::Function *TheFunction = code_gen->Builder->GetInsertBlock()->getParent();
+        std::vector<Variable> OldBindings;
+
     for(unsigned i = 0, e = VarNames.size(); i != e;++i){
         const std::string &VarName = VarNames[i].first;
         ExprAST *Init = VarNames[i].second.get();
@@ -287,10 +296,11 @@ llvm::Value *VarExprAST::codegen(){
         else{
             InitVal = llvm::ConstantFP::get(*code_gen->TheContext,llvm::APFloat(0.0));
         }
-        llvm::AllocaInst *Alloca = code_gen->CreateEntryBlockAlloca(TheFunction,VarName);
+        llvm::AllocaInst *Alloca = code_gen->CreateEntryBlockAlloca(TheFunction,type,VarName);
+        InitVal = code_gen->castToType(InitVal,type);
         code_gen->Builder->CreateStore(InitVal, Alloca);
         OldBindings.push_back(code_gen->NamedValues[VarName]);
-        code_gen->NamedValues[VarName] = Variable{Alloca,llvm::Type::getDoubleTy(*code_gen->TheContext)};
+        code_gen->NamedValues[VarName] = Variable{Alloca,type};
     }
     return llvm::ConstantFP::get(*(code_gen->TheContext),llvm::APFloat(0.0));
 }
@@ -323,7 +333,7 @@ llvm::Function *FunctionAST::codegen(){
     code_gen->NamedValues.clear();
     for(auto &Arg : TheFunction->args()){
 
-        llvm::AllocaInst *Alloca = code_gen->CreateEntryBlockAlloca(TheFunction,Arg.getName());
+        llvm::AllocaInst *Alloca = code_gen->CreateEntryBlockAlloca(TheFunction,llvm::Type::getDoubleTy(*code_gen->TheContext),Arg.getName());
         code_gen->Builder->CreateStore(&Arg,Alloca);
         code_gen->NamedValues[Arg.getName()] = Variable{Alloca, llvm::Type::getDoubleTy(*code_gen->TheContext)};
     }
