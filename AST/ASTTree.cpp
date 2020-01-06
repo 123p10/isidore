@@ -81,6 +81,9 @@ std::unique_ptr<ExprAST> ASTTree::ParsePrimary() {
     else if(getCurrToken().type == "int" || getCurrToken().type == "float"){
         return ParseNumberExpr();
     }
+    else if(getCurrToken().type == "string"){
+        return ParseCharExpr();
+    }
     else if(getCurrToken().value == "("){
         return ParseParenExpr();
     }
@@ -151,7 +154,7 @@ std::unique_ptr<PrototypeAST> ASTTree::ParsePrototype() {
        else if(type_tok.value == "int"){
            type = std::move(llvm::Type::getInt64Ty(*code_gen->TheContext));
        }
-        else if(type_tok.value == "char"){
+        else if(type_tok.value == "short"){
             type = std::move(llvm::Type::getInt8Ty(*code_gen->TheContext));
         }
 
@@ -311,7 +314,7 @@ std::unique_ptr<ExprAST> ASTTree::ParseVarExpr(){
     else if(type_str == "int"){
         type = std::move(llvm::Type::getInt64Ty(*code_gen->TheContext));
     }
-    else if(type_str == "char"){
+    else if(type_str == "short"){
         type = std::move(llvm::Type::getInt8Ty(*code_gen->TheContext));
     }
     else{
@@ -376,4 +379,10 @@ std::vector<std::unique_ptr<ExprAST>> ASTTree::ParseStatementList(){
     }
     nextToken();
     return statementList;
+}
+std::unique_ptr<ExprAST> ASTTree::ParseCharExpr(){
+    auto Result = llvm::make_unique<NumberExprAST>(std::to_string((int)getCurrToken().value[0]),code_gen);
+    nextToken();
+    return std::move(Result);
+
 }

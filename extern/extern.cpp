@@ -9,3 +9,7 @@ extern "C" DLLEXPORT double printd(double X) {
   fprintf(stderr, "%f\n", X);
   return 0;
 }
+extern "C" DLLEXPORT char putcharc(char X){
+  fputc((char)X, stderr);
+  return 0;
+}
