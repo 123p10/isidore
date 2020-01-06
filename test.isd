@@ -1,8 +1,6 @@
 extern double printd(ch);
-
 double mod(a,b){
-    int div = a / b;
-    double mul2 = div * b;
-    return a-mul2;
+    char c = 128;
+    return a-c;
 }
 mod(12,3);

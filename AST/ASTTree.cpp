@@ -151,6 +151,10 @@ std::unique_ptr<PrototypeAST> ASTTree::ParsePrototype() {
        else if(type_tok.value == "int"){
            type = std::move(llvm::Type::getInt64Ty(*code_gen->TheContext));
        }
+        else if(type_tok.value == "char"){
+            type = std::move(llvm::Type::getInt8Ty(*code_gen->TheContext));
+        }
+
     }
     else{
         return LogErrorP("Please specify a data type for the function");
@@ -306,6 +310,9 @@ std::unique_ptr<ExprAST> ASTTree::ParseVarExpr(){
     }
     else if(type_str == "int"){
         type = std::move(llvm::Type::getInt64Ty(*code_gen->TheContext));
+    }
+    else if(type_str == "char"){
+        type = std::move(llvm::Type::getInt8Ty(*code_gen->TheContext));
     }
     else{
         type = std::move(llvm::Type::getDoubleTy(*code_gen->TheContext));
