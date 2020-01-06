@@ -1,0 +1,18 @@
+extern char putcharc(ch);
+extern double putchard(c);
+int printStatement(a,b,c,d, e){
+    putchard(a);
+    putchard(b);
+    putchard(c);
+    putchard(d);
+    putchard(e);
+    putchard(10);
+    return 0;
+}
+
+double mod(){
+    printStatement('H','e','l','l','o');
+    printStatement('W','o','r','l','d');
+    return 0;
+}
+mod();

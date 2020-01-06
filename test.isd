@@ -1,6 +1,13 @@
-extern double printd(ch);
-double mod(a,b){
-    char c = 128;
-    return a-c;
+extern double printd(x);
+extern short putcharc(ch);
+double mod(){
+    short nl = 10;
+    for(short c = 48;c < 127;c+=1){
+        putcharc(c);
+        if((c-47) % 10 == 0){
+            putcharc(nl);
+        };
+    };
+    return 0;
 }
-mod(12,3);
+mod();

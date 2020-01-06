@@ -5,7 +5,7 @@
 std::map<std::string,std::string> keywords_list = {
     {"int","data_type"},
     {"bool","data_type"},
-    {"char","data_type"},
+    {"short","data_type"},
     {"string","data_type"},
     //May insert partial type inferencing to kill float but we shall see
     {"float","data_type"},
