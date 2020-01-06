@@ -51,7 +51,7 @@ CodeGenerator::~CodeGenerator(){
     delete FunctionProtos;
 }
 void CodeGenerator::InitializeModuleAndPassManager(void){
-    bool isDebug = false;
+    bool isDebug = true;
     TheModule = new std::unique_ptr<llvm::Module>;
     *TheModule = llvm::make_unique<llvm::Module>("my cool jit", *TheContext);
     TheModule->get()->setDataLayout(TheJIT->get()->getTargetMachine().createDataLayout());
@@ -77,8 +77,24 @@ llvm::Function *CodeGenerator::getFunction(std::string Name){
     }
     return nullptr;
 }
+llvm::Value * CodeGenerator::castToType(llvm::Value *value, llvm::Type * type){
+    if(type == value->getType()){
+        return value;
+    }
+    if(value->getType()->isIntegerTy()){
+        if(type->isFloatingPointTy()){
+            return Builder->CreateSIToFP(value,type);
+        }
+    }
+    else if(value->getType()->isFloatingPointTy()){
+        if(type->isIntegerTy()){
+            return Builder->CreateFPToSI(value,type);
+        }
+    }
+    return value;
+}
 
-llvm::AllocaInst *CodeGenerator::CreateEntryBlockAlloca(llvm::Function *TheFunction, const std::string &VarName){
+llvm::AllocaInst *CodeGenerator::CreateEntryBlockAlloca(llvm::Function *TheFunction, llvm::Type * type, const std::string &VarName){
     llvm::IRBuilder<> TmpB(&TheFunction->getEntryBlock(), TheFunction->getEntryBlock().begin());
-    return TmpB.CreateAlloca(llvm::Type::getDoubleTy(*TheContext),0,VarName.c_str());
+    return TmpB.CreateAlloca(type,0,VarName.c_str());
 }

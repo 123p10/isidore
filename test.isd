@@ -1,4 +1,8 @@
+extern printd(x);
 double foo(x){
-    var y = x+1;
-    return y*y;
+    int a = 100/3;
+    double y = a * 3;
+    return y;
 }
+
+foo(1);
