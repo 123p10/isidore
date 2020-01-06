@@ -7,6 +7,11 @@
 #include "llvm/IR/LegacyPassManager.h"
 #include "../JIT/KaleidoscopeJIT.h"
 class PrototypeAST;
+struct Variable
+{
+    llvm::AllocaInst *value;
+    llvm::Type *type;
+};
 
 class CodeGenerator{
     public:
@@ -16,7 +21,7 @@ class CodeGenerator{
         std::unique_ptr<llvm::Module> *TheModule;
         llvm::LLVMContext *TheContext;
         llvm::IRBuilder<> *Builder;
-        std::map<std::string, llvm::AllocaInst *> NamedValues;
+        std::map<std::string, Variable> NamedValues;
         std::unique_ptr<llvm::legacy::FunctionPassManager> *TheFPM;
         std::unique_ptr<llvm::orc::KaleidoscopeJIT> *TheJIT;
         std::map<std::string, std::unique_ptr<PrototypeAST>> *FunctionProtos;

@@ -22,7 +22,7 @@ int main(){
         else if(source_tree.getCurrToken().type == "semicolon"){
             source_tree.nextToken();
         }
-        else if(source_tree.getCurrToken().type == "data_void"){
+        else if(source_tree.getCurrToken().type == "data_type"){
             HandleDefinition(source_tree,code_gen);
         }
         else if(source_tree.getCurrToken().type == "extern"){

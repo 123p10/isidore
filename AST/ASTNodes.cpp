@@ -46,7 +46,7 @@ llvm::Value *NumberExprAST::codegen(){
     return llvm::ConstantFP::get(*(code_gen->TheContext),llvm::APFloat(Val));
 }
 llvm::Value *VariableExprAST::codegen(){
-    llvm::Value *V = code_gen->NamedValues[Name];
+    llvm::Value *V = code_gen->NamedValues[Name].value;
     if(!V){
         LogErrorV("Unknown Variable Name");
     }
@@ -79,7 +79,7 @@ llvm::Value *BinaryExprAST::codegen() {
         if(!Val){
             return nullptr;
         }
-        llvm::Value *Variable = code_gen->NamedValues[LHSE->getName()];
+        llvm::Value *Variable = code_gen->NamedValues[LHSE->getName()].value;
         if(!Variable){
             return LogErrorV("Unknown Variable name");
         }
@@ -270,7 +270,7 @@ llvm::Value *ForExprAST::codegen(){
 }
 
 llvm::Value *VarExprAST::codegen(){
-    std::vector<llvm::AllocaInst *> OldBindings;
+    std::vector<Variable> OldBindings;
 
     llvm::Function *TheFunction = code_gen->Builder->GetInsertBlock()->getParent();
     for(unsigned i = 0, e = VarNames.size(); i != e;++i){
@@ -290,7 +290,7 @@ llvm::Value *VarExprAST::codegen(){
         llvm::AllocaInst *Alloca = code_gen->CreateEntryBlockAlloca(TheFunction,VarName);
         code_gen->Builder->CreateStore(InitVal, Alloca);
         OldBindings.push_back(code_gen->NamedValues[VarName]);
-        code_gen->NamedValues[VarName] = Alloca;
+        code_gen->NamedValues[VarName] = Variable{Alloca,llvm::Type::getDoubleTy(*code_gen->TheContext)};
     }
     return llvm::ConstantFP::get(*(code_gen->TheContext),llvm::APFloat(0.0));
 }
@@ -325,7 +325,7 @@ llvm::Function *FunctionAST::codegen(){
 
         llvm::AllocaInst *Alloca = code_gen->CreateEntryBlockAlloca(TheFunction,Arg.getName());
         code_gen->Builder->CreateStore(&Arg,Alloca);
-        code_gen->NamedValues[Arg.getName()] = Alloca;
+        code_gen->NamedValues[Arg.getName()] = Variable{Alloca, llvm::Type::getDoubleTy(*code_gen->TheContext)};
     }
     if(P.getName() == "__anon__expr"){
         llvm::Value *RetVal = Body.at(0)->codegen();
