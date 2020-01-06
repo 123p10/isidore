@@ -3,13 +3,14 @@
 #include <iostream>
 
 std::map<std::string,std::string> keywords_list = {
-    {"int","data_int"},
-    {"bool","data_boolean"},
-    {"char","data_character"},
-    {"string","data_string"},
+    {"int","data_type"},
+    {"bool","data_type"},
+    {"char","data_type"},
+    {"string","data_type"},
     //May insert partial type inferencing to kill float but we shall see
-    {"float","data_float"},
-    {"void","data_void"},
+    {"float","data_type"},
+    {"double","data_type"},
+    {"void","data_type"},
     {"extern","extern"},
     {"if","if"},
     {"else","else"},

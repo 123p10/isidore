@@ -1,4 +1,4 @@
-void foo(x){
+double foo(x){
     var y = x+1;
     return y*y;
 }
