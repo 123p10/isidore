@@ -18,10 +18,12 @@ High Level TODO
         Take certain constructs out of expressions, make instructions(if,var,for)
             Then make it so we don't need semicolons for ifs
         Fix variable scopage(vars declared inside ifs should not be accessible after)
+            Probably going to have to adjust NamedValues to have other elements
         String
         Char
         Arrays
         Function prototypes
+        Garbage Collection
     Error Handling(SO much todo here)
         Proper error handling functions
         Develop verbose error outputs, line numbering, keywords, etc.
