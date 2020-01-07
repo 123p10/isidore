@@ -15,12 +15,18 @@ Every part of the system is built with the OOP principles in mind. The lexer mod
 Isidore is currently under heavy development and is certainly not complete. The compiler has only been tested on a single Ubuntu machine. Seg-faults and non user friendly error messages may arise if you are not extremely careful.
 
 #### How to Build Isidore Programs
+To run an Isidore program you require some form of llvm and g++. For linux users it is probably easiest to do
+`sudo apt-get install llvm` and `sudo apt-get install g++`. Once you have the dependencies installed you may proceed below.
 1. Pull this repo
 2. `cd` to the local repo
 3. Run `make`
 4. Run the output file main (Linux: ./main)
 
-*Note: this will compile and run the isidore program "test.isd" located at the current directory, you can attempt to change this by editing test_lexer.cpp before building the main source code. Proper compiler will be available in production release.*
+*Note: this will compile and run the isidore program "main.isd"*
+
+*To run your own programs type `./main <relative path to .isd file>`*
+
+*Ex. `./main examples/HelloWorld.isd`*
 
 ### Plan
 The things I am working on in the near future are listed in TODO. I won't be posting what has been accomplished per say as it will take too much time. Documentation is currently in progress and available in the docs folder, examples are also available in the examples folder.

@@ -1,11 +1,15 @@
 extern double printd(x);
 extern short putcharc(ch);
+short print(x){
+    putcharc(x);
+    return x;
+}
 double mod(){
     short nl = 10;
     for(short c = 48;c < 127;c+=1){
-        putcharc(c);
+        print(c);
         if((c-47) % 10 == 0){
-            putcharc(nl);
+            print(nl);
         };
     };
     return 0;

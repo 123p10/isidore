@@ -14,6 +14,6 @@
 
 extern "C" DLLEXPORT double putchard(double X);
 extern "C" DLLEXPORT double printd(double X);
-extern "C" DLLEXPORT char putcharc(char X);
+extern "C" DLLEXPORT short putcharc(short X);
 
 #endif

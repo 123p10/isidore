@@ -1,4 +1,4 @@
-extern char putcharc(ch);
+extern short putcharc(ch);
 extern double putchard(c);
 int printStatement(a,b,c,d, e){
     putchard(a);

@@ -6,10 +6,9 @@ Constant TODOS
 High Level TODO 
     Syntax Definition
         Implement while statements
-        Proper type definition(no inferencing)
         Think about whether we use int main() or compile inline commands
             deprecate TopLevelExpressions
-        Change syntax of function definition(not void)
+        Change syntax of function definition(types for arguments)
         foreach loop
     Workflow/compilation
         Develop production(for user use) compiler framework
@@ -17,11 +16,11 @@ High Level TODO
     Data
         Should we add globals?
         Take certain constructs out of expressions, make instructions(if,var,for)
-            Then make it so we don't need semicolons for ifs
+            Then make it so we don't need semicolons for these constructs in statement lists, (no if(){};)
         Fix variable scopage(vars declared inside ifs should not be accessible after)
             Probably going to have to adjust NamedValues to have other elements
         String
-        Char
+        Char(char type is literally just a short)
         Arrays
         Function prototypes
         Garbage Collection
@@ -51,8 +50,9 @@ Low Level TODO
         Better storage of getCurrToken()
         Remove semi colons from if,for statements
         Fix for statements always running once
-
-    Not so quick Fixes 
+        Cast function calls to proper types
+    Not so quick Fixes
+        Should we keep overflows 
         Develop proper handling of semi colons(right now they are checked on a case by case basis)
         If else statement exists we shouldn't need to return at the end
         Short circuit boolean evaluation
