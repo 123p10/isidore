@@ -6,6 +6,7 @@
 #include "llvm/IR/Module.h"
 #include "llvm/IR/LegacyPassManager.h"
 #include "../JIT/KaleidoscopeJIT.h"
+
 class PrototypeAST;
 struct Variable
 {
