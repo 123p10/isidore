@@ -11,7 +11,7 @@ High Level TODO
         Change syntax of function definition(types for arguments)
         foreach loop
     Workflow/compilation
-        Develop production(for user use) compiler framework
+        Allow toggling of code optimizations
         Debugger
     Data
         Should we add globals?
