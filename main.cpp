@@ -8,19 +8,32 @@
 #include "code_generation/code_gen.h"
 #include "llvm/Support/raw_ostream.h"
 #include "extern/extern.h"
-
 int main(int argc, char* argv[]){
+    bool showCode = false;
+    //bool optimizations = true;
     std::string file_name = "main.isd";
-    if(argc > 1){
-        for(int i = 0;i < argc;i++){
-            file_name = argv[i];
+    for(int i = 0;i < argc;i++){
+        if(strcmp(argv[i],"-f") == 0){
+            file_name = argv[i+1];
         }
+        else if(strcmp(argv[i],"-o") == 0){
+         //   optimizations = false;
+        }
+        else if(strcmp(argv[i],"-d") == 0){
+            showCode = true;
+        //    optimizations = false;
+        }
+        else if(strcmp(argv[i],"-c") == 0){
+            showCode = true;
+        }
+
     }
     std::ifstream my_file(file_name);
     CodeGenerator * code_gen = new CodeGenerator();
     ProgramFile test_file(my_file);
     tokenize_file(test_file);
     ASTTree source_tree(test_file,code_gen);
+    Driver my_driver(showCode);
     while(1){
         if(source_tree.getCurrToken().value == "EOF"){
             break;
@@ -29,13 +42,13 @@ int main(int argc, char* argv[]){
             source_tree.nextToken();
         }
         else if(source_tree.getCurrToken().type == "data_type"){
-            HandleDefinition(source_tree,code_gen);
+            my_driver.HandleDefinition(source_tree,code_gen);
         }
         else if(source_tree.getCurrToken().type == "extern"){
-            HandleExtern(source_tree,code_gen);
+            my_driver.HandleExtern(source_tree,code_gen);
         }
         else{
-            HandleTopLevelExpression(source_tree,code_gen);
+            my_driver.HandleTopLevelExpression(source_tree,code_gen);
         }
     }
     //code_gen->TheModule->get()->print(llvm::errs(), nullptr);

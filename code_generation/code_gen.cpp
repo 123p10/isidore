@@ -5,7 +5,7 @@
 #include "llvm/Transforms/Scalar/GVN.h"
 #include "llvm/Support/TargetSelect.h"
 #include "clang/AST/Type.h"
- #include "llvm/Transforms/Utils.h"
+#include "llvm/Transforms/Utils.h"
 llvm::Value *LogErrorV(const char *Str){
     LogError(Str);
     return nullptr;
@@ -50,14 +50,13 @@ CodeGenerator::~CodeGenerator(){
     delete TheJIT;
     delete FunctionProtos;
 }
-void CodeGenerator::InitializeModuleAndPassManager(void){
-    bool isDebug = true;
+void CodeGenerator::InitializeModuleAndPassManager(){
     TheModule = new std::unique_ptr<llvm::Module>;
     *TheModule = llvm::make_unique<llvm::Module>("my cool jit", *TheContext);
     TheModule->get()->setDataLayout(TheJIT->get()->getTargetMachine().createDataLayout());
     TheFPM = new std::unique_ptr<llvm::legacy::FunctionPassManager>;
     *TheFPM = llvm::make_unique<llvm::legacy::FunctionPassManager>(TheModule->get());
-    if(!isDebug){
+    if(false){
         TheFPM->get()->add(llvm::createPromoteMemoryToRegisterPass());
         TheFPM->get()->add(llvm::createInstructionCombiningPass());
         TheFPM->get()->add(llvm::createReassociatePass());
@@ -92,6 +91,7 @@ llvm::Value * CodeGenerator::castToType(llvm::Value *value, llvm::Type * type){
         }
     }
     return value;
+
 }
 
 llvm::AllocaInst *CodeGenerator::CreateEntryBlockAlloca(llvm::Function *TheFunction, llvm::Type * type, const std::string &VarName){
