@@ -58,3 +58,5 @@ The things I am working on in the near future are listed in TODO. I won't be pos
 6. Semicolons should be placed at end of every non block statement to clarify end of statement.
 7. Global mutable variables have no use in modern programs.
     * Global constants are acceptable and important for code readibility
+8. Raw pointers are dangerous and often improperly used
+9. Warnings should be treated as Errors
