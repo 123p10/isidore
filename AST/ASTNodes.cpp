@@ -87,15 +87,15 @@ llvm::Value *BinaryExprAST::codegen() {
             code_gen->Builder->CreateStore(Val, Variable);
         }
         else if(Op == "+="){
-            Val = code_gen->Builder->CreateAdd(LHSE->codegen(),Val,"add_equal_tmp");
+            Val = code_gen->Builder->CreateFAdd(LHSE->codegen(),Val,"add_equal_tmp");
             code_gen->Builder->CreateStore(Val,Variable);
         }
         else if(Op == "-="){
-            Val = code_gen->Builder->CreateSub(LHSE->codegen(),Val,"sub_equal_tmp");
+            Val = code_gen->Builder->CreateFSub(LHSE->codegen(),Val,"sub_equal_tmp");
             code_gen->Builder->CreateStore(Val,Variable);
         }
         else if(Op == "*="){
-            Val = code_gen->Builder->CreateMul(LHSE->codegen(),Val,"mul_equal_tmp");
+            Val = code_gen->Builder->CreateFMul(LHSE->codegen(),Val,"mul_equal_tmp");
             code_gen->Builder->CreateStore(Val,Variable);
         }
         else if(Op == "/="){

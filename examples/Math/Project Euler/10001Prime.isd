@@ -1,6 +1,6 @@
-extern printd(x);
-extern putchard(x)
-void prime_check(curr,num){
+extern double printd(x);
+extern double putchard(x)
+double prime_check(curr,num){
     if(num == curr){
         return 1;
     };
@@ -9,7 +9,7 @@ void prime_check(curr,num){
     };
     return prime_check(curr+2,num);
 }
-void is_prime(num){
+double is_prime(num){
     if(num == 2){
         return 1;
     };
@@ -18,7 +18,7 @@ void is_prime(num){
     };
     return prime_check(3,num);
 }
-void find_nth_prime(curr_num,curr_prime,max_prime){
+double find_nth_prime(curr_num,curr_prime,max_prime){
     if(is_prime(curr_num)){
       curr_prime += 1;  
     };

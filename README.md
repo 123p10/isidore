@@ -3,6 +3,9 @@
 ### Purpose
 Every day there is a hip, new programming language. The recent trend for the past 5-10 years has been moving towards more "beautiful" languages like Python and Golang. Isidore attempts to redirect this focus from beautiful code towards clear, readable, maintainable code.
 
+By enforcing code standards and best practices at the compiler level:
+technical debt for tech companies will decrease, updates and code changes will be easier and bugs will become less frequent and easier to resolve.
+
 ### Name
 The name of the language will most certainly change. The name comes from the story of Isidore of Seville, the "last scholar of the ancient world" for compiling an encyclopedia with works from the Ancient world. Just as this language is attempting to retain some of the constructs of older languages while utilizing modern features.
 
@@ -24,9 +27,9 @@ To run an Isidore program you require llvm-9 and g++. For linux users it is prob
 
 *Note: this will compile and run the isidore program "main.isd"*
 
-*To run your own programs type `./main <relative path to .isd file>`*
+*To run your own programs type `./main -f <relative path to .isd file>`*
 
-*Ex. `./main examples/HelloWorld.isd`*
+*Ex. `./main -f examples/HelloWorld.isd`*
 
 ### Plan
 The things I am working on in the near future are listed in TODO. I won't be posting what has been accomplished per say as it will take too much time. Documentation is currently in progress and available in the docs folder, examples are also available in the examples folder.
@@ -53,3 +56,5 @@ The things I am working on in the near future are listed in TODO. I won't be pos
     * No stupid operators like << or >>
 5. Functions should be able to return multiple values, not by pass by reference in parameters.
 6. Semicolons should be placed at end of every non block statement to clarify end of statement.
+7. Global mutable variables have no use in modern programs.
+    * Global constants are acceptable and important for code readibility

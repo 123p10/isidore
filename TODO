@@ -20,7 +20,6 @@ High Level TODO
         Fix variable scopage(vars declared inside ifs should not be accessible after)
             Probably going to have to adjust NamedValues to have other elements
         String
-        Char(char type is literally just a short)
         Arrays
         Function prototypes
         Garbage Collection
