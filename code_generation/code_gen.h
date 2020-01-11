@@ -31,7 +31,10 @@ class CodeGenerator{
         void InitializeModuleAndPassManager(void);
         llvm::AllocaInst *CreateEntryBlockAlloca(llvm::Function *TheFunction,llvm::Type * type, const std::string &VarName);
         llvm::Value * castToType(llvm::Value *value, llvm::Type * type);
-
+        llvm::Type * auto_cast(llvm::Value *&value_1, llvm::Value *& value_2);
+        llvm::Type * highest_order_type(llvm::Type * type_1, llvm::Type * type_2);
+        int type_hierarchy(llvm::Type * type);
+        llvm::Value * operator_instructions(std::string instruction, llvm::Value *L, llvm::Value *R);
         CodeGenerator();
         ~CodeGenerator();
 

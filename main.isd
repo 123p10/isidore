@@ -1,13 +1,11 @@
-extern double printd(x);
-extern short putcharc(ch);
 double mod(){
-    short nl = 10;
-    for(short c = 48;c < 127;c+=1){
-        putcharc(c);
-        if((c-47) % 10 == 0){
-            putcharc(nl);
-        };
-    };
-    return 0;
+    short abc = 0;
+    short def = 2;
+    double ghi = 5;
+    abc += def + ghi;
+    def += abc + ghi;
+    ghi += def + abc;
+
+    return ghi;
 }
 mod();
