@@ -292,12 +292,15 @@ llvm::Value *VarExprAST::codegen(){
 
 
 llvm::Function *PrototypeAST::codegen(){
-    std::vector<llvm::Type*> Doubles(Args.size(),llvm::Type::getDoubleTy(*(code_gen->TheContext)));
-    llvm::FunctionType *FT = llvm::FunctionType::get(std::move(type),Doubles,false);
+    std::vector<llvm::Type*> argTypes;
+    for(int i = 0; i < Args.size();i++){
+        argTypes.push_back(Args.at(i).type);
+    }
+    llvm::FunctionType *FT = llvm::FunctionType::get(std::move(type),argTypes,false);
     llvm::Function *F = llvm::Function::Create(FT, llvm::Function::ExternalLinkage,Name,code_gen->TheModule->get());
     unsigned Idx = 0;
     for(auto &Arg : F->args()){
-        Arg.setName(Args[Idx++]);
+        Arg.setName(Args[Idx++].name);
     }
     return F;
 }
@@ -317,10 +320,9 @@ llvm::Function *FunctionAST::codegen(){
     //Maybe we change this
     code_gen->NamedValues.clear();
     for(auto &Arg : TheFunction->args()){
-
-        llvm::AllocaInst *Alloca = code_gen->CreateEntryBlockAlloca(TheFunction,llvm::Type::getDoubleTy(*code_gen->TheContext),Arg.getName());
+        llvm::AllocaInst *Alloca = code_gen->CreateEntryBlockAlloca(TheFunction,Arg.getType(),Arg.getName());
         code_gen->Builder->CreateStore(&Arg,Alloca);
-        code_gen->NamedValues[Arg.getName()] = Variable{Alloca, llvm::Type::getDoubleTy(*code_gen->TheContext)};
+        code_gen->NamedValues[Arg.getName()] = Variable{Alloca, Arg.getType()};
     }
     if(P.getName() == "__anon__expr"){
         llvm::Value *RetVal = Body.at(0)->codegen();

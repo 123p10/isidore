@@ -15,8 +15,8 @@ struct Variable
 };
 struct Argument
 {
+    llvm::Type * type;
     std::string name;
-    std::string type;
 };
 class CodeGenerator{
     public:
