@@ -1,6 +1,4 @@
 #include "ASTTree.h"
-//I have a feeling this should all be in our program file class??!!
-
 
 Token ASTTree::nextToken() {
     (*this).token_i++;
@@ -143,25 +141,8 @@ std::unique_ptr<ExprAST> ASTTree::ParseBinOpRHS(int ExprPrec,std::unique_ptr<Exp
     }
 }
 std::unique_ptr<PrototypeAST> ASTTree::ParsePrototype() {
-    llvm::Type * type = std::move(llvm::Type::getDoubleTy(*code_gen->TheContext));
-    Token type_tok;
+    llvm::Type * type = type_from_name(getCurrToken());
     std::string FnName;
-    type_tok = getCurrToken();
-    if(type_tok.type == "data_type"){
-       if(type_tok.value == "double"){
-           type = std::move(llvm::Type::getDoubleTy(*code_gen->TheContext));
-       } 
-       else if(type_tok.value == "int"){
-           type = std::move(llvm::Type::getInt64Ty(*code_gen->TheContext));
-       }
-        else if(type_tok.value == "short"){
-            type = std::move(llvm::Type::getInt8Ty(*code_gen->TheContext));
-        }
-
-    }
-    else{
-        return LogErrorP("Please specify a data type for the function");
-    }
     nextToken();
     unsigned Kind = 0; //0-iden, 1=unary, 2=binary
     unsigned BinaryPrecedence = 30;
@@ -306,20 +287,8 @@ std::unique_ptr<ExprAST> ASTTree::ParseUnary(){
     return nullptr;
 }
 std::unique_ptr<ExprAST> ASTTree::ParseVarExpr(){
-    std::string type_str = getCurrToken().value;
-    llvm::Type * type = std::move(llvm::Type::getDoubleTy(*code_gen->TheContext));
-    if(type_str == "double"){
-        type = std::move(llvm::Type::getDoubleTy(*code_gen->TheContext));
-    }
-    else if(type_str == "int"){
-        type = std::move(llvm::Type::getInt64Ty(*code_gen->TheContext));
-    }
-    else if(type_str == "short"){
-        type = std::move(llvm::Type::getInt8Ty(*code_gen->TheContext));
-    }
-    else{
-        type = std::move(llvm::Type::getDoubleTy(*code_gen->TheContext));
-    }
+
+    llvm::Type * type = type_from_name(getCurrToken());
     nextToken();
     std::vector<std::pair<std::string, std::unique_ptr<ExprAST>>> VarNames;
 
@@ -385,4 +354,24 @@ std::unique_ptr<ExprAST> ASTTree::ParseCharExpr(){
     nextToken();
     return std::move(Result);
 
+}
+llvm::Type * ASTTree::type_from_name(Token data_token){
+    llvm::Type * type = std::move(llvm::Type::getDoubleTy(*code_gen->TheContext));
+    if(data_token.type == "data_type"){
+        if(data_token.value == "double"){
+            type = std::move(llvm::Type::getDoubleTy(*code_gen->TheContext));
+        }
+        else if(data_token.value == "int"){
+            type = std::move(llvm::Type::getInt64Ty(*code_gen->TheContext));
+        }
+        else if(data_token.value == "short"){
+            type = std::move(llvm::Type::getInt8Ty(*code_gen->TheContext));
+        }
+        else{
+            type = std::move(llvm::Type::getDoubleTy(*code_gen->TheContext));
+        }
+        return type;
+    }
+    LogError("No type specified for declaration");
+    return nullptr;
 }
