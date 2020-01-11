@@ -39,7 +39,7 @@ class ASTTree{
         Token getCurrToken();
         Token nextToken();
         std::vector<std::unique_ptr<ExprAST>> ParseStatementList();
-
+        llvm::Type * type_from_name(Token data_token);
 
 };
 

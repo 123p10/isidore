@@ -13,7 +13,11 @@ struct Variable
     llvm::AllocaInst *value;
     llvm::Type *type;
 };
-
+struct Argument
+{
+    std::string name;
+    std::string type;
+};
 class CodeGenerator{
     public:
         void initPrecedence();
