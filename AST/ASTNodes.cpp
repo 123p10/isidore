@@ -86,8 +86,19 @@ llvm::Value *BinaryExprAST::codegen() {
             return nullptr;
         }
         llvm::Value *Variable = code_gen->NamedValues[LHSE->getName()].value;
-        Val = code_gen->castToType(Val,code_gen->NamedValues[LHSE->getName()].type);
-        llvm::Value *variable_value = LHSE->codegen();
+        llvm::Value *variable_value;
+        if(LHSE->isArrayElem){
+            ArrayElementAST *array_elem = dynamic_cast<ArrayElementAST*>(LHS.get());
+            llvm::Value* index_list[2];
+            index_list[1] = llvm::ConstantInt::get(*(code_gen->TheContext),llvm::APInt(32,array_elem->element_number));
+            index_list[0] = llvm::ConstantInt::get(*(code_gen->TheContext),llvm::APInt(32,0));
+            llvm::ArrayRef<llvm::Value *> indices(index_list);
+            Variable = code_gen->Builder->CreateGEP(Variable,indices);
+        }
+        else{
+            Val = code_gen->castToType(Val,code_gen->NamedValues[LHSE->getName()].type);
+            variable_value = LHSE->codegen();
+        }
 
 
         if(!Variable){
@@ -374,3 +385,15 @@ llvm::Value *ReturnExprAST::codegen(){
     return code_gen->Builder->CreateRet(return_val);
 }
 
+llvm::Value *ArrayElementAST::codegen(){
+    llvm::Value *V = code_gen->NamedValues[Name].value;
+    if(!V){
+        LogErrorV("Unknown Variable Name");
+    }
+    llvm::Value* index_list[2];
+    index_list[1] = llvm::ConstantInt::get(*(code_gen->TheContext),llvm::APInt(32,element_number));
+    index_list[0] = llvm::ConstantInt::get(*(code_gen->TheContext),llvm::APInt(32,0));
+    llvm::ArrayRef<llvm::Value *> indices(index_list);
+    llvm::Value* element_value = code_gen->Builder->CreateGEP(V,indices);
+    return code_gen->Builder->CreateLoad(element_value,(Name + std::to_string(element_number)).c_str());
+}
