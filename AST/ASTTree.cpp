@@ -178,9 +178,11 @@ std::unique_ptr<PrototypeAST> ASTTree::ParsePrototype() {
     if(getCurrToken().value != "("){
         return LogErrorP("Expected '(' in prototype");
     }
-    std::vector<std::string> ArgNames;
-    while(nextToken().type == "identifier"){
-        ArgNames.push_back(getCurrToken().value);
+    std::vector<Argument> ArgNames;
+    while(nextToken().type == "data_type"){
+        llvm::Type * argType = type_from_name(getCurrToken());
+        nextToken();
+        ArgNames.push_back(Argument{argType,getCurrToken().value});
         if(nextToken().value != ","){
             break;
         }
@@ -214,7 +216,7 @@ std::unique_ptr<FunctionAST> ASTTree::ParseTopLevelExpr() {
   if (auto E = ParseExpression()) {
     std::vector<std::unique_ptr<ExprAST>> statement;
     statement.push_back(std::move(E));
-    auto Proto = llvm::make_unique<PrototypeAST>("__anon__expr", std::vector<std::string>(),code_gen,llvm::Type::getDoubleTy(*code_gen->TheContext));
+    auto Proto = llvm::make_unique<PrototypeAST>("__anon__expr", std::vector<Argument>(),code_gen,llvm::Type::getDoubleTy(*code_gen->TheContext));
     return llvm::make_unique<FunctionAST>(std::move(Proto), std::move(statement),code_gen);
   }
   return nullptr;

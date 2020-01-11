@@ -8,14 +8,12 @@ High Level TODO
         Implement while statements
         Think about whether we use int main() or compile inline commands
             deprecate TopLevelExpressions
-        Change syntax of function definition(types for arguments)
         foreach loop
     Workflow/compilation
         Allow toggling of code optimizations
         Debugger
         Compile to executables
     Data
-        Should we add globals?
         Take certain constructs out of expressions, make instructions(if,var,for)
             Then make it so we don't need semicolons for these constructs in statement lists, (no if(){};)
         Fix variable scopage(vars declared inside ifs should not be accessible after)
