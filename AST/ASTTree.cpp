@@ -46,7 +46,14 @@ std::unique_ptr<ExprAST> ASTTree::ParseIdentifierExpr() {
 
     //This is a variable
     if(getCurrToken().value != "("){
+        if(getCurrToken().value == "["){
+            int index = std::stoi(nextToken().value);
+            nextToken();
+            nextToken();
+            return llvm::make_unique<ArrayElementAST>(IdName,code_gen,index);
+        }
         return llvm::make_unique<VariableExprAST>(IdName,code_gen);
+        
     }
     //This is a function
     nextToken();

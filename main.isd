@@ -1,12 +1,13 @@
 extern short putcharc(short ch);
 
 double main(){
-    double sb = 5;
+    short sb = 49;
     putcharc(10);
     putcharc(10);
-    short[3] x;
-
+    short[10] x;
     putcharc(48);
+    x[0] = sb;
+    putcharc(x[0]);
     return putcharc(10);
 }
 main();

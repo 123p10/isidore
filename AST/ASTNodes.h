@@ -28,12 +28,16 @@ class NumberExprAST : public ExprAST {
 };
 
 class VariableExprAST : public ExprAST{
-    CodeGenerator *code_gen;
 
-    std::string Name;
     public:
+      std::string Name;
+      CodeGenerator *code_gen;
+      bool isArrayElem = false;
+
         const std::string &getName() const { return Name; }
         VariableExprAST(const std::string &Name, CodeGenerator * code_gen);
+        VariableExprAST(const std::string &Name, CodeGenerator * code_gen,bool isArrayElem)
+        : Name(Name),code_gen(code_gen),isArrayElem(isArrayElem){}
         llvm::Value *codegen() override;
 
 };
@@ -144,4 +148,15 @@ public:
               std::vector<std::unique_ptr<ExprAST>> Body, CodeGenerator * code_gen);
   llvm::Function *codegen();
 };
+
+class ArrayElementAST : public VariableExprAST{
+
+    public:
+        int element_number;
+
+      ArrayElementAST(const std::string &Name, CodeGenerator * code_gen, int element_number):
+      VariableExprAST(Name,code_gen,true), element_number(element_number){}
+      llvm::Value *codegen();
+};
+
 #endif
