@@ -13,6 +13,7 @@ High Level TODO
     Workflow/compilation
         Allow toggling of code optimizations
         Debugger
+        Compile to executables
     Data
         Should we add globals?
         Take certain constructs out of expressions, make instructions(if,var,for)

@@ -61,3 +61,4 @@ The things I am working on in the near future are listed in TODO. I won't be pos
 8. Raw pointers are dangerous and often improperly used
 9. Warnings should be treated as Errors
 10. No goto statements ever
+11. Language should always remain portable and cross platform

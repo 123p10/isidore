@@ -80,6 +80,9 @@ llvm::Value *BinaryExprAST::codegen() {
         }
         llvm::Value *Variable = code_gen->NamedValues[LHSE->getName()].value;
         Val = code_gen->castToType(Val,code_gen->NamedValues[LHSE->getName()].type);
+        llvm::Value *variable_value = LHSE->codegen();
+
+
         if(!Variable){
             return LogErrorV("Unknown Variable name");
         }
@@ -87,19 +90,19 @@ llvm::Value *BinaryExprAST::codegen() {
             code_gen->Builder->CreateStore(Val, Variable);
         }
         else if(Op == "+="){
-            Val = code_gen->Builder->CreateFAdd(LHSE->codegen(),Val,"add_equal_tmp");
+            Val = code_gen->operator_instructions("Add",variable_value,Val);
             code_gen->Builder->CreateStore(Val,Variable);
         }
         else if(Op == "-="){
-            Val = code_gen->Builder->CreateFSub(LHSE->codegen(),Val,"sub_equal_tmp");
+            Val = code_gen->operator_instructions("Subtract",variable_value,Val);
             code_gen->Builder->CreateStore(Val,Variable);
         }
         else if(Op == "*="){
-            Val = code_gen->Builder->CreateFMul(LHSE->codegen(),Val,"mul_equal_tmp");
+            Val = code_gen->operator_instructions("Multiply",variable_value,Val);
             code_gen->Builder->CreateStore(Val,Variable);
         }
         else if(Op == "/="){
-            Val = code_gen->Builder->CreateFDiv(LHSE->codegen(),Val,"div_equal_tmp");
+            Val = code_gen->operator_instructions("Divide",variable_value,Val);
             code_gen->Builder->CreateStore(Val,Variable);
         }
 
@@ -107,64 +110,46 @@ llvm::Value *BinaryExprAST::codegen() {
     }
     llvm::Value *L = LHS->codegen();
     llvm::Value *R = RHS->codegen();
-    if(L->getType() != R->getType()){
-        if(L->getType()->isFloatingPointTy() && !(R->getType()->isFloatingPointTy())){
-            R = code_gen->castToType(R,L->getType());
-        }
-        else{
-            L = code_gen->castToType(L,R->getType());
-        }
-    }
     if (!L || !R)
         return nullptr;
     if(Op == "+"){
-        return code_gen->Builder->CreateFAdd(L,R, "addtmp");
+        return code_gen->operator_instructions("Add",L,R);
     }
     else if(Op == "-"){
-        return code_gen->Builder->CreateFSub(L,R, "subtmp");
+        return code_gen->operator_instructions("Subtract",L,R);
     }
     else if(Op == "*"){
-        return code_gen->Builder->CreateFMul(L,R, "multmp");
+        return code_gen->operator_instructions("Multiply",L,R);
     }
     else if(Op == "/"){
-        return code_gen->Builder->CreateFDiv(L,R,"divtmp");
+        return code_gen->operator_instructions("Divide",L,R);
     }
     else if(Op == "%"){
-        return code_gen->Builder->CreateFRem(L,R,"modtmp");
+        return code_gen->operator_instructions("Remainder",L,R);
     }
     else if(Op == "<"){
-        L = code_gen->Builder->CreateFCmpULT(L,R,"cmptmp");
-        return code_gen->Builder->CreateUIToFP(L,llvm::Type::getDoubleTy(*(code_gen->TheContext)),"booltmp");
+        return code_gen->operator_instructions("LessThan",L,R);
     }
     else if(Op == ">"){
-        L = code_gen->Builder->CreateFCmpUGT(L,R,"cmptmp");
-        return code_gen->Builder->CreateUIToFP(L,llvm::Type::getDoubleTy(*(code_gen->TheContext)),"booltmp");
+        return code_gen->operator_instructions("GreaterThan",L,R);
     }
     else if(Op == "=="){
-        L = code_gen->Builder->CreateFCmpUEQ(L,R,"cmptmp");
-        return code_gen->Builder->CreateUIToFP(L,llvm::Type::getDoubleTy(*(code_gen->TheContext)),"booltmp");
+        return code_gen->operator_instructions("CheckEquality",L,R);
     }
     else if(Op == ">="){
-        L = code_gen->Builder->CreateFCmpUGE(L,R,"cmptmp");
-        return code_gen->Builder->CreateUIToFP(L,llvm::Type::getDoubleTy(*(code_gen->TheContext)),"booltmp");
+        return code_gen->operator_instructions("GreaterThanEqualTo",L,R);
     }
     else if(Op == "<="){
-        L = code_gen->Builder->CreateFCmpULE(L,R,"cmptmp");
-        return code_gen->Builder->CreateUIToFP(L,llvm::Type::getDoubleTy(*(code_gen->TheContext)),"booltmp");
+        return code_gen->operator_instructions("LessThanEqualTo",L,R);
     }
     else if(Op == "!="){
-        L = code_gen->Builder->CreateFCmpUNE(L,R,"cmptmp");
-        return code_gen->Builder->CreateUIToFP(L,llvm::Type::getDoubleTy(*(code_gen->TheContext)),"booltmp");
+        return code_gen->operator_instructions("NotEqual",L,R);
     }
     else if(Op == "&&"){
-        //No short circuit
-        L = code_gen->Builder->CreateAnd(L,R,"cmptmp");
-        return code_gen->Builder->CreateUIToFP(L,llvm::Type::getDoubleTy(*(code_gen->TheContext)),"booltmp");
+        return code_gen->operator_instructions("And",L,R);
     }
     else if(Op == "||"){
-        //No short circuit
-        L = code_gen->Builder->CreateOr(L,R,"cmptmp");
-        return code_gen->Builder->CreateUIToFP(L,llvm::Type::getDoubleTy(*(code_gen->TheContext)),"booltmp");
+        return code_gen->operator_instructions("Or",L,R);
     }
 
     else{
@@ -360,3 +345,4 @@ llvm::Value *ReturnExprAST::codegen(){
     return_val = code_gen->castToType(return_val,TheFunction->getReturnType());
     return code_gen->Builder->CreateRet(return_val);
 }
+
