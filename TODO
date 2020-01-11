@@ -22,6 +22,7 @@ High Level TODO
         Arrays
         Function prototypes
         Garbage Collection
+        void type
     Error Handling(SO much todo here)
         Proper error handling functions
         Develop verbose error outputs, line numbering, keywords, etc.
@@ -45,6 +46,7 @@ Low Level TODO
         ^
         Update docs
     Quick Fixes
+        Add ],; to ParsePrimary to skip expression
         Better storage of getCurrToken()
         Remove semi colons from if,for statements
         Fix for statements always running once
