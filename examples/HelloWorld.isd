@@ -1,12 +1,12 @@
-extern short putcharc(ch);
-extern double putchard(c);
-int printStatement(a,b,c,d, e){
-    putchard(a);
-    putchard(b);
-    putchard(c);
-    putchard(d);
-    putchard(e);
-    putchard(10);
+extern short putcharc(short ch);
+int printStatement(short a,short b,short c,short d,short e){
+    short nl = 10;
+    putcharc(a);
+    putcharc(b);
+    putcharc(c);
+    putcharc(d);
+    putcharc(e);
+    putcharc(nl);
     return 0;
 }
 
