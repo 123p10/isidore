@@ -168,10 +168,17 @@ llvm::Value *CallExprAST::codegen(){
         return LogErrorV("Incorrect # of arguments passed");
     }
     std::vector<llvm::Value *> ArgsV;
-    for(unsigned i = 0, e = Args.size(); i != e;++i){
-        ArgsV.push_back(Args[i]->codegen());
+    int i = 0;
+    for(auto &Arg : CalleeF->args()){
+        llvm::Value * argExpr = Args[i]->codegen();
+        argExpr = code_gen->castToType(argExpr,Arg.getType());
+        ArgsV.push_back(argExpr);
         if(!ArgsV.back()){
             return nullptr;
+        }
+        i++;
+        if(i >= (int)Args.size()){
+            break;
         }
     }
     return code_gen->Builder->CreateCall(CalleeF,ArgsV,"calltmp");
@@ -293,7 +300,7 @@ llvm::Value *VarExprAST::codegen(){
 
 llvm::Function *PrototypeAST::codegen(){
     std::vector<llvm::Type*> argTypes;
-    for(int i = 0; i < Args.size();i++){
+    for(int i = 0; i < (int)Args.size();i++){
         argTypes.push_back(Args.at(i).type);
     }
     llvm::FunctionType *FT = llvm::FunctionType::get(std::move(type),argTypes,false);
