@@ -289,11 +289,17 @@ std::unique_ptr<ExprAST> ASTTree::ParseUnary(){
     return nullptr;
 }
 std::unique_ptr<ExprAST> ASTTree::ParseVarExpr(){
-
     llvm::Type * type = type_from_name(getCurrToken());
     nextToken();
     std::vector<std::pair<std::string, std::unique_ptr<ExprAST>>> VarNames;
-
+    bool isArray = false;
+    std::unique_ptr<ExprAST> size = nullptr;
+    if(getCurrToken().value == "["){
+        nextToken();
+        size = std::move(ParseExpression());
+        isArray = true;
+        nextToken();
+    }
     if(getCurrToken().type != "identifier"){
         return LogError("expected identifier after var");
     }
@@ -307,12 +313,12 @@ std::unique_ptr<ExprAST> ASTTree::ParseVarExpr(){
             if(!Init){return nullptr;}
         }
         VarNames.push_back(std::make_pair(Name, std::move(Init)));
-
+        
         if(getCurrToken().value != ","){break;}
         nextToken();
         if(getCurrToken().type != "identifier"){return LogError("expected identifier list after var");}
     }
-    return llvm::make_unique<VarExprAST>(std::move(VarNames),std::move(type),code_gen);
+    return llvm::make_unique<VarExprAST>(std::move(VarNames),std::move(type),code_gen,isArray,std::move(size));
 }
 
 std::unique_ptr<ExprAST> ASTTree::ParseReturnExpr(){

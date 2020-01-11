@@ -33,6 +33,13 @@ ReturnExprAST::ReturnExprAST(std::unique_ptr<ExprAST> returnExpr,CodeGenerator *
     (*this).code_gen = code_gen;
     (*this).isReturn = true;
 }
+VarExprAST::VarExprAST(std::vector<std::pair<std::string, std::unique_ptr<ExprAST>>> VarNames, llvm::Type * type,  CodeGenerator * code_gen, bool isArray, std::unique_ptr<ExprAST> size){
+    (*this).VarNames = std::move(VarNames);
+    (*this).type = std::move(type);
+    (*this).code_gen = code_gen;
+    (*this).isArray = isArray;
+    (*this).size = std::move(size);
+}
 
 FunctionAST::FunctionAST(std::unique_ptr<PrototypeAST> Proto,
               std::vector<std::unique_ptr<ExprAST>> Body, CodeGenerator * code_gen){
@@ -273,7 +280,12 @@ llvm::Value *VarExprAST::codegen(){
 
     llvm::Function *TheFunction = code_gen->Builder->GetInsertBlock()->getParent();
         std::vector<Variable> OldBindings;
-
+    if(isArray){
+        int size_int = 0;
+        llvm::ConstantInt* size_gen = static_cast<llvm::ConstantInt*>(code_gen->castToType(size->codegen(),llvm::Type::getInt64Ty(*code_gen->TheContext)));
+        size_int = size_gen->getValue().getZExtValue();
+        type = llvm::ArrayType::get(type,size_int);
+    }
     for(unsigned i = 0, e = VarNames.size(); i != e;++i){
         const std::string &VarName = VarNames[i].first;
         ExprAST *Init = VarNames[i].second.get();
@@ -286,11 +298,18 @@ llvm::Value *VarExprAST::codegen(){
             }
         }
         else{
-            InitVal = llvm::ConstantFP::get(*code_gen->TheContext,llvm::APFloat(0.0));
+            if(type->isDoubleTy()){
+                InitVal = llvm::ConstantFP::get(*code_gen->TheContext,llvm::APFloat(0.0));
+            }
+            else if(type->isIntegerTy()){
+                InitVal = llvm::ConstantInt::get(*code_gen->TheContext,llvm::APInt(64,0));
+            }
         }
         llvm::AllocaInst *Alloca = code_gen->CreateEntryBlockAlloca(TheFunction,type,VarName);
-        InitVal = code_gen->castToType(InitVal,type);
-        code_gen->Builder->CreateStore(InitVal, Alloca);
+        if(!isArray){
+            InitVal = code_gen->castToType(InitVal,type);
+            code_gen->Builder->CreateStore(InitVal, Alloca);
+        }
         OldBindings.push_back(code_gen->NamedValues[VarName]);
         code_gen->NamedValues[VarName] = Variable{Alloca,type};
     }

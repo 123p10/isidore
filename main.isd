@@ -1,16 +1,12 @@
 extern short putcharc(short ch);
-double mod(short x){
-    short abc = 0;
-    short def = 2;
-    double ghi = 5;
-    abc += def + ghi;
-    def += abc + ghi;
-    ghi += def + abc;
 
-    return ghi - x;
-}
 double main(){
-    short x = 48;
-    return putcharc(x);
+    double sb = 5;
+    putcharc(10);
+    putcharc(10);
+    short[3] x;
+
+    putcharc(48);
+    return putcharc(10);
 }
 main();
