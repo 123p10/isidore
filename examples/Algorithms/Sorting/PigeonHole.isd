@@ -1,0 +1,32 @@
+extern short putcharc(short ch);
+extern double printd(double d);
+
+int sort(){
+    int[6] initial;
+    initial[0] = 5;
+    initial[1] = 4;
+    initial[2] = 9;
+    initial[3] = 1;
+    initial[4] = -1;
+    initial[5] = 0;
+
+    int[20] dictionary;
+    for(int i = 0;i < 20;i+=1){
+        dictionary[i] = 0;
+    };
+    for(int i = 0;i < 6;i+=1){
+        dictionary[initial[i]+10] = dictionary[initial[i]+10] + 1;
+    };
+    for(int i = 0;i < 20;i+=1){
+        if(dictionary[i] > 0){
+            printd(i-10);
+        };
+    };
+    return 0;
+}
+
+double main(){
+    sort();
+    return 0;
+}
+main();
