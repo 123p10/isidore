@@ -122,6 +122,8 @@ llvm::Value * CodeGenerator::castToType(llvm::Value *value, llvm::Type * type){
             return Builder->CreateFPToSI(value,type);
         }
     }
+    if(type->isArrayTy()){
+    }
     return value;
 
 }

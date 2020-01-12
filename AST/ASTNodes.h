@@ -152,10 +152,10 @@ public:
 class ArrayElementAST : public VariableExprAST{
 
     public:
-        int element_number;
+      std::unique_ptr<ExprAST> index;
 
-      ArrayElementAST(const std::string &Name, CodeGenerator * code_gen, int element_number):
-      VariableExprAST(Name,code_gen,true), element_number(element_number){}
+      ArrayElementAST(const std::string &Name, CodeGenerator * code_gen, std::unique_ptr<ExprAST> index):
+      VariableExprAST(Name,code_gen,true), index(std::move(index)){}
       llvm::Value *codegen();
 };
 

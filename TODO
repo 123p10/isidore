@@ -57,3 +57,6 @@ Low Level TODO
         If else statement exists we shouldn't need to return at the end
         Short circuit boolean evaluation
         Fix boolean expressions(|| &&)
+
+Examples
+    Sorting Algorithm
