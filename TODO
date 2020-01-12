@@ -19,7 +19,6 @@ High Level TODO
         Fix variable scopage(vars declared inside ifs should not be accessible after)
             Probably going to have to adjust NamedValues to have other elements
         String
-        Arrays
         Function prototypes
         Garbage Collection
         void type
@@ -52,6 +51,7 @@ Low Level TODO
         Fix for statements always running once
         Cast function calls to proper types
     Not so quick Fixes
+        Add arrays to parameters of functions
         Should we keep overflows 
         Develop proper handling of semi colons(right now they are checked on a case by case basis)
         If else statement exists we shouldn't need to return at the end

@@ -24,3 +24,5 @@ Deal with this when we do variable scopes.
 void f(x){return 1;}
 f(x) && 1;
 throws error but (f(x) == 1) && 1; returns normal
+
+Comparing two integers tosses an error

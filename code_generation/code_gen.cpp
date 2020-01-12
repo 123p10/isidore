@@ -116,10 +116,16 @@ llvm::Value * CodeGenerator::castToType(llvm::Value *value, llvm::Type * type){
         if(type->isFloatingPointTy()){
             return Builder->CreateSIToFP(value,type);
         }
+        else if(type->isIntegerTy()){
+            return Builder->CreateIntCast(value,type,true);
+        }
     }
     else if(value->getType()->isFloatingPointTy()){
         if(type->isIntegerTy()){
             return Builder->CreateFPToSI(value,type);
+        }
+        else if(type->isFloatingPointTy()){
+            return Builder->CreateFPCast(value,type);
         }
     }
     if(type->isArrayTy()){
@@ -175,27 +181,57 @@ llvm::Value * CodeGenerator::operator_instructions(std::string instruction, llvm
         }
     }
     else if(instruction == "LessThan"){
-        L = Builder->CreateFCmpULT(L,R,"cmptmp");
+        if(casted_type->isFloatingPointTy()){
+            L = Builder->CreateFCmpULT(L,R,"cmptmp");
+        }
+        else if(casted_type->isIntegerTy()){
+            L = Builder->CreateICmpULT(L,R,"cmptmp");
+        }
         return Builder->CreateUIToFP(L,casted_type,"booltmp");
     }
     else if(instruction == "GreaterThan"){
-        L = Builder->CreateFCmpUGT(L,R,"cmptmp");
+        if(casted_type->isFloatingPointTy()){
+            L = Builder->CreateFCmpUGT(L,R,"cmptmp");
+        }
+        else if(casted_type->isIntegerTy()){
+            L = Builder->CreateICmpUGT(L,R,"cmptmp");
+        }
         return Builder->CreateUIToFP(L,casted_type,"booltmp");
     }
     else if(instruction == "CheckEquality"){
-        L = Builder->CreateFCmpUEQ(L,R,"cmptmp");
+        if(casted_type->isFloatingPointTy()){
+            L = Builder->CreateFCmpUEQ(L,R,"cmptmp");
+        }
+        else if(casted_type->isIntegerTy()){
+            L = Builder->CreateICmpEQ(L,R,"cmptmp");
+        }
         return Builder->CreateUIToFP(L,casted_type,"booltmp");
     }
     else if(instruction == "GreaterThanEqualTo"){
-        L = Builder->CreateFCmpUGE(L,R,"cmptmp");
+        if(casted_type->isFloatingPointTy()){
+            L = Builder->CreateFCmpUGE(L,R,"cmptmp");
+        }
+        else if(casted_type->isIntegerTy()){
+            L = Builder->CreateICmpUGE(L,R,"cmptmp");
+        }
         return Builder->CreateUIToFP(L,casted_type,"booltmp");
     }
     else if(instruction == "LessThanEqualTo"){
-        L = Builder->CreateFCmpULE(L,R,"cmptmp");
+        if(casted_type->isFloatingPointTy()){
+            L = Builder->CreateFCmpULE(L,R,"cmptmp");
+        }
+        else if(casted_type->isIntegerTy()){
+            L = Builder->CreateICmpULE(L,R,"cmptmp");
+        }
         return Builder->CreateUIToFP(L,casted_type,"booltmp");
     }
     else if(instruction == "NotEqual"){
-        L = Builder->CreateFCmpUNE(L,R,"cmptmp");
+        if(casted_type->isFloatingPointTy()){
+            L = Builder->CreateFCmpUNE(L,R,"cmptmp");
+        }
+        else if(casted_type->isIntegerTy()){
+            L = Builder->CreateICmpNE(L,R,"cmptmp");
+        }
         return Builder->CreateUIToFP(L,casted_type,"booltmp");
     }
     else if(instruction == "And"){

@@ -1,0 +1,37 @@
+extern short putcharc(short ch);
+extern double printd(double d);
+
+int sort(){
+    double[6] initial;
+    initial[0] = 5;
+    initial[1] = 4;
+    initial[2] = 9;
+    initial[3] = 1;
+    initial[4] = -1;
+    initial[5] = 0;
+
+    for(int i = 0;i < 5;i+=1){
+        if(initial[i] > initial[i+1]){
+            double temp = initial[i+1];
+            initial[i+1] = initial[i];
+            initial[i] = temp;
+        };
+        if(i == 4){
+            for(int j = 0;j < 6-1;j+=1){
+                if(initial[j] > initial[j+1]){
+                    i = -1;
+                };
+            };
+        };     
+    };
+    for(int i = 0;i < 6;i+=1){
+        printd(initial[i]);
+    };
+    return 0;
+}
+
+double main(){
+    sort();
+    return 0;
+}
+main();
