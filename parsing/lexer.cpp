@@ -93,7 +93,13 @@ void tokenize_file(ProgramFile & source_file){
                 source_file.AddToken("semicolon",char_stack);
                 char_stack="";
             }
-            else if(char_stack[0] == '\'' || char_stack[0] == '\"'){
+            else if(char_stack[0] == '\''){
+                std::string str = loadStringToken(source_file,line_num,char_number);
+                source_file.AddToken("char",str);
+                char_stack="";
+                current_line = source_file.GetLine(line_num);
+            }
+            else if(char_stack[0] == '\"'){
                 std::string str = loadStringToken(source_file,line_num,char_number);
                 source_file.AddToken("string",str);
                 char_stack="";

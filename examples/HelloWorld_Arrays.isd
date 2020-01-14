@@ -1,20 +1,10 @@
+extern short getcharc();
 extern short putcharc(short ch);
-extern double printd(double d);
 double main(){
-    short[11] a;
-    a[0] = 'H';
-    a[1] = 'e';
-    a[2] = 'l';
-    a[3] = 'l';
-    a[4] = 'o';
-    a[5] = ' ';
-    a[6] = 'W';
-    a[7] = 'o';
-    a[8] = 'r';
-    a[9] = 'l';
-    a[10] = 'd';
-    for(int i = 0;i < 11;i+=1){
-        putcharc(a[i]);
+    short[11] hello_world;
+    hello_world = "Hello World";
+    for(double i = 0;i < 12;i+=1){
+        putcharc(hello_world[i]);
     };
     putcharc(10);
     return 0;

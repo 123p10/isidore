@@ -1,50 +1,12 @@
 extern short getcharc();
 extern short putcharc(short ch);
 double main(){
-    short[50] name;
-    for(int i = 0;i < 50;i+=1){
-        name[i] = '\';
-    };
-    short[50] message;
-    message[0] = 'E';
-    message[1] = 'n';
-    message[2] = 't';
-    message[3] = 'e';
-    message[4] = 'r';
-    message[5] = ' ';
-    message[6] = 'y';
-    message[7] = 'o';
-    message[8] = 'u';
-    message[9] = 'r';
-    message[10] = ' ';
-    message[11] = 'n';
-    message[12] = 'a';
-    message[13] = 'm';
-    message[14] = 'e';
-    message[15] = ':';
-    message[16] = 10;
-    message[17] = '\';
-    for(int i = 0;message[i] != '\';i+=1){
-        putcharc(message[i]);
-    };
-    for(int i = 0;name_char != 10;i+=1){
-        short name_char = getcharc();
-        name[i] = name_char;
+    short[11] hello_world;
+    hello_world = "Hello World";
+    for(double i = 0;i < 12;i+=1){
+        putcharc(hello_world[i]);
     };
     putcharc(10);
-    message[0] = 'H';
-    message[1] = 'e';
-    message[2] = 'l';
-    message[3] = 'l';
-    message[4] = 'o';
-    message[5] = ' ';
-    message[6] = '\';
-    for(int i = 0;message[i] != '\';i+=1){
-        putcharc(message[i]);
-    };
-    for(int j = 0;name[j] != '\';j+=1){
-        putcharc(name[j]);
-    };
     return 0;
 }
 main();

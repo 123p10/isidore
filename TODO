@@ -22,6 +22,7 @@ High Level TODO
         Function prototypes
         Garbage Collection
         void type
+        Add array initialization like = [1,2,3]
     Error Handling(SO much todo here)
         Proper error handling functions
         Develop verbose error outputs, line numbering, keywords, etc.
@@ -41,6 +42,7 @@ Low Level TODO
         Add postfix
         !
         /
+        Add . as an operator
         *
         ^
         Update docs
