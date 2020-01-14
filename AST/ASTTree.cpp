@@ -86,8 +86,11 @@ std::unique_ptr<ExprAST> ASTTree::ParsePrimary() {
     else if(getCurrToken().type == "int" || getCurrToken().type == "float"){
         return ParseNumberExpr();
     }
-    else if(getCurrToken().type == "string"){
+    else if(getCurrToken().type == "char"){
         return ParseCharExpr();
+    }
+    else if(getCurrToken().type == "string"){
+        return ParseStringExpr();
     }
     else if(getCurrToken().value == "("){
         return ParseParenExpr();
@@ -365,11 +368,17 @@ std::vector<std::unique_ptr<ExprAST>> ASTTree::ParseStatementList(){
     return statementList;
 }
 std::unique_ptr<ExprAST> ASTTree::ParseCharExpr(){
-    auto Result = llvm::make_unique<NumberExprAST>(std::to_string((int)getCurrToken().value[0]),code_gen);
+    std::unique_ptr<ExprAST> Result = llvm::make_unique<NumberExprAST>(std::to_string((int)getCurrToken().value[0]),code_gen);
     nextToken();
     return std::move(Result);
-
 }
+
+std::unique_ptr<ExprAST> ASTTree::ParseStringExpr(){
+    std::unique_ptr<ExprAST> Result = llvm::make_unique<StringLiteralExprAST>(getCurrToken().value,code_gen);
+    nextToken();
+    return std::move(Result);
+}
+
 llvm::Type * ASTTree::type_from_name(Token data_token){
     llvm::Type * type = std::move(llvm::Type::getDoubleTy(*code_gen->TheContext));
     if(data_token.type == "data_type"){

@@ -159,4 +159,13 @@ class ArrayElementAST : public VariableExprAST{
       llvm::Value *codegen();
 };
 
+class StringLiteralExprAST : public ExprAST {
+  public:
+    std::string str;
+        CodeGenerator *code_gen;
+
+    StringLiteralExprAST(std::string str,CodeGenerator * code_gen): str(str),code_gen(code_gen){}
+    llvm::Value *codegen();
+};
+
 #endif

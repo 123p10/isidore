@@ -291,7 +291,7 @@ llvm::Value *ForExprAST::codegen(){
 llvm::Value *VarExprAST::codegen(){
 
     llvm::Function *TheFunction = code_gen->Builder->GetInsertBlock()->getParent();
-        std::vector<Variable> OldBindings;
+    std::vector<Variable> OldBindings;
     if(isArray){
         int size_int = 0;
         llvm::ConstantInt* size_gen = static_cast<llvm::ConstantInt*>(code_gen->castToType(size->codegen(),llvm::Type::getInt64Ty(*code_gen->TheContext)));
@@ -397,4 +397,11 @@ llvm::Value *ArrayElementAST::codegen(){
     llvm::ArrayRef<llvm::Value *> indices(index_list);
     llvm::Value* element_value = code_gen->Builder->CreateGEP(V,indices);
     return code_gen->Builder->CreateLoad(element_value,(Name + "i").c_str());
+}
+llvm::Value *StringLiteralExprAST::codegen(){
+    std::vector<llvm::Constant*> chars;
+    for(int i = 0;i < str.length();i++){
+        chars.push_back(llvm::Constant::getIntegerValue(llvm::Type::getInt8Ty(*code_gen->TheContext),llvm::APInt(8,(int)str[i])));
+    }
+    return llvm::ConstantArray::get(llvm::ArrayType::get(llvm::Type::getInt8Ty(*code_gen->TheContext),str.length()),chars);
 }
