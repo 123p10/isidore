@@ -6,20 +6,29 @@
 #include "llvm/IR/Module.h"
 #include "llvm/IR/LegacyPassManager.h"
 #include "../code_generation/code_gen.h"
+#include "primitives/int64.h"
+#include "primitives/type.h"
+#include "primitives/short.h"
+#include "primitives/double.h"
 class CodeGenerator;
 class TypeManager{
     llvm::LLVMContext *TheContext;
     llvm::IRBuilder<> *Builder;
-    //Integer Type Class
+
+    Int64 * int64_type;
+    Short * short_type;
+    Double * double_type;
     //Floating Point Type Class
     //Array Class
+    //operator add
     public:
         TypeManager(llvm::LLVMContext *TheContext,llvm::IRBuilder<> *Builder);
+        ~TypeManager();
         llvm::Type * auto_cast(llvm::Value *&value_1, llvm::Value * & value_2);
         llvm::Value * castToType(llvm::Value *value, llvm::Type * type);
         llvm::Type * highest_order_type(llvm::Type * type_1, llvm::Type * type_2);
         int type_hierarchy(llvm::Type * type);
-
+        Type * getType(llvm::Type * type);
 };
 
 #endif

@@ -400,7 +400,7 @@ llvm::Value *ArrayElementAST::codegen(){
 }
 llvm::Value *StringLiteralExprAST::codegen(){
     std::vector<llvm::Constant*> chars;
-    for(int i = 0;i < str.length();i++){
+    for(int i = 0;i < (int)str.length();i++){
         chars.push_back(llvm::Constant::getIntegerValue(llvm::Type::getInt8Ty(*code_gen->TheContext),llvm::APInt(8,(int)str[i])));
     }
     return llvm::ConstantArray::get(llvm::ArrayType::get(llvm::Type::getInt8Ty(*code_gen->TheContext),str.length()),chars);

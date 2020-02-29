@@ -2,6 +2,14 @@
 TypeManager::TypeManager(llvm::LLVMContext *TheContext,llvm::IRBuilder<> *Builder){
     (*this).TheContext = TheContext;
     (*this).Builder = Builder;
+    int64_type = new Int64(TheContext,Builder);
+    short_type = new Short(TheContext,Builder);
+    double_type = new Double(TheContext,Builder);
+}
+TypeManager::~TypeManager(){
+    delete int64_type;
+    delete short_type;
+    delete double_type;
 }
 llvm::Type * TypeManager::auto_cast(llvm::Value *&value_1, llvm::Value * & value_2){
     llvm::Type * cast_type = value_1->getType();
@@ -28,31 +36,24 @@ int TypeManager::type_hierarchy(llvm::Type * type){
     else if(type == llvm::Type::getInt8Ty(*(TheContext))){
         return 10;
     }
-
-     return 0;
+    return 0;
 }
 llvm::Value * TypeManager::castToType(llvm::Value *value, llvm::Type * type){
-    if(type == value->getType()){
+    Type * value_type = getType(value->getType());
+    if(!value_type){
         return value;
     }
-    if(value->getType()->isIntegerTy()){
-        if(type->isFloatingPointTy()){
-            return Builder->CreateSIToFP(value,type);
-        }
-        else if(type->isIntegerTy()){
-            return Builder->CreateIntCast(value,type,true);
-        }
+    return value_type->castToType(value,type);
+}
+Type * TypeManager::getType(llvm::Type * type){
+    if(type == llvm::Type::getInt64Ty(*TheContext)){
+        return int64_type;
     }
-    else if(value->getType()->isFloatingPointTy()){
-        if(type->isIntegerTy()){
-            return Builder->CreateFPToSI(value,type);
-        }
-        else if(type->isFloatingPointTy()){
-            return Builder->CreateFPCast(value,type);
-        }
+    else if(type == llvm::Type::getInt8Ty(*TheContext)){
+        return short_type;
     }
-    if(type->isArrayTy()){
+    else if(type == llvm::Type::getDoubleTy(*TheContext)){
+        return double_type;
     }
-    return value;
-
+    return nullptr;
 }
