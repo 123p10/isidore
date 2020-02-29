@@ -90,15 +90,15 @@ llvm::Value *BinaryExprAST::codegen() {
         if(LHSE->isArrayElem){
             ArrayElementAST *array_elem = dynamic_cast<ArrayElementAST*>(LHS.get());
             llvm::Value* index_list[2];
-            index_list[1] = code_gen->castToType(array_elem->index->codegen(),llvm::Type::getInt32Ty(*code_gen->TheContext));
+            index_list[1] = code_gen->typeManager->castToType(array_elem->index->codegen(),llvm::Type::getInt32Ty(*code_gen->TheContext));
             index_list[0] = llvm::ConstantInt::get(*(code_gen->TheContext),llvm::APInt(32,0));
             llvm::ArrayRef<llvm::Value *> indices(index_list);
             Variable = code_gen->Builder->CreateGEP(Variable,indices);
-            Val = code_gen->castToType(Val,array_elem->codegen()->getType());
+            Val = code_gen->typeManager->castToType(Val,array_elem->codegen()->getType());
         }
         else{
             variable_value = LHSE->codegen();
-            Val = code_gen->castToType(Val,code_gen->NamedValues[LHSE->getName()].type);
+            Val = code_gen->typeManager->castToType(Val,code_gen->NamedValues[LHSE->getName()].type);
         }
 
 
@@ -190,7 +190,7 @@ llvm::Value *CallExprAST::codegen(){
     int i = 0;
     for(auto &Arg : CalleeF->args()){
         llvm::Value * argExpr = Args[i]->codegen();
-        argExpr = code_gen->castToType(argExpr,Arg.getType());
+        argExpr = code_gen->typeManager->castToType(argExpr,Arg.getType());
         ArgsV.push_back(argExpr);
         if(!ArgsV.back()){
             return nullptr;
@@ -294,7 +294,7 @@ llvm::Value *VarExprAST::codegen(){
     std::vector<Variable> OldBindings;
     if(isArray){
         int size_int = 0;
-        llvm::ConstantInt* size_gen = static_cast<llvm::ConstantInt*>(code_gen->castToType(size->codegen(),llvm::Type::getInt64Ty(*code_gen->TheContext)));
+        llvm::ConstantInt* size_gen = static_cast<llvm::ConstantInt*>(code_gen->typeManager->castToType(size->codegen(),llvm::Type::getInt64Ty(*code_gen->TheContext)));
         size_int = size_gen->getValue().getZExtValue();
         type = llvm::ArrayType::get(type,size_int);
     }
@@ -319,7 +319,7 @@ llvm::Value *VarExprAST::codegen(){
         }
         llvm::AllocaInst *Alloca = code_gen->CreateEntryBlockAlloca(TheFunction,type,VarName);
         if(!isArray){
-            InitVal = code_gen->castToType(InitVal,type);
+            InitVal = code_gen->typeManager->castToType(InitVal,type);
             code_gen->Builder->CreateStore(InitVal, Alloca);
         }
         OldBindings.push_back(code_gen->NamedValues[VarName]);
@@ -382,7 +382,7 @@ llvm::Function *FunctionAST::codegen(){
 llvm::Value *ReturnExprAST::codegen(){
     llvm::Value * return_val = returnExpr->codegen();
     llvm::Function *TheFunction = code_gen->Builder->GetInsertBlock()->getParent();
-    return_val = code_gen->castToType(return_val,TheFunction->getReturnType());
+    return_val = code_gen->typeManager->castToType(return_val,TheFunction->getReturnType());
     return code_gen->Builder->CreateRet(return_val);
 }
 
@@ -392,7 +392,7 @@ llvm::Value *ArrayElementAST::codegen(){
         LogErrorV("Unknown Variable Name");
     }
     llvm::Value* index_list[2];
-    index_list[1] = code_gen->castToType(index->codegen(),llvm::Type::getInt64Ty(*code_gen->TheContext));
+    index_list[1] = code_gen->typeManager->castToType(index->codegen(),llvm::Type::getInt64Ty(*code_gen->TheContext));
     index_list[0] = llvm::ConstantInt::get(*(code_gen->TheContext),llvm::APInt(32,0));
     llvm::ArrayRef<llvm::Value *> indices(index_list);
     llvm::Value* element_value = code_gen->Builder->CreateGEP(V,indices);

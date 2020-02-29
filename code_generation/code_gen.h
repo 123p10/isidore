@@ -6,8 +6,9 @@
 #include "llvm/IR/Module.h"
 #include "llvm/IR/LegacyPassManager.h"
 #include "../JIT/KaleidoscopeJIT.h"
-
+#include "../types/type_manager.h"
 class PrototypeAST;
+class TypeManager;
 struct Variable
 {
     llvm::AllocaInst *value;
@@ -20,9 +21,9 @@ struct Argument
 };
 class CodeGenerator{
     public:
+        TypeManager * typeManager;
         void initPrecedence();
         std::map<std::string, int> BinopPrecedence;
-
         std::unique_ptr<llvm::Module> *TheModule;
         llvm::LLVMContext *TheContext;
         llvm::IRBuilder<> *Builder;
@@ -34,10 +35,6 @@ class CodeGenerator{
         llvm::Function *getFunction(std::string Name);
         void InitializeModuleAndPassManager(void);
         llvm::AllocaInst *CreateEntryBlockAlloca(llvm::Function *TheFunction,llvm::Type * type, const std::string &VarName);
-        llvm::Value * castToType(llvm::Value *value, llvm::Type * type);
-        llvm::Type * auto_cast(llvm::Value *&value_1, llvm::Value *& value_2);
-        llvm::Type * highest_order_type(llvm::Type * type_1, llvm::Type * type_2);
-        int type_hierarchy(llvm::Type * type);
         llvm::Value * operator_instructions(std::string instruction, llvm::Value *L, llvm::Value *R);
         CodeGenerator();
         ~CodeGenerator();
