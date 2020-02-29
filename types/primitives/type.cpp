@@ -1,5 +1,8 @@
 #include "type.h"
-Type::Type(llvm::LLVMContext *TheContext,llvm::IRBuilder<> *Builder){
-    (*this).Builder = Builder;
-    (*this).TheContext = TheContext;
+#include "../type_manager.h"
+
+Type::Type(TypeManager * typeManager){
+    (*this).typeManager = typeManager;
+    (*this).Builder = typeManager->Builder;
+    (*this).TheContext = typeManager->TheContext;
 }

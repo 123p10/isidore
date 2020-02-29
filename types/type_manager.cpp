@@ -2,9 +2,9 @@
 TypeManager::TypeManager(llvm::LLVMContext *TheContext,llvm::IRBuilder<> *Builder){
     (*this).TheContext = TheContext;
     (*this).Builder = Builder;
-    int64_type = new Int64(TheContext,Builder);
-    short_type = new Short(TheContext,Builder);
-    double_type = new Double(TheContext,Builder);
+    int64_type = new Int64(this);
+    short_type = new Short(this);
+    double_type = new Double(this);
 }
 TypeManager::~TypeManager(){
     delete int64_type;

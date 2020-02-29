@@ -1,19 +1,16 @@
 #ifndef TYPE_MANAGER_H
 #define TYPE_MANAGER_H
+
 #include "clang/AST/Type.h"
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/Module.h"
 #include "llvm/IR/LegacyPassManager.h"
-#include "../code_generation/code_gen.h"
 #include "primitives/int64.h"
-#include "primitives/type.h"
 #include "primitives/short.h"
 #include "primitives/double.h"
 class CodeGenerator;
 class TypeManager{
-    llvm::LLVMContext *TheContext;
-    llvm::IRBuilder<> *Builder;
 
     Int64 * int64_type;
     Short * short_type;
@@ -22,6 +19,9 @@ class TypeManager{
     //Array Class
     //operator add
     public:
+        llvm::LLVMContext *TheContext;
+        llvm::IRBuilder<> *Builder;
+
         TypeManager(llvm::LLVMContext *TheContext,llvm::IRBuilder<> *Builder);
         ~TypeManager();
         llvm::Type * auto_cast(llvm::Value *&value_1, llvm::Value * & value_2);
