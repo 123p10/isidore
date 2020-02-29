@@ -19,7 +19,6 @@ CodeGenerator::CodeGenerator(){
     TheContext = new llvm::LLVMContext();
     Builder = new llvm::IRBuilder<>(*TheContext);
     typeManager = new TypeManager(TheContext,Builder);
-
     TheJIT = new std::unique_ptr<llvm::orc::KaleidoscopeJIT>;
     *TheJIT = llvm::make_unique<llvm::orc::KaleidoscopeJIT>();
     FunctionProtos = new std::map<std::string, std::unique_ptr<PrototypeAST>>;
