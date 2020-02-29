@@ -1,6 +1,7 @@
 #ifndef INTEGER_TYPE_H
 #define INTEGER_TYPE_H
 #include "type.h"
+
 class Integer : public Type{
     public:
         using Type::Type;
