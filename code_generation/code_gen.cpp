@@ -88,45 +88,21 @@ llvm::AllocaInst *CodeGenerator::CreateEntryBlockAlloca(llvm::Function *TheFunct
 }
 llvm::Value * CodeGenerator::operator_instructions(std::string instruction, llvm::Value *L, llvm::Value *R){
     llvm::Type * casted_type = typeManager->auto_cast(L,R);
+    Type * casted_type_obj = typeManager->getType(casted_type);
     if(instruction == "Add"){
-        if(casted_type->isFloatingPointTy()){
-            return Builder->CreateFAdd(L,R, "addtmp");
-        }
-        else if(casted_type->isIntegerTy()){
-            return Builder->CreateAdd(L,R, "addtmp");
-        }
+        return casted_type_obj->operator_add(L,R);
     }
     else if(instruction == "Subtract"){
-        if(casted_type->isFloatingPointTy()){
-            return Builder->CreateFSub(L,R, "subtmp");
-        }
-        else if(casted_type->isIntegerTy()){
-            return Builder->CreateSub(L,R, "subtmp");
-        }
+        return casted_type_obj->operator_sub(L,R);
     }
     else if(instruction == "Multiply"){
-        if(casted_type->isFloatingPointTy()){
-            return Builder->CreateFMul(L,R, "multmp");
-        }
-        else if(casted_type->isIntegerTy()){
-            return Builder->CreateMul(L,R, "multmp");
-        }
+        return casted_type_obj->operator_mul(L,R);
     }
     else if(instruction == "Divide"){
-        if(casted_type->isFloatingPointTy()){
-            return Builder->CreateFDiv(L,R, "divtmp");
-        }
-        else if(casted_type->isIntegerTy()){
-            return Builder->CreateSDiv(L,R, "divtmp");
-        }
+        return casted_type_obj->operator_div(L,R);
     }
     else if(instruction == "Remainder"){
-        if(casted_type->isFloatingPointTy()){
-            return Builder->CreateFRem(L,R, "remtmp");
-        }
-        else if(casted_type->isIntegerTy()){
-            return Builder->CreateSRem(L,R, "remtmp");
-        }
+        return casted_type_obj->operator_rem(L,R);
     }
     else if(instruction == "LessThan"){
         if(casted_type->isFloatingPointTy()){
