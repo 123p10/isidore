@@ -8,6 +8,11 @@ class Integer : public Type{
         virtual llvm::Type * getType();
         llvm::Value * castToType(llvm::Value *value, llvm::Type * type);
         virtual ~Integer() = default;
+        llvm::Value * operator_add(llvm::Value *L, llvm::Value *R);
+        llvm::Value * operator_sub(llvm::Value *L, llvm::Value *R);
+        llvm::Value * operator_mul(llvm::Value *L, llvm::Value *R);
+        llvm::Value * operator_div(llvm::Value *L, llvm::Value *R);
+        llvm::Value * operator_rem(llvm::Value *L, llvm::Value *R);
 };
 
 #endif

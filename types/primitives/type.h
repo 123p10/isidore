@@ -17,8 +17,13 @@ class Type{
         virtual llvm::Type * getType() = 0;
         virtual llvm::Value * castToType(llvm::Value *value, llvm::Type * type) = 0;
         virtual ~Type() = default;
+        //Toss error I suppose
+        virtual llvm::Value * operator_add(llvm::Value *L, llvm::Value *R) = 0;
+        virtual llvm::Value * operator_sub(llvm::Value *L, llvm::Value *R) = 0;
+        virtual llvm::Value * operator_mul(llvm::Value *L, llvm::Value *R) = 0;
+        virtual llvm::Value * operator_div(llvm::Value *L, llvm::Value *R) = 0;
+        virtual llvm::Value * operator_rem(llvm::Value *L, llvm::Value *R) = 0;
 
-//        virtual llvm::Value * operator_add(llvm::Value *L, llvm::Value *R);
 };
 
 #endif
