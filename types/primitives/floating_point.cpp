@@ -40,3 +40,6 @@ llvm::Value * FloatingPoint::operator_less_than_equals(llvm::Value *L, llvm::Val
 llvm::Value * FloatingPoint::operator_compare_equals(llvm::Value *L, llvm::Value *R){
     return Builder->CreateFCmpUEQ(L,R,"cmptmp");
 }
+llvm::Value * FloatingPoint::operator_compare_not_equals(llvm::Value *L, llvm::Value *R){
+    return Builder->CreateFCmpUNE(L,R,"cmptmp");
+}

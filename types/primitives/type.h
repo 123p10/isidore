@@ -28,6 +28,7 @@ class Type{
         virtual llvm::Value * operator_greater_than_equals(llvm::Value *L, llvm::Value *R) = 0;
         virtual llvm::Value * operator_less_than_equals(llvm::Value *L, llvm::Value *R) = 0;
         virtual llvm::Value * operator_compare_equals(llvm::Value *L, llvm::Value *R) = 0;
+        virtual llvm::Value * operator_compare_not_equals(llvm::Value *L, llvm::Value *R) = 0;
 
 };
 

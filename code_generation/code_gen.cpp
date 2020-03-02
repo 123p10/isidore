@@ -120,13 +120,7 @@ llvm::Value * CodeGenerator::operator_instructions(std::string instruction, llvm
         return casted_type_obj->operator_less_than_equals(L,R);
     }
     else if(instruction == "NotEqual"){
-        if(casted_type->isFloatingPointTy()){
-            L = Builder->CreateFCmpUNE(L,R,"cmptmp");
-        }
-        else if(casted_type->isIntegerTy()){
-            L = Builder->CreateICmpNE(L,R,"cmptmp");
-        }
-        return Builder->CreateUIToFP(L,casted_type,"booltmp");
+        return casted_type_obj->operator_compare_not_equals(L,R);
     }
     else if(instruction == "And"){
         //No short circuit

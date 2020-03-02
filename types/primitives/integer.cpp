@@ -42,3 +42,6 @@ llvm::Value * Integer::operator_less_than_equals(llvm::Value *L, llvm::Value *R)
 llvm::Value * Integer::operator_compare_equals(llvm::Value *L, llvm::Value *R){
     return Builder->CreateICmpEQ(L,R,"cmptmp");
 }
+llvm::Value * Integer::operator_compare_not_equals(llvm::Value *L, llvm::Value *R){
+    return Builder->CreateICmpNE(L,R,"cmptmp");
+}
