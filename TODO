@@ -35,6 +35,7 @@ High Level TODO
         Show outputs of example file
         Define Isidore, purpose of naming and why certain features are the way they are
     Linting
+    Put micro compiler in browser
 Low Level TODO
     Function/operators(very easy to make but develop a proper way to insert into standard library)
         ++/--
