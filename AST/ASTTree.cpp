@@ -354,14 +354,20 @@ std::vector<std::unique_ptr<ExprAST>> ASTTree::ParseStatementList(){
     while(getCurrToken().value != "}"){
         std::unique_ptr<ExprAST> statement = ParseExpression();
         if(!statement){
+            if(getCurrToken().type == "semicolon"){
+                nextToken();
+                continue;
+            }
             LogError("Expression failed to parse");
             break;
         }
-        if(getCurrToken().type != "semicolon"){
-            LogError("expected ';'");
-            break;
+        if(statement->requireSemiColon()){
+            if(getCurrToken().type != "semicolon"){
+                LogError("expected ';'");
+                break;
+            }
+            nextToken(); // eat ;
         }
-        nextToken(); // eat ;
         statementList.push_back(std::move(statement));
     }
     nextToken();
