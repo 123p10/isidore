@@ -25,3 +25,18 @@ llvm::Value * FloatingPoint::operator_div(llvm::Value *L, llvm::Value *R){
 llvm::Value * FloatingPoint::operator_rem(llvm::Value *L, llvm::Value *R){
     return Builder->CreateFRem(L,R, "remtmp");
 }
+llvm::Value * FloatingPoint::operator_less_than(llvm::Value *L, llvm::Value *R){
+    return Builder->CreateFCmpULT(L,R,"cmptmp");
+}
+llvm::Value * FloatingPoint::operator_greater_than(llvm::Value *L, llvm::Value *R){
+    return Builder->CreateFCmpUGT(L,R,"cmptmp");
+}
+llvm::Value * FloatingPoint::operator_greater_than_equals(llvm::Value *L, llvm::Value *R){
+    return Builder->CreateFCmpUGE(L,R,"cmptmp");
+}
+llvm::Value * FloatingPoint::operator_less_than_equals(llvm::Value *L, llvm::Value *R){
+    return Builder->CreateFCmpULE(L,R,"cmptmp");
+}
+llvm::Value * FloatingPoint::operator_compare_equals(llvm::Value *L, llvm::Value *R){
+    return Builder->CreateFCmpUEQ(L,R,"cmptmp");
+}

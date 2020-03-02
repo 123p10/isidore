@@ -105,49 +105,19 @@ llvm::Value * CodeGenerator::operator_instructions(std::string instruction, llvm
         return casted_type_obj->operator_rem(L,R);
     }
     else if(instruction == "LessThan"){
-        if(casted_type->isFloatingPointTy()){
-            L = Builder->CreateFCmpULT(L,R,"cmptmp");
-        }
-        else if(casted_type->isIntegerTy()){
-            L = Builder->CreateICmpULT(L,R,"cmptmp");
-        }
-        return Builder->CreateUIToFP(L,casted_type,"booltmp");
+        return casted_type_obj->operator_less_than(L,R);
     }
     else if(instruction == "GreaterThan"){
-        if(casted_type->isFloatingPointTy()){
-            L = Builder->CreateFCmpUGT(L,R,"cmptmp");
-        }
-        else if(casted_type->isIntegerTy()){
-            L = Builder->CreateICmpUGT(L,R,"cmptmp");
-        }
-        return Builder->CreateUIToFP(L,casted_type,"booltmp");
+        return casted_type_obj->operator_greater_than(L,R);
     }
     else if(instruction == "CheckEquality"){
-        if(casted_type->isFloatingPointTy()){
-            L = Builder->CreateFCmpUEQ(L,R,"cmptmp");
-        }
-        else if(casted_type->isIntegerTy()){
-            L = Builder->CreateICmpEQ(L,R,"cmptmp");
-        }
-        return Builder->CreateUIToFP(L,casted_type,"booltmp");
+        return casted_type_obj->operator_compare_equals(L,R);
     }
     else if(instruction == "GreaterThanEqualTo"){
-        if(casted_type->isFloatingPointTy()){
-            L = Builder->CreateFCmpUGE(L,R,"cmptmp");
-        }
-        else if(casted_type->isIntegerTy()){
-            L = Builder->CreateICmpUGE(L,R,"cmptmp");
-        }
-        return Builder->CreateUIToFP(L,casted_type,"booltmp");
+        return casted_type_obj->operator_greater_than_equals(L,R);
     }
     else if(instruction == "LessThanEqualTo"){
-        if(casted_type->isFloatingPointTy()){
-            L = Builder->CreateFCmpULE(L,R,"cmptmp");
-        }
-        else if(casted_type->isIntegerTy()){
-            L = Builder->CreateICmpULE(L,R,"cmptmp");
-        }
-        return Builder->CreateUIToFP(L,casted_type,"booltmp");
+        return casted_type_obj->operator_less_than_equals(L,R);
     }
     else if(instruction == "NotEqual"){
         if(casted_type->isFloatingPointTy()){

@@ -207,7 +207,7 @@ llvm::Value *IfExprAST::codegen(){
     if(!CondV){
         return nullptr;
     }
-    CondV = code_gen->Builder->CreateFCmpONE(CondV, llvm::ConstantFP::get(*code_gen->TheContext,llvm::APFloat(0.0)),"ifcond");
+    CondV = code_gen->Builder->CreateICmpNE(CondV, llvm::ConstantInt::get(*code_gen->TheContext,llvm::APInt(1,0,false)),"ifcond");
     llvm::Function *TheFunction = code_gen->Builder->GetInsertBlock()->getParent();
     
     llvm::BasicBlock *ThenBB = llvm::BasicBlock::Create(*code_gen->TheContext,"then");

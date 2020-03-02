@@ -12,6 +12,12 @@ class FloatingPoint : public Type{
         llvm::Value * operator_mul(llvm::Value *L, llvm::Value *R);
         llvm::Value * operator_div(llvm::Value *L, llvm::Value *R);
         llvm::Value * operator_rem(llvm::Value *L, llvm::Value *R);
+        
+        llvm::Value * operator_less_than(llvm::Value *L, llvm::Value *R);
+        llvm::Value * operator_greater_than(llvm::Value *L, llvm::Value *R);
+        llvm::Value * operator_greater_than_equals(llvm::Value *L, llvm::Value *R);
+        llvm::Value * operator_less_than_equals(llvm::Value *L, llvm::Value *R);
+        llvm::Value * operator_compare_equals(llvm::Value *L, llvm::Value *R);
 
 };
 
