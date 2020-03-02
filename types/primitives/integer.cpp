@@ -27,3 +27,18 @@ llvm::Value * Integer::operator_div(llvm::Value *L, llvm::Value *R){
 llvm::Value * Integer::operator_rem(llvm::Value *L, llvm::Value *R){
     return Builder->CreateSRem(L,R, "remtmp");
 }
+llvm::Value * Integer::operator_less_than(llvm::Value *L, llvm::Value *R){
+    return Builder->CreateICmpSLT(L,R,"cmptmp");
+}
+llvm::Value * Integer::operator_greater_than(llvm::Value *L, llvm::Value *R){
+    return Builder->CreateICmpSGT(L,R,"cmptmp");
+}
+llvm::Value * Integer::operator_greater_than_equals(llvm::Value *L, llvm::Value *R){
+    return Builder->CreateICmpSGE(L,R,"cmptmp");
+}
+llvm::Value * Integer::operator_less_than_equals(llvm::Value *L, llvm::Value *R){
+    return Builder->CreateICmpSLE(L,R,"cmptmp");
+}
+llvm::Value * Integer::operator_compare_equals(llvm::Value *L, llvm::Value *R){
+    return Builder->CreateICmpEQ(L,R,"cmptmp");
+}
