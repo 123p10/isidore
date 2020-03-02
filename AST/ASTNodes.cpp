@@ -279,7 +279,7 @@ llvm::Value *ForExprAST::codegen(){
     if(!EndCond){
         return nullptr;
     }
-    EndCond = code_gen->Builder->CreateFCmpONE(EndCond,llvm::ConstantFP::get(*code_gen->TheContext,llvm::APFloat(0.0)),"loopcond");
+    EndCond = code_gen->Builder->CreateICmpNE(EndCond,llvm::ConstantInt::get(*code_gen->TheContext,llvm::APInt(1,0)),"loopcond");
 
     llvm::BasicBlock *AfterBB = llvm::BasicBlock::Create(*code_gen->TheContext,"afterloop",TheFunction);
     code_gen->Builder->CreateCondBr(EndCond, LoopBB, AfterBB);
