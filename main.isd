@@ -1,12 +1,10 @@
 extern short getcharc();
 extern short putcharc(short ch);
 double main(){
-    short[11] hello_world;
-    hello_world = "Hello World";
-    for(double i = 0;i < 12;i+=1){
-        putcharc(hello_world[i]);
-    };
-    putcharc(10);
-    return 0;
+    int a = 5;
+    if(a == 5 && a > 2){
+        return 1;
+    }
+    return a;
 }
 main();
