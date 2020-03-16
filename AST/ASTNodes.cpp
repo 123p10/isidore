@@ -405,3 +405,10 @@ llvm::Value *StringLiteralExprAST::codegen(){
     }
     return llvm::ConstantArray::get(llvm::ArrayType::get(llvm::Type::getInt8Ty(*code_gen->TheContext),str.length()),chars);
 }
+llvm::StructType *ClassDeclarationAST::codegen(){
+    std::vector<llvm::Type*> type_list;
+    for(int i = 0;i < (int)args.size();i++){
+        type_list.push_back(args.at(i).type);
+    }
+    return llvm::StructType::create(*code_gen->TheContext,type_list,identifier,false);
+}

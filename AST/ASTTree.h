@@ -36,6 +36,7 @@ class ASTTree{
         std::unique_ptr<ExprAST> ParseReturnExpr();
         std::unique_ptr<ExprAST> ParseCharExpr();
         std::unique_ptr<ExprAST> ParseStringExpr();
+        std::unique_ptr<ClassDeclarationAST> ParseClassDef();
         int GetTokPrecedence();
         Token getCurrToken();
         Token nextToken();
@@ -46,5 +47,6 @@ class ASTTree{
 
 std::unique_ptr<ExprAST> LogError(const char *Str);
 std::unique_ptr<PrototypeAST> LogErrorP(const char *Str);
+std::unique_ptr<ClassDeclarationAST> LogErrorC(const char *Str);
 
 #endif

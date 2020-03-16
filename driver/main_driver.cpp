@@ -21,6 +21,24 @@ void Driver::HandleDefinition(ASTTree & source_tree, CodeGenerator * code_gen){
         source_tree.nextToken();
     }
 }
+void Driver::HandleClassDeclaration(ASTTree & source_tree, CodeGenerator * code_gen){
+    if(auto ClassAST = source_tree.ParseClassDef()){
+        if(auto *ClassIR = ClassAST->codegen()){
+            if(showCode){
+                fprintf(stderr, "Read class definition:");
+                ClassIR->print(llvm::errs());
+                fprintf(stderr, "\n");
+            }
+            code_gen->TheJIT->get()->addModule(std::move(*(code_gen->TheModule)));
+            code_gen->InitializeModuleAndPassManager();
+            (*(code_gen->Classes))[ClassAST->getName()] = std::move(ClassAST);
+        }
+    }
+    else{
+        source_tree.nextToken();
+    }
+}
+
 void Driver::HandleExtern(ASTTree & source_tree,CodeGenerator * code_gen){
     if(auto ProtoAST = source_tree.ParseExtern()){
         if(auto *FnIR = ProtoAST->codegen()){
@@ -53,3 +71,4 @@ void Driver::HandleTopLevelExpression(ASTTree & source_tree, CodeGenerator * cod
         source_tree.nextToken();
     }
 }
+

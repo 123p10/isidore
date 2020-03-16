@@ -111,7 +111,7 @@ std::unique_ptr<ExprAST> ASTTree::ParsePrimary() {
         return nullptr;
     }
     else{
-        return LogError("unknown token when resolving expression");
+        return LogError("Unknown token when resolving expression");
     }
 }
 int ASTTree::GetTokPrecedence(){
@@ -220,7 +220,7 @@ std::unique_ptr<FunctionAST> ASTTree::ParseDefinition() {
 }
 std::unique_ptr<PrototypeAST> ASTTree::ParseExtern() {
     nextToken();
-  return ParsePrototype();
+    return ParsePrototype();
 }
 std::unique_ptr<FunctionAST> ASTTree::ParseTopLevelExpr() {
   if (auto E = ParseExpression()) {
@@ -348,7 +348,10 @@ std::unique_ptr<PrototypeAST> LogErrorP(const char *Str) {
   LogError(Str);
   return nullptr;
 }
-
+std::unique_ptr<ClassDeclarationAST> LogErrorC(const char *Str){
+    LogError(Str);
+    return nullptr;
+}
 std::vector<std::unique_ptr<ExprAST>> ASTTree::ParseStatementList(){
     std::vector<std::unique_ptr<ExprAST>> statementList;
     while(getCurrToken().value != "}"){
@@ -385,6 +388,37 @@ std::unique_ptr<ExprAST> ASTTree::ParseStringExpr(){
     return std::move(Result);
 }
 
+std::unique_ptr<ClassDeclarationAST> ASTTree::ParseClassDef(){
+    if(getCurrToken().type != "class"){
+        return LogErrorC("ERROR: ParseClassExpr called on non class type");
+    }
+    if(nextToken().type != "identifier"){
+        return LogErrorC("Class type must be followed by identifier");
+    }
+    std::string name = getCurrToken().value;
+    if(nextToken().value != "="){
+        return LogErrorC("Missing '='");
+    }
+    if(nextToken().value != "{"){
+        return LogErrorC("Missing '{'");
+    }
+    //Probably have to change this if we want nested structure
+    std::vector<Argument> args;
+    while(nextToken().type == "data_type"){
+        llvm::Type * argType = type_from_name(getCurrToken());
+        std::string argName = nextToken().value;
+        if(nextToken().value != ";"){
+            return LogErrorC("Expected semicolon");
+        }
+        args.push_back({argType,argName});
+    }
+    if(getCurrToken().value != "}"){
+        return LogErrorC("Expected '}'");
+    }
+    nextToken();
+    return llvm::make_unique<ClassDeclarationAST>(name,args,code_gen);
+}
+
 llvm::Type * ASTTree::type_from_name(Token data_token){
     llvm::Type * type = std::move(llvm::Type::getDoubleTy(*code_gen->TheContext));
     if(data_token.type == "data_type"){
@@ -396,6 +430,9 @@ llvm::Type * ASTTree::type_from_name(Token data_token){
         }
         else if(data_token.value == "short"){
             type = std::move(llvm::Type::getInt8Ty(*code_gen->TheContext));
+        }
+        else if(data_token.value == "bool"){
+            type = std::move(llvm::Type::getInt1Ty(*code_gen->TheContext));
         }
         else{
             type = std::move(llvm::Type::getDoubleTy(*code_gen->TheContext));

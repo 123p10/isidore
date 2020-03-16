@@ -10,5 +10,6 @@ class Driver{
         void HandleDefinition(ASTTree & source_tree, CodeGenerator * code_gen);
         void HandleExtern(ASTTree & source_tree, CodeGenerator * code_gen);
         void HandleTopLevelExpression(ASTTree & source_tree, CodeGenerator * code_gen);
+        void HandleClassDeclaration(ASTTree & source_tree, CodeGenerator * code_gen);
 };
 #endif

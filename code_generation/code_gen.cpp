@@ -22,6 +22,7 @@ CodeGenerator::CodeGenerator(){
     TheJIT = new std::unique_ptr<llvm::orc::KaleidoscopeJIT>;
     *TheJIT = llvm::make_unique<llvm::orc::KaleidoscopeJIT>();
     FunctionProtos = new std::map<std::string, std::unique_ptr<PrototypeAST>>;
+    Classes = new std::map<std::string,std::unique_ptr<ClassDeclarationAST>>;
     InitializeModuleAndPassManager();
 }
 void CodeGenerator::initPrecedence(){

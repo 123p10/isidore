@@ -1,10 +1,5 @@
-extern short getcharc();
-extern short putcharc(short ch);
-double main(){
-    int a = 5;
-    if(a == 5 && a > 2){
-        return 1;
-    }
-    return a;
+class abc = {
+    int a;
+    short b;
+    bool e;
 }
-main();

@@ -1,0 +1,13 @@
+extern short getcharc();
+extern short putcharc(short ch);
+
+double pi(int i){
+    if(i > 1000){
+        return 1;
+    }
+    if(i == 0){
+        return 3 + pi(i+1);
+    }
+    return i*i/(6+pi(i+2));
+}
+pi(0);
