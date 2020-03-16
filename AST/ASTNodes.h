@@ -101,12 +101,12 @@ class VarExprAST : public ExprAST{
   std::vector<std::pair<std::string, std::unique_ptr<ExprAST>>> VarNames;
   llvm::Type * type;
   CodeGenerator * code_gen;
-  bool isArray;
+  bool isAbstractType;
   std::unique_ptr<ExprAST> size;
   public:
     VarExprAST(std::vector<std::pair<std::string, std::unique_ptr<ExprAST>>> VarNames, llvm::Type * type,  CodeGenerator * code_gen)
     : VarNames(std::move(VarNames)), type(std::move(type)), code_gen(code_gen) {}
-    VarExprAST(std::vector<std::pair<std::string, std::unique_ptr<ExprAST>>> VarNames, llvm::Type * type,  CodeGenerator * code_gen, bool isArray, std::unique_ptr<ExprAST> size);
+    VarExprAST(std::vector<std::pair<std::string, std::unique_ptr<ExprAST>>> VarNames, llvm::Type * type,  CodeGenerator * code_gen, bool isAbstract, std::unique_ptr<ExprAST> size);
     llvm::Value *codegen() override;
 };
 
@@ -176,9 +176,11 @@ class ClassDeclarationAST{
   std::string identifier;
   std::vector<Argument> args;
   CodeGenerator * code_gen;
+  llvm::Type * type;
   public:
     ClassDeclarationAST(const std::string &identifier, std::vector<Argument> args, CodeGenerator * code_gen) : identifier(identifier),args(std::move(args)),code_gen(code_gen){}
-    llvm::StructType *codegen();
+    llvm::Type *codegen();
     const std::string &getName(){return identifier;}
+    llvm::Type * getType() {return type;}
 };
 #endif

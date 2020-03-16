@@ -3,3 +3,8 @@ class abc = {
     short b;
     bool e;
 }
+double test(){
+    abc a;
+    return 0;
+}
+test();
