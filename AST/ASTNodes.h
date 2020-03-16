@@ -7,6 +7,7 @@
 #include "../code_generation/code_gen.h"
 #include <vector>
 #include "llvm/IR/Function.h"
+#include "llvm/IR/DerivedTypes.h"
 class CodeGenerator;
 typedef struct Argument Argument;
 
@@ -171,4 +172,13 @@ class StringLiteralExprAST : public ExprAST {
     llvm::Value *codegen();
 };
 
+class ClassDeclarationAST{
+  std::string identifier;
+  std::vector<Argument> args;
+  CodeGenerator * code_gen;
+  public:
+    ClassDeclarationAST(const std::string &identifier, std::vector<Argument> args, CodeGenerator * code_gen) : identifier(identifier),args(std::move(args)),code_gen(code_gen){}
+    llvm::StructType *codegen();
+    const std::string &getName(){return identifier;}
+};
 #endif

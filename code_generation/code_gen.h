@@ -8,6 +8,7 @@
 #include "../JIT/KaleidoscopeJIT.h"
 #include "../types/type_manager.h"
 class PrototypeAST;
+class ClassDeclarationAST;
 class TypeManager;
 struct Variable
 {
@@ -31,7 +32,7 @@ class CodeGenerator{
         std::unique_ptr<llvm::legacy::FunctionPassManager> *TheFPM;
         std::unique_ptr<llvm::orc::KaleidoscopeJIT> *TheJIT;
         std::map<std::string, std::unique_ptr<PrototypeAST>> *FunctionProtos;
-        
+        std::map<std::string, std::unique_ptr<ClassDeclarationAST>> *Classes;
         llvm::Function *getFunction(std::string Name);
         void InitializeModuleAndPassManager(void);
         llvm::AllocaInst *CreateEntryBlockAlloca(llvm::Function *TheFunction,llvm::Type * type, const std::string &VarName);

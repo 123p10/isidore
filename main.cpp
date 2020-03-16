@@ -47,6 +47,9 @@ int main(int argc, char* argv[]){
         else if(source_tree.getCurrToken().type == "extern"){
             my_driver.HandleExtern(source_tree,code_gen);
         }
+        else if(source_tree.getCurrToken().type == "class"){
+            my_driver.HandleClassDeclaration(source_tree,code_gen);
+        }
         else{
             my_driver.HandleTopLevelExpression(source_tree,code_gen);
         }

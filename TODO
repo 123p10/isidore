@@ -40,6 +40,7 @@ High Level TODO
         Page with textbox press compile
             python/go script then runs constantly pulling git repo and posts the terminal output
     Add direct or implicit casting for stuff like return types
+    Scan files for funciton prototypes
 Low Level TODO
     Function/operators(very easy to make but develop a proper way to insert into standard library)
         ++/--
