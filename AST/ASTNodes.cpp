@@ -33,11 +33,11 @@ ReturnExprAST::ReturnExprAST(std::unique_ptr<ExprAST> returnExpr,CodeGenerator *
     (*this).code_gen = code_gen;
     (*this).isReturn = true;
 }
-VarExprAST::VarExprAST(std::vector<std::pair<std::string, std::unique_ptr<ExprAST>>> VarNames, llvm::Type * type,  CodeGenerator * code_gen, bool isArray, std::unique_ptr<ExprAST> size){
+VarExprAST::VarExprAST(std::vector<std::pair<std::string, std::unique_ptr<ExprAST>>> VarNames, llvm::Type * type,  CodeGenerator * code_gen, bool isAbstract, std::unique_ptr<ExprAST> size){
     (*this).VarNames = std::move(VarNames);
     (*this).type = std::move(type);
     (*this).code_gen = code_gen;
-    (*this).isArray = isArray;
+    (*this).isAbstractType = isAbstract;
     (*this).size = std::move(size);
 }
 
@@ -292,7 +292,7 @@ llvm::Value *VarExprAST::codegen(){
 
     llvm::Function *TheFunction = code_gen->Builder->GetInsertBlock()->getParent();
     std::vector<Variable> OldBindings;
-    if(isArray){
+    if(isAbstractType && size != nullptr){
         int size_int = 0;
         llvm::ConstantInt* size_gen = static_cast<llvm::ConstantInt*>(code_gen->typeManager->castToType(size->codegen(),llvm::Type::getInt64Ty(*code_gen->TheContext)));
         size_int = size_gen->getValue().getZExtValue();
@@ -318,7 +318,7 @@ llvm::Value *VarExprAST::codegen(){
             }
         }
         llvm::AllocaInst *Alloca = code_gen->CreateEntryBlockAlloca(TheFunction,type,VarName);
-        if(!isArray){
+        if(!isAbstractType){
             InitVal = code_gen->typeManager->castToType(InitVal,type);
             code_gen->Builder->CreateStore(InitVal, Alloca);
         }
@@ -405,10 +405,12 @@ llvm::Value *StringLiteralExprAST::codegen(){
     }
     return llvm::ConstantArray::get(llvm::ArrayType::get(llvm::Type::getInt8Ty(*code_gen->TheContext),str.length()),chars);
 }
-llvm::StructType *ClassDeclarationAST::codegen(){
+llvm::Type *ClassDeclarationAST::codegen(){
     std::vector<llvm::Type*> type_list;
     for(int i = 0;i < (int)args.size();i++){
         type_list.push_back(args.at(i).type);
     }
-    return llvm::StructType::create(*code_gen->TheContext,type_list,identifier,false);
+    llvm::StructType *myType = llvm::StructType::create(*code_gen->TheContext,type_list,identifier,false);
+    (*this).type = myType;
+    return getType();
 }

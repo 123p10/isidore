@@ -81,6 +81,9 @@ std::unique_ptr<ExprAST> ASTTree::ParseIdentifierExpr() {
 
 std::unique_ptr<ExprAST> ASTTree::ParsePrimary() {
     if(getCurrToken().type == "identifier"){
+        if((code_gen)->Classes->count(getCurrToken().value) > 0){
+            return ParseVarExpr();
+        }
         return ParseIdentifierExpr();
     }
     else if(getCurrToken().type == "int" || getCurrToken().type == "float"){
@@ -302,12 +305,15 @@ std::unique_ptr<ExprAST> ASTTree::ParseVarExpr(){
     llvm::Type * type = type_from_name(getCurrToken());
     nextToken();
     std::vector<std::pair<std::string, std::unique_ptr<ExprAST>>> VarNames;
-    bool isArray = false;
+    bool isAbstract = false;
     std::unique_ptr<ExprAST> size = nullptr;
-    if(getCurrToken().value == "["){
+    if(type->isStructTy()){
+        isAbstract = true;
+    }
+    else if(getCurrToken().value == "["){
         nextToken();
         size = std::move(ParseExpression());
-        isArray = true;
+        isAbstract = true;
         nextToken();
     }
     if(getCurrToken().type != "identifier"){
@@ -328,7 +334,7 @@ std::unique_ptr<ExprAST> ASTTree::ParseVarExpr(){
         nextToken();
         if(getCurrToken().type != "identifier"){return LogError("expected identifier list after var");}
     }
-    return llvm::make_unique<VarExprAST>(std::move(VarNames),std::move(type),code_gen,isArray,std::move(size));
+    return llvm::make_unique<VarExprAST>(std::move(VarNames),std::move(type),code_gen,isAbstract,std::move(size));
 }
 
 std::unique_ptr<ExprAST> ASTTree::ParseReturnExpr(){
@@ -390,7 +396,7 @@ std::unique_ptr<ExprAST> ASTTree::ParseStringExpr(){
 
 std::unique_ptr<ClassDeclarationAST> ASTTree::ParseClassDef(){
     if(getCurrToken().type != "class"){
-        return LogErrorC("ERROR: ParseClassExpr called on non class type");
+        return LogErrorC("ParseClassExpr called on non class type");
     }
     if(nextToken().type != "identifier"){
         return LogErrorC("Class type must be followed by identifier");
@@ -419,6 +425,7 @@ std::unique_ptr<ClassDeclarationAST> ASTTree::ParseClassDef(){
     return llvm::make_unique<ClassDeclarationAST>(name,args,code_gen);
 }
 
+//Just adjust this to find locally defined ones
 llvm::Type * ASTTree::type_from_name(Token data_token){
     llvm::Type * type = std::move(llvm::Type::getDoubleTy(*code_gen->TheContext));
     if(data_token.type == "data_type"){
@@ -439,6 +446,10 @@ llvm::Type * ASTTree::type_from_name(Token data_token){
         }
         return type;
     }
+    else if(code_gen->Classes->count(data_token.value) > 0){
+        return std::move((*(code_gen)->Classes)[data_token.value]->getType());
+    }
+
     LogError("No type specified for declaration");
     return nullptr;
 }
