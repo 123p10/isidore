@@ -182,5 +182,13 @@ class ClassDeclarationAST{
     llvm::Type *codegen();
     const std::string &getName(){return identifier;}
     llvm::Type * getType() {return type;}
+    int indexOfArg(std::string key);
+};
+class ClassAccessorAST : public VariableExprAST{
+  int index;
+  public:
+      ClassAccessorAST(const std::string &Name, CodeGenerator * code_gen, int index):
+      VariableExprAST(Name,code_gen,true), index(index){}
+      llvm::Value * codegen();
 };
 #endif

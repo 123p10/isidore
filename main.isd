@@ -1,10 +1,12 @@
 class abc = {
     int a;
-    short b;
-    bool e;
 }
 double test(){
-    abc a;
-    return 0;
+    abc k;
+    int[5] list;
+    list[0] = 5;
+    //int i = 0;
+    k.a = 1;
+    return list[0];
 }
 test();
