@@ -414,3 +414,24 @@ llvm::Type *ClassDeclarationAST::codegen(){
     (*this).type = myType;
     return getType();
 }
+int ClassDeclarationAST::indexOfArg(std::string key){
+    for(int i = 0;i < args.size();i++){
+        if(key == args.at(i).name){
+            return i;
+        }
+    }
+    return -1;
+}
+llvm::Value *ClassAccessorAST::codegen(){
+    llvm::Value *V = code_gen->NamedValues[Name].value;
+    if(!V){
+        LogErrorV("Unknown Variable Name");
+    }
+    llvm::Value* index_list[2];
+    index_list[1] = llvm::ConstantInt::get(*(code_gen->TheContext),llvm::APInt(32,index));
+    index_list[0] = llvm::ConstantInt::get(*(code_gen->TheContext),llvm::APInt(32,0));
+    llvm::ArrayRef<llvm::Value *> indices(index_list);
+    llvm::Value* element_value = code_gen->Builder->CreateGEP(V,indices);
+    return code_gen->Builder->CreateLoad(element_value,(Name + "i").c_str());
+
+}
