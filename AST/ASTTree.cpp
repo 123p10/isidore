@@ -55,10 +55,8 @@ std::unique_ptr<ExprAST> ASTTree::ParseIdentifierExpr() {
         else if(getCurrToken().value == "."){
             nextToken();
             std::string key = getCurrToken().value;
-            //[IdName] will not work the map corresponds to ["abc"], develop a function to find ClassDeclaration AST from var type
-            int index = (*(code_gen)->Classes)[IdName]->indexOfArg(key);
             nextToken();
-            return llvm::make_unique<ClassAccessorAST>(IdName,code_gen,index);
+            return llvm::make_unique<ClassAccessorAST>(IdName,code_gen,key);
         }
         return llvm::make_unique<VariableExprAST>(IdName,code_gen);
         

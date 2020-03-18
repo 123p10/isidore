@@ -185,10 +185,10 @@ class ClassDeclarationAST{
     int indexOfArg(std::string key);
 };
 class ClassAccessorAST : public VariableExprAST{
-  int index;
+  std::string accessKey;
   public:
-      ClassAccessorAST(const std::string &Name, CodeGenerator * code_gen, int index):
-      VariableExprAST(Name,code_gen,true), index(index){}
+      ClassAccessorAST(const std::string &Name, CodeGenerator * code_gen, std::string accessKey):
+      VariableExprAST(Name,code_gen,false), accessKey(accessKey){}
       llvm::Value * codegen();
 };
 #endif
