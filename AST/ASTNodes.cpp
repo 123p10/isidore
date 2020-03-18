@@ -415,7 +415,7 @@ llvm::Type *ClassDeclarationAST::codegen(){
     return getType();
 }
 int ClassDeclarationAST::indexOfArg(std::string key){
-    for(int i = 0;i < args.size();i++){
+    for(int i = 0;i < (int)args.size();i++){
         if(key == args.at(i).name){
             return i;
         }
@@ -424,6 +424,8 @@ int ClassDeclarationAST::indexOfArg(std::string key){
 }
 llvm::Value *ClassAccessorAST::codegen(){
     llvm::Value *V = code_gen->NamedValues[Name].value;
+    
+    int index = (*code_gen->Classes)[code_gen->NamedValues[Name].type->getStructName()]->indexOfArg(accessKey);
     if(!V){
         LogErrorV("Unknown Variable Name");
     }
