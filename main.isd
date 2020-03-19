@@ -4,10 +4,8 @@ class abc = {
 }
 double test(){
     abc k;
-    int[5] arr;
-    arr[0] = 1;
-    arr[1] = 5;
-    arr[2] = 3;
-    return arr[0] + arr[1];
+    k.b = 3;
+    k.c = 5;
+    return k.c;
 }
 test();

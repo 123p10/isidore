@@ -40,8 +40,8 @@ class VariableExprAST : public ExprAST{
         VariableExprAST(const std::string &Name, CodeGenerator * code_gen);
         VariableExprAST(const std::string &Name, CodeGenerator * code_gen,bool isArrayElem)
         : Name(Name),code_gen(code_gen),isArrayElem(isArrayElem){}
-        llvm::Value *codegen() override;
-
+        virtual llvm::Value *codegen() override;
+        virtual llvm::Value * getAlloca();
 };
 class BinaryExprAST : public ExprAST {
     std::string Op;
@@ -161,6 +161,7 @@ class ArrayElementAST : public VariableExprAST{
       ArrayElementAST(const std::string &Name, CodeGenerator * code_gen, std::unique_ptr<ExprAST> index):
       VariableExprAST(Name,code_gen,true), index(std::move(index)){}
       llvm::Value *codegen();
+      llvm::Value * getAlloca();
 };
 
 class StringLiteralExprAST : public ExprAST {
@@ -190,5 +191,6 @@ class ClassAccessorAST : public VariableExprAST{
       ClassAccessorAST(const std::string &Name, CodeGenerator * code_gen, std::string accessKey):
       VariableExprAST(Name,code_gen,false), accessKey(accessKey){}
       llvm::Value * codegen();
+      llvm::Value * getAlloca();
 };
 #endif
