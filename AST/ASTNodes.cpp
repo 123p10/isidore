@@ -59,6 +59,9 @@ llvm::Value *VariableExprAST::codegen(){
     }
     return code_gen->Builder->CreateLoad(V,Name.c_str());
 }
+llvm::Value * VariableExprAST::getAlloca(){
+    return code_gen->NamedValues[getName()].value;
+}
 llvm::Value *UnaryExprAST::codegen(){
     llvm::Value *OperandV = Operand->codegen();
     if(!OperandV){
@@ -85,21 +88,9 @@ llvm::Value *BinaryExprAST::codegen() {
         if(!Val){
             return nullptr;
         }
-        llvm::Value *Variable = code_gen->NamedValues[LHSE->getName()].value;
-        llvm::Value *variable_value;
-        if(LHSE->isArrayElem){
-            ArrayElementAST *array_elem = dynamic_cast<ArrayElementAST*>(LHS.get());
-            llvm::Value* index_list[2];
-            index_list[1] = code_gen->typeManager->castToType(array_elem->index->codegen(),llvm::Type::getInt32Ty(*code_gen->TheContext));
-            index_list[0] = llvm::ConstantInt::get(*(code_gen->TheContext),llvm::APInt(32,0));
-            llvm::ArrayRef<llvm::Value *> indices(index_list);
-            Variable = code_gen->Builder->CreateGEP(Variable,indices);
-            Val = code_gen->typeManager->castToType(Val,array_elem->codegen()->getType());
-        }
-        else{
-            variable_value = LHSE->codegen();
-            Val = code_gen->typeManager->castToType(Val,code_gen->NamedValues[LHSE->getName()].type);
-        }
+        llvm::Value *Variable = LHSE->getAlloca();
+        llvm::Value *variable_value = LHSE->codegen();
+        Val = code_gen->typeManager->castToType(Val,variable_value->getType());
 
 
         if(!Variable){
@@ -387,6 +378,9 @@ llvm::Value *ReturnExprAST::codegen(){
 }
 
 llvm::Value *ArrayElementAST::codegen(){
+    return code_gen->Builder->CreateLoad(getAlloca(),(Name + "i").c_str());
+}
+llvm::Value * ArrayElementAST::getAlloca(){
     llvm::Value *V = code_gen->NamedValues[Name].value;
     if(!V){
         LogErrorV("Unknown Variable Name");
@@ -396,8 +390,9 @@ llvm::Value *ArrayElementAST::codegen(){
     index_list[0] = llvm::ConstantInt::get(*(code_gen->TheContext),llvm::APInt(32,0));
     llvm::ArrayRef<llvm::Value *> indices(index_list);
     llvm::Value* element_value = code_gen->Builder->CreateGEP(V,indices);
-    return code_gen->Builder->CreateLoad(element_value,(Name + "i").c_str());
+    return element_value;
 }
+
 llvm::Value *StringLiteralExprAST::codegen(){
     std::vector<llvm::Constant*> chars;
     for(int i = 0;i < (int)str.length();i++){
@@ -423,6 +418,9 @@ int ClassDeclarationAST::indexOfArg(std::string key){
     return -1;
 }
 llvm::Value *ClassAccessorAST::codegen(){
+    return code_gen->Builder->CreateLoad(getAlloca(),(Name + "i").c_str());
+}
+llvm::Value * ClassAccessorAST::getAlloca(){
     llvm::Value *V = code_gen->NamedValues[Name].value;
     
     int index = (*code_gen->Classes)[code_gen->NamedValues[Name].type->getStructName()]->indexOfArg(accessKey);
@@ -434,6 +432,5 @@ llvm::Value *ClassAccessorAST::codegen(){
     index_list[0] = llvm::ConstantInt::get(*(code_gen->TheContext),llvm::APInt(32,0));
     llvm::ArrayRef<llvm::Value *> indices(index_list);
     llvm::Value* element_value = code_gen->Builder->CreateGEP(V,indices);
-    return code_gen->Builder->CreateLoad(element_value,(Name + "i").c_str());
-
+    return element_value;
 }
