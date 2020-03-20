@@ -54,6 +54,7 @@ int main(int argc, char* argv[]){
             my_driver.HandleTopLevelExpression(source_tree,code_gen);
         }
     }
+
     //code_gen->TheModule->get()->print(llvm::errs(), nullptr);
     //wonder if this will cause memory leak?
     //delete code_gen;

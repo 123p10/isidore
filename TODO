@@ -4,6 +4,7 @@ Constant TODOS
     Convert and maintain codebase to follow: https://www.perforce.com/blog/kw/NASA-rules-for-developing-safety-critical-code
     Update Documentation
 High Level TODO 
+    Add functions to classes
     Syntax Definition
         Implement while statements
         Think about whether we use int main() or compile inline commands

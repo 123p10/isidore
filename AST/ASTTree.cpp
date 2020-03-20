@@ -198,7 +198,7 @@ std::unique_ptr<PrototypeAST> ASTTree::ParsePrototype() {
         return LogErrorP("Expected '(' in prototype");
     }
     std::vector<Argument> ArgNames;
-    while(nextToken().type == "data_type"){
+    while(nextToken().type == "data_type" || getCurrToken().type == "identifier"){
         llvm::Type * argType = type_from_name(getCurrToken());
         nextToken();
         ArgNames.push_back(Argument{argType,getCurrToken().value});
