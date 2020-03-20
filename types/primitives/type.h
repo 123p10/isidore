@@ -3,7 +3,7 @@
 #define TYPE_H
 
 #include "llvm/IR/IRBuilder.h"
-#include "clang/AST/Type.h"
+#include "llvm/IR/Type.h"
 #include "llvm/IR/LLVMContext.h"
 class TypeManager;
 class Type{

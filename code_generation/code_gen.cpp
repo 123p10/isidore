@@ -4,7 +4,7 @@
 #include "llvm/Transforms/Scalar.h"
 #include "llvm/Transforms/Scalar/GVN.h"
 #include "llvm/Support/TargetSelect.h"
-#include "clang/AST/Type.h"
+#include "llvm/IR/Type.h"
 #include "llvm/Transforms/Utils.h"
 #include "../types/type_manager.h"
 llvm::Value *LogErrorV(const char *Str){
