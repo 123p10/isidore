@@ -1,11 +1,6 @@
-class abc = {
-    double b;
-    double c;
+extern double putcharc(short c);
+double main(){
+    putcharc('a');
+    return 0;
 }
-double test(){
-    abc k;
-    k.b = 3;
-    k.c = 5;
-    return k.c;
-}
-test();
+main();
