@@ -63,7 +63,7 @@ void Driver::HandleTopLevelExpression(ASTTree & source_tree, CodeGenerator * cod
             auto ExprSymbol = code_gen->TheJIT->get()->findSymbol("__anon__expr");
             assert(ExprSymbol && "Function not found");
             double (*FP)() = (double(*)())(intptr_t)llvm::cantFail(ExprSymbol.getAddress());
-            fprintf(stderr,"Evaluated to %f \n",FP());
+            fprintf(stderr,"\n Top Level Expression Evaluated to %f \n",FP());
             code_gen->TheJIT->get()->removeModule(H);
         }
     }
