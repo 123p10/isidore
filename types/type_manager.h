@@ -1,7 +1,7 @@
 #ifndef TYPE_MANAGER_H
 #define TYPE_MANAGER_H
 
-#include "clang/AST/Type.h"
+#include "llvm/IR/Type.h"
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/Module.h"
