@@ -1,4 +1,5 @@
 # Isidore
+You can run your own program at: OwenBrake.com/compiler
 ## Background
 ### Purpose
 Every day there is a hip, new programming language. The recent trend for the past 5-10 years has been moving towards more "beautiful" languages like Python and Golang. Isidore attempts to redirect this focus from beautiful code towards clear, readable, maintainable code.
@@ -30,6 +31,7 @@ To run an Isidore program you require llvm-9 and g++. For linux users it is prob
 *To run your own programs type `./main -f <relative path to .isd file>`*
 
 *Ex. `./main -f examples/HelloWorld.isd`*
+
 
 ### Plan
 The things I am working on in the near future are listed in TODO. I won't be posting what has been accomplished per say as it will take too much time. Documentation is currently in progress and available in the docs folder, examples are also available in the examples folder.
