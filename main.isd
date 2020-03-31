@@ -1,6 +1,4 @@
-extern double putcharc(short c);
 double main(){
-    putcharc('a');
-    return 0;
+	return 0;
 }
 main();
