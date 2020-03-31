@@ -34,7 +34,7 @@ void tokenize_file(ProgramFile & source_file){
         char_number = 0;
         while(char_number < (int)current_line.size()){
             char_stack += current_line.at(char_number);
-            if(char_stack[0] == ' '){
+            if(char_stack[0] == ' ' || char_stack[0] == '\t'){
                 char_stack = "";
             }
             else if(isNumber(char_stack[0])){
