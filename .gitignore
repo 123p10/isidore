@@ -1,4 +1,5 @@
 *.o
 main
 *.sh
+Makefile
 main.isd
