@@ -23,7 +23,6 @@ class ProgramFile{
         void AddToken(std::string type, std::string value);
         Token GetToken(int index);
         int TokenListSize();
-
 };
 
 #endif

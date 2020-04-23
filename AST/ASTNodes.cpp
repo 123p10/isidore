@@ -80,7 +80,7 @@ llvm::Value *UnaryExprAST::codegen(){
 }
 llvm::Value *BinaryExprAST::codegen() {
     if(Op == "=" || Op == "+=" || Op == "-=" || Op == "*=" || Op == "/="){
-        VariableExprAST *LHSE = dynamic_cast<VariableExprAST*>(LHS.get());
+        VariableExprAST *LHSE = reinterpret_cast<VariableExprAST*>(LHS.get());
         if(!LHSE){
             return LogErrorV("destination of '=' must be a variable");
         }
@@ -349,9 +349,9 @@ llvm::Function *FunctionAST::codegen(){
     //Maybe we change this
     code_gen->NamedValues.clear();
     for(auto &Arg : TheFunction->args()){
-        llvm::AllocaInst *Alloca = code_gen->CreateEntryBlockAlloca(TheFunction,Arg.getType(),Arg.getName());
+        llvm::AllocaInst *Alloca = code_gen->CreateEntryBlockAlloca(TheFunction,Arg.getType(),Arg.getName().str());
         code_gen->Builder->CreateStore(&Arg,Alloca);
-        code_gen->NamedValues[Arg.getName()] = Variable{Alloca, Arg.getType()};
+        code_gen->NamedValues[Arg.getName().str()] = Variable{Alloca, Arg.getType()};
     }
     if(P.getName() == "__anon__expr"){
         llvm::Value *RetVal = Body.at(0)->codegen();
@@ -423,7 +423,7 @@ llvm::Value *ClassAccessorAST::codegen(){
 llvm::Value * ClassAccessorAST::getAlloca(){
     llvm::Value *V = code_gen->NamedValues[Name].value;
     
-    int index = (*code_gen->Classes)[code_gen->NamedValues[Name].type->getStructName()]->indexOfArg(accessKey);
+    int index = (*code_gen->Classes)[code_gen->NamedValues[Name].type->getStructName().str()]->indexOfArg(accessKey);
     if(!V){
         LogErrorV("Unknown Variable Name");
     }
