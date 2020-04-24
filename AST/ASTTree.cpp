@@ -201,6 +201,10 @@ std::unique_ptr<PrototypeAST> ASTTree::ParsePrototype() {
     while(nextToken().type == "data_type" || getCurrToken().type == "identifier"){
         llvm::Type * argType = type_from_name(getCurrToken());
         nextToken();
+	if(getCurrToken().type == "operator" && getCurrToken().value == "&"){
+		argType = argType->getPointerTo();
+		nextToken();
+	}
         ArgNames.push_back(Argument{argType,getCurrToken().value});
         if(nextToken().value != ","){
             break;
