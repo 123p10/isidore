@@ -43,7 +43,7 @@ class ASTTree{
         Token nextToken();
         std::vector<std::unique_ptr<ExprAST>> ParseStatementList();
         llvm::Type * type_from_name(Token data_token);
-
+	bool isType(Token data_token);
 };
 
 std::unique_ptr<ExprAST> LogError(const char *Str);

@@ -409,10 +409,10 @@ std::unique_ptr<ClassDeclarationAST> ASTTree::ParseClassDef(){
     }
     std::string name = getCurrToken().value;
     if(nextToken().value != "="){
-        return LogErrorC("Missing '='");
+        return LogErrorC(("Missing '=' in Class Definition for " + name).c_str());
     }
     if(nextToken().value != "{"){
-        return LogErrorC("Missing '{'");
+        return LogErrorC(("Missing '{' in Class Definition for " + name).c_str());
     }
     //Probably have to change this if we want nested structure
     std::vector<Argument> args;
@@ -455,7 +455,9 @@ llvm::Type * ASTTree::type_from_name(Token data_token){
     else if(code_gen->Classes->count(data_token.value) > 0){
         return std::move((*(code_gen)->Classes)[data_token.value]->getType());
     }
-
     LogError("No type specified for declaration");
     return nullptr;
+}
+bool ASTTree::isType(Token data_token){
+	return data_token.type == "data_type" || code_gen->Classes->count(data_token.value) > 0;
 }
