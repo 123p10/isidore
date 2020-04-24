@@ -1,4 +1,16 @@
+class vector = {
+	int i;
+}
+
+vector abc(vector a){
+	a.i = 1;
+	return a;
+}
+
 double main(){
-	return 0;
+	vector a;
+	a.i = 2;
+	a = abc(a);
+	return a.i;
 }
 main();

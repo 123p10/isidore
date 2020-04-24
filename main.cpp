@@ -40,7 +40,7 @@ int main(int argc, char* argv[]){
         else if(source_tree.getCurrToken().type == "semicolon"){
             source_tree.nextToken();
         }
-        else if(source_tree.getCurrToken().type == "data_type"){
+        else if(source_tree.isType(source_tree.getCurrToken())){
             my_driver.HandleDefinition(source_tree,code_gen);
         }
         else if(source_tree.getCurrToken().type == "extern"){

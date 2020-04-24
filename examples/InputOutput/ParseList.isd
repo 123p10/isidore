@@ -1,0 +1,15 @@
+extern void putcharc(short c);
+double main(){
+	short[9] arr;
+	arr = "1,2,3,4,5";
+	for(int i = 0;i < 9;i+=1){
+		if(arr[i] != ','){
+			putcharc(arr[i]);
+		}
+		else{
+			putcharc(10);
+		}
+	};
+	return 1;
+}
+main();
