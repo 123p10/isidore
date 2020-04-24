@@ -12,7 +12,7 @@ class ClassDeclarationAST;
 class TypeManager;
 struct Variable
 {
-    llvm::AllocaInst *value;
+    llvm::Value *value;
     llvm::Type *type;
 };
 struct Argument

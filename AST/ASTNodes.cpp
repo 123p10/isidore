@@ -358,8 +358,12 @@ llvm::Function *FunctionAST::codegen(){
     code_gen->NamedValues.clear();
     for(auto &Arg : TheFunction->args()){
         llvm::AllocaInst *Alloca = code_gen->CreateEntryBlockAlloca(TheFunction,Arg.getType(),Arg.getName().str());
-        code_gen->Builder->CreateStore(&Arg,Alloca);
-        code_gen->NamedValues[Arg.getName().str()] = Variable{Alloca, Arg.getType()};
+	code_gen->Builder->CreateStore(&Arg,Alloca);
+       	code_gen->NamedValues[Arg.getName().str()] = Variable{Alloca, Arg.getType()};
+	if(Arg.getType()->isPointerTy()){
+		llvm::LoadInst *Load = code_gen->Builder->CreateLoad(Alloca);
+		code_gen->NamedValues[Arg.getName().str()] = Variable{Load, Arg.getType()->getPointerElementType()};
+	}
     }
     if(P.getName() == "__anon__expr"){
         llvm::Value *RetVal = Body.at(0)->codegen();
