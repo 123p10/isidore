@@ -42,13 +42,18 @@ VarExprAST::VarExprAST(std::vector<std::pair<std::string, std::unique_ptr<ExprAS
 }
 
 FunctionAST::FunctionAST(std::unique_ptr<PrototypeAST> Proto,
-              std::vector<std::unique_ptr<ExprAST>> Body, CodeGenerator * code_gen){
+    std::vector<std::unique_ptr<ExprAST>> Body, CodeGenerator * code_gen){
     (*this).Proto = std::move(Proto);
     (*this).Body = std::move(Body);
     (*this).code_gen = code_gen;
 }
 //Code_gen
 //To improve this remove these persistent references to getContext or getModule, replace with temp variables or better method, pointers
+
+llvm::Value * ExprAST::getAlloca(){
+	return LogErrorV("Improperly Address Request");
+}
+
 llvm::Value *NumberExprAST::codegen(){
     return llvm::ConstantFP::get(*(code_gen->TheContext),llvm::APFloat(Val));
 }
@@ -63,6 +68,9 @@ llvm::Value * VariableExprAST::getAlloca(){
     return code_gen->NamedValues[getName()].value;
 }
 llvm::Value *UnaryExprAST::codegen(){
+    if(Opcode == "&"){
+    	return Operand->getAlloca();
+    }
     llvm::Value *OperandV = Operand->codegen();
     if(!OperandV){
         return nullptr;
