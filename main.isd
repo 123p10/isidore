@@ -1,16 +1,23 @@
-class vector = {
-	int i;
-	int j;
-}
+class Node = {
+	int val;
+	Node next;
+};
 
-int d(int & a){
-	a = 1;
+int tmp(Node & n){
+	if(n.val > 0 && n.val < 10){
+		return n.val + tmp(&n.next);
+	}
 	return 0;
 }
 
 double main(){
-	int b = 0;	
-	d(&b);
-	return b;
+	Node a;
+	a.val = 3;
+	Node b;
+	b.val = 5;
+	a.next = b;
+	b.val = 2;
+	int v = tmp(&a);
+	return v;
 }
 main();
