@@ -1,5 +1,4 @@
 #include "ASTTree.h"
-
 Token ASTTree::nextToken() {
     (*this).token_i++;
     return getCurrToken();
@@ -201,10 +200,10 @@ std::unique_ptr<PrototypeAST> ASTTree::ParsePrototype() {
     while(nextToken().type == "data_type" || getCurrToken().type == "identifier"){
         llvm::Type * argType = type_from_name(getCurrToken());
         nextToken();
-	if(getCurrToken().type == "operator" && getCurrToken().value == "&"){
-		argType = argType->getPointerTo();
-		nextToken();
-	}
+		if(argType->isStructTy() || (getCurrToken().type == "operator" && getCurrToken().value == "&")){
+			argType = argType->getPointerTo();
+			nextToken();
+		}
         ArgNames.push_back(Argument{argType,getCurrToken().value});
         if(nextToken().value != ","){
             break;
@@ -317,7 +316,7 @@ std::unique_ptr<ExprAST> ASTTree::ParseVarExpr(){
     std::vector<std::pair<std::string, std::unique_ptr<ExprAST>>> VarNames;
     bool isAbstract = false;
     std::unique_ptr<ExprAST> size = nullptr;
-    if(type->isStructTy()){
+    if(type->isStructTy() || type->isPointerTy()){
         isAbstract = true;
     }
     else if(getCurrToken().value == "["){
@@ -420,14 +419,33 @@ std::unique_ptr<ClassDeclarationAST> ASTTree::ParseClassDef(){
     }
     //Probably have to change this if we want nested structure
     std::vector<Argument> args;
-    while(nextToken().type == "data_type"){
-        llvm::Type * argType = type_from_name(getCurrToken());
-        std::string argName = nextToken().value;
-        if(nextToken().value != ";"){
-            return LogErrorC("Expected semicolon");
-        }
-        args.push_back({argType,argName});
-    }
+    while(nextToken().type == "data_type" || getCurrToken().type == "identifier"){
+		llvm::Type * argType;
+		if(getCurrToken().value == name){
+			argType = nullptr;
+		}
+		else{
+			argType = type_from_name(getCurrToken());
+			if(!argType){
+				return LogErrorC("Could not find type in struct");
+			}
+		}
+		std::string next_tok = nextToken().value;
+		std::string argName;
+		if(next_tok == "&"){
+			if(argType){
+				argType = argType->getPointerTo();
+			}
+			argName = nextToken().value;
+		}
+		else{
+			argName = next_tok;
+		}
+		if(nextToken().value != ";"){
+			return LogErrorC("Expected semicolon");
+		}
+		args.push_back({argType,argName});
+	}
     if(getCurrToken().value != "}"){
         return LogErrorC("Expected '}'");
     }
@@ -457,7 +475,7 @@ llvm::Type * ASTTree::type_from_name(Token data_token){
         return type;
     }
     else if(code_gen->Classes->count(data_token.value) > 0){
-        return std::move((*(code_gen)->Classes)[data_token.value]->getType());
+        return std::move((*(code_gen)->Classes)[data_token.value]->getType()->getPointerTo());
     }
     LogError("No type specified for declaration");
     return nullptr;

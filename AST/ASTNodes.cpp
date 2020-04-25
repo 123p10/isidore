@@ -98,31 +98,31 @@ llvm::Value *BinaryExprAST::codegen() {
         }
         llvm::Value *Variable = LHSE->getAlloca();
         llvm::Value *variable_value = LHSE->codegen();
-        Val = code_gen->typeManager->castToType(Val,variable_value->getType());
-
+		if(!Val->getType()->isPointerTy()){
+			Val = code_gen->typeManager->castToType(Val,variable_value->getType());
+		}
 
         if(!Variable){
             return LogErrorV("Unknown Variable name");
         }
-        if(Op == "="){
-            code_gen->Builder->CreateStore(Val, Variable);
-        }
         else if(Op == "+="){
             Val = code_gen->operator_instructions("Add",variable_value,Val);
-            code_gen->Builder->CreateStore(Val,Variable);
         }
         else if(Op == "-="){
             Val = code_gen->operator_instructions("Subtract",variable_value,Val);
-            code_gen->Builder->CreateStore(Val,Variable);
         }
         else if(Op == "*="){
             Val = code_gen->operator_instructions("Multiply",variable_value,Val);
-            code_gen->Builder->CreateStore(Val,Variable);
         }
         else if(Op == "/="){
             Val = code_gen->operator_instructions("Divide",variable_value,Val);
-            code_gen->Builder->CreateStore(Val,Variable);
         }
+		if(!variable_value->getType()->isPointerTy()){
+			code_gen->Builder->CreateStore(Val, Variable);
+		}
+		else{
+			code_gen->Builder->CreateStore(Val,Variable);
+		}
 
         return Val;
     }
@@ -288,7 +288,6 @@ llvm::Value *ForExprAST::codegen(){
 }
 
 llvm::Value *VarExprAST::codegen(){
-
     llvm::Function *TheFunction = code_gen->Builder->GetInsertBlock()->getParent();
     std::vector<Variable> OldBindings;
     if(isAbstractType && size != nullptr){
@@ -316,12 +315,19 @@ llvm::Value *VarExprAST::codegen(){
                 InitVal = llvm::ConstantInt::get(*code_gen->TheContext,llvm::APInt(64,0));
             }
         }
-        llvm::AllocaInst *Alloca = code_gen->CreateEntryBlockAlloca(TheFunction,type,VarName);
-        if(!isAbstractType){
+        llvm::AllocaInst *Alloca;
+        OldBindings.push_back(code_gen->NamedValues[VarName]); 
+		if(!isAbstractType){
+			Alloca = code_gen->CreateEntryBlockAlloca(TheFunction,type,VarName);	
             InitVal = code_gen->typeManager->castToType(InitVal,type);
             code_gen->Builder->CreateStore(InitVal, Alloca);
         }
-        OldBindings.push_back(code_gen->NamedValues[VarName]);
+		else{
+			llvm::AllocaInst *StorageAlloca = code_gen->CreateEntryBlockAlloca(TheFunction,static_cast<llvm::PointerType*>(type)->getElementType(),VarName);;
+			llvm::AllocaInst *PointerAlloca = code_gen->CreateEntryBlockAlloca(TheFunction,type,VarName + "__ptr");
+			code_gen->Builder->CreateStore(StorageAlloca,PointerAlloca);
+			Alloca = PointerAlloca;
+		}
         code_gen->NamedValues[VarName] = Variable{Alloca,type};
     }
     return llvm::ConstantFP::get(*(code_gen->TheContext),llvm::APFloat(0.0));
@@ -358,12 +364,12 @@ llvm::Function *FunctionAST::codegen(){
     code_gen->NamedValues.clear();
     for(auto &Arg : TheFunction->args()){
         llvm::AllocaInst *Alloca = code_gen->CreateEntryBlockAlloca(TheFunction,Arg.getType(),Arg.getName().str());
-	code_gen->Builder->CreateStore(&Arg,Alloca);
+		code_gen->Builder->CreateStore(&Arg,Alloca);
        	code_gen->NamedValues[Arg.getName().str()] = Variable{Alloca, Arg.getType()};
-	if(Arg.getType()->isPointerTy()){
-		llvm::LoadInst *Load = code_gen->Builder->CreateLoad(Alloca);
-		code_gen->NamedValues[Arg.getName().str()] = Variable{Load, Arg.getType()->getPointerElementType()};
-	}
+		if(Arg.getType()->isPointerTy()){
+			llvm::LoadInst *Load = code_gen->Builder->CreateLoad(Alloca);
+			code_gen->NamedValues[Arg.getName().str()] = Variable{Load, Arg.getType()->getPointerElementType()};
+		}
     }
     if(P.getName() == "__anon__expr"){
         llvm::Value *RetVal = Body.at(0)->codegen();
@@ -413,11 +419,17 @@ llvm::Value *StringLiteralExprAST::codegen(){
     return llvm::ConstantArray::get(llvm::ArrayType::get(llvm::Type::getInt8Ty(*code_gen->TheContext),str.length()),chars);
 }
 llvm::Type *ClassDeclarationAST::codegen(){
+    llvm::StructType *myType = llvm::StructType::create(*code_gen->TheContext,identifier);
     std::vector<llvm::Type*> type_list;
     for(int i = 0;i < (int)args.size();i++){
-        type_list.push_back(args.at(i).type);
-    }
-    llvm::StructType *myType = llvm::StructType::create(*code_gen->TheContext,type_list,identifier,false);
+		if(!args.at(i).type){
+			type_list.push_back(myType->getPointerTo());
+		}
+		else{
+			type_list.push_back(args.at(i).type);
+		}
+	}
+    myType->setBody(type_list,false);
     (*this).type = myType;
     return getType();
 }
@@ -429,13 +441,15 @@ int ClassDeclarationAST::indexOfArg(std::string key){
     }
     return -1;
 }
-llvm::Value *ClassAccessorAST::codegen(){
-    return code_gen->Builder->CreateLoad(getAlloca(),(Name + "i").c_str());
+llvm::Value *ClassAccessorAST::codegen(){	
+    llvm::LoadInst * load = code_gen->Builder->CreateLoad(getAlloca(),(Name + "i").c_str());
+	return load;
 }
 llvm::Value * ClassAccessorAST::getAlloca(){
-    llvm::Value *V = code_gen->NamedValues[Name].value;
-    
-    int index = (*code_gen->Classes)[code_gen->NamedValues[Name].type->getStructName().str()]->indexOfArg(accessKey);
+    llvm::Value *ptr = code_gen->NamedValues[Name].value;
+    llvm::Value *V = code_gen->Builder->CreateLoad(ptr,(Name + "_load_ptr").c_str());
+	llvm::PointerType *pT = static_cast<llvm::PointerType*>(code_gen->NamedValues[Name].type);
+    int index = (*code_gen->Classes)[pT->getElementType()->getStructName().str()]->indexOfArg(accessKey);
     if(!V){
         LogErrorV("Unknown Variable Name");
     }
