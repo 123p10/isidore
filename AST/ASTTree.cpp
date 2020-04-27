@@ -200,9 +200,11 @@ std::unique_ptr<PrototypeAST> ASTTree::ParsePrototype() {
     while(nextToken().type == "data_type" || getCurrToken().type == "identifier"){
         llvm::Type * argType = type_from_name(getCurrToken());
         nextToken();
-		if(argType->isStructTy() || (getCurrToken().type == "operator" && getCurrToken().value == "&")){
+		if(argType->isPointerTy() || (getCurrToken().type == "operator" && getCurrToken().value == "&")){
 			argType = argType->getPointerTo();
-			nextToken();
+			if(getCurrToken().value == "&"){
+				nextToken();
+			}
 		}
         ArgNames.push_back(Argument{argType,getCurrToken().value});
         if(nextToken().value != ","){

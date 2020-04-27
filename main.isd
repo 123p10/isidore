@@ -2,22 +2,17 @@ class Node = {
 	int val;
 	Node next;
 };
-
-int tmp(Node & n){
-	if(n.val > 0 && n.val < 10){
-		return n.val + tmp(&n.next);
-	}
-	return 0;
+//RIGHT NOW THIS ONLY WORKS WITH & pass by reference, check this out
+int swap(Node  n){
+	Node t;
+	t.val = 2;
+	n = t;
+	return t.val; 
 }
-
 double main(){
 	Node a;
-	a.val = 3;
-	Node b;
-	b.val = 5;
-	a.next = b;
-	b.val = 2;
-	int v = tmp(&a);
-	return v;
+	a.val = 5;
+	swap(a);
+	return a.val;
 }
 main();

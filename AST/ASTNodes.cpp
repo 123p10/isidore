@@ -117,12 +117,7 @@ llvm::Value *BinaryExprAST::codegen() {
         else if(Op == "/="){
             Val = code_gen->operator_instructions("Divide",variable_value,Val);
         }
-		if(!variable_value->getType()->isPointerTy()){
-			code_gen->Builder->CreateStore(Val, Variable);
-		}
-		else{
-			code_gen->Builder->CreateStore(Val,Variable);
-		}
+		code_gen->Builder->CreateStore(Val, Variable);
 
         return Val;
     }
@@ -188,7 +183,14 @@ llvm::Value *CallExprAST::codegen(){
     std::vector<llvm::Value *> ArgsV;
     int i = 0;
     for(auto &Arg : CalleeF->args()){
-        llvm::Value * argExpr = Args[i]->codegen();
+		llvm::Value * argExpr;
+		if(Arg.getType()->isPointerTy()){
+			//This seems weird but we use it for implicit pass by reference
+			argExpr = Args[i]->getAlloca();
+		}
+		else{
+			argExpr = Args[i]->codegen();
+		}
         argExpr = code_gen->typeManager->castToType(argExpr,Arg.getType());
         ArgsV.push_back(argExpr);
         if(!ArgsV.back()){
