@@ -21,6 +21,7 @@ struct Argument
     std::string name;
 };
 class CodeGenerator{
+	bool optimizations;
     public:
         TypeManager * typeManager;
         void initPrecedence();
@@ -37,7 +38,7 @@ class CodeGenerator{
         void InitializeModuleAndPassManager(void);
         llvm::AllocaInst *CreateEntryBlockAlloca(llvm::Function *TheFunction,llvm::Type * type, const std::string &VarName);
         llvm::Value * operator_instructions(std::string instruction, llvm::Value *L, llvm::Value *R);
-        CodeGenerator();
+        CodeGenerator(bool optimizations);
         ~CodeGenerator();
 
 };

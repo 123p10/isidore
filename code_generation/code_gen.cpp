@@ -11,7 +11,8 @@ llvm::Value *LogErrorV(const char *Str){
     LogError(Str);
     return nullptr;
 }
-CodeGenerator::CodeGenerator(){
+CodeGenerator::CodeGenerator(bool optimizations){
+	(*this).optimizations = optimizations;
     initPrecedence();
     llvm::InitializeNativeTarget();
     llvm::InitializeNativeTargetAsmPrinter();
@@ -60,8 +61,8 @@ void CodeGenerator::InitializeModuleAndPassManager(){
     TheModule->get()->setDataLayout(TheJIT->get()->getTargetMachine().createDataLayout());
     TheFPM = new std::unique_ptr<llvm::legacy::FunctionPassManager>;
     *TheFPM = std::make_unique<llvm::legacy::FunctionPassManager>(TheModule->get());
-    if(false){
-        TheFPM->get()->add(llvm::createPromoteMemoryToRegisterPass());
+    if(optimizations){
+        //TheFPM->get()->add(llvm::createPromoteMemoryToRegisterPass());
         TheFPM->get()->add(llvm::createInstructionCombiningPass());
         TheFPM->get()->add(llvm::createReassociatePass());
         TheFPM->get()->add(llvm::createGVNPass());

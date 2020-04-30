@@ -10,25 +10,25 @@
 #include "extern/extern.h"
 int main(int argc, char* argv[]){
     bool showCode = false;
-    //bool optimizations = true;
+    bool optimizations = true;
     std::string file_name = "main.isd";
     for(int i = 0;i < argc;i++){
         if(strcmp(argv[i],"-f") == 0){
             file_name = argv[i+1];
         }
         else if(strcmp(argv[i],"-o") == 0){
-         //   optimizations = false;
+            optimizations = false;
         }
         else if(strcmp(argv[i],"-d") == 0){
             showCode = true;
-        //    optimizations = false;
+            optimizations = false;
         }
         else if(strcmp(argv[i],"-c") == 0){
             showCode = true;
         }
     }
     std::ifstream my_file(file_name);
-    CodeGenerator * code_gen = new CodeGenerator();
+    CodeGenerator * code_gen = new CodeGenerator(optimizations);
     ProgramFile test_file(my_file);
     tokenize_file(test_file);
     ASTTree source_tree(test_file,code_gen);

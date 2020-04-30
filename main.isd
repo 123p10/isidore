@@ -83,7 +83,9 @@ double main(){
 	add(arr,a);
 	add(arr,b);
 	add(arr,c);
+	Node e;
+	//e = push_back(arr,5);
 	print(arr);
-	return get_val(arr,1);
+	return 0;// e.val;
 }
 main();
