@@ -18,6 +18,11 @@ Every part of the system is built with the OOP principles in mind. The lexer mod
 
 Isidore is currently under heavy development and is certainly not complete. The compiler has only been tested on a single Ubuntu machine. Seg-faults and non user friendly error messages may arise if you are not extremely careful.
 
+#### Dependencies
+1. libgc (Tested in GC-8.0.4)
+2. LLVM (Tested in LLVM-10)
+3. g++ or some other C++(14+) compiler, for other compilers you have to edit the Makefile
+
 #### How to Build Isidore Programs
 To run an Isidore program you require llvm-9 and g++. For linux users it is probably easiest to do
 `sudo apt-get install llvm` and `sudo apt-get install g++`. Once you have the dependencies installed you may proceed below.

@@ -12,13 +12,14 @@ int main(int argc, char* argv[]){
     bool showCode = false;
     bool optimizations = true;
     std::string file_name = "main.isd";
+	std::string output_file_name = file_name + ".o";
     for(int i = 0;i < argc;i++){
         if(strcmp(argv[i],"-f") == 0){
             file_name = argv[i+1];
         }
         else if(strcmp(argv[i],"-o") == 0){
-            optimizations = false;
-        }
+			output_file_name = argv[i+1];
+		}
         else if(strcmp(argv[i],"-d") == 0){
             showCode = true;
             optimizations = false;
@@ -53,6 +54,7 @@ int main(int argc, char* argv[]){
             my_driver.HandleTopLevelExpression(source_tree,code_gen);
         }
     }
+	code_gen->OutputToObjectCode(output_file_name);
     //code_gen->TheModule->get()->print(llvm::errs(), nullptr);
     //wonder if this will cause memory leak?
     //delete code_gen;

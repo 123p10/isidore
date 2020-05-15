@@ -36,9 +36,12 @@ class CodeGenerator{
         std::map<std::string, std::unique_ptr<ClassDeclarationAST>> *Classes;
         llvm::Function *getFunction(std::string Name);
         void InitializeModuleAndPassManager(void);
+		void InitializeOptimizations();
+		void InitializeObjectTargets();
+		void OutputToObjectCode(std::string fileName);
         llvm::AllocaInst *CreateEntryBlockAlloca(llvm::Function *TheFunction,llvm::Type * type, const std::string &VarName);
         llvm::Value * operator_instructions(std::string instruction, llvm::Value *L, llvm::Value *R);
-        CodeGenerator(bool optimizations);
+		CodeGenerator(bool optimizations);
         ~CodeGenerator();
 
 };

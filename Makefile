@@ -1,7 +1,7 @@
 CXX = g++
-LLVMFLAGS = `llvm-config --cxxflags --ldflags --system-libs --libs core mcjit orcjit native`
+LLVMFLAGS = `llvm-config --cxxflags --ldflags --system-libs --libs core orcgit mcgit native`
 INC = -I/usr/local/include/llvm
-CXXFLAGS = -Wall -g -O0 -rdynamic $(LLVMFLAGS)
+CXXFLAGS = -Wall -g -O0 -rdynamic -lgc $(LLVMFLAGS)
 OBJFILES = main.o AST/ASTNodes.o AST/ASTTree.o code_generation/code_gen.o \
 		   driver/main_driver.o extern/extern.o files/file_handler.o parsing/lexer.o \
 		   types/type_manager.o types/primitives/int64.o types/primitives/integer.o \

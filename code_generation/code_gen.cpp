@@ -3,10 +3,13 @@
 #include "llvm/Transforms/InstCombine/InstCombine.h"
 #include "llvm/Transforms/Scalar.h"
 #include "llvm/Transforms/Scalar/GVN.h"
-#include "llvm/Support/TargetSelect.h"
 #include "llvm/IR/Type.h"
 #include "llvm/Transforms/Utils.h"
 #include "../types/type_manager.h"
+#include "llvm/Support/TargetRegistry.h"
+#include "llvm/Support/TargetSelect.h"
+#include "llvm/Support/Host.h"
+using namespace llvm::sys;
 llvm::Value *LogErrorV(const char *Str){
     LogError(Str);
     return nullptr;
@@ -62,14 +65,65 @@ void CodeGenerator::InitializeModuleAndPassManager(){
     TheFPM = new std::unique_ptr<llvm::legacy::FunctionPassManager>;
     *TheFPM = std::make_unique<llvm::legacy::FunctionPassManager>(TheModule->get());
     if(optimizations){
-        //TheFPM->get()->add(llvm::createPromoteMemoryToRegisterPass());
-        TheFPM->get()->add(llvm::createInstructionCombiningPass());
-        TheFPM->get()->add(llvm::createReassociatePass());
-        TheFPM->get()->add(llvm::createGVNPass());
-        TheFPM->get()->add(llvm::createCFGSimplificationPass());
-    }
+		InitializeOptimizations();
+	}
     TheFPM->get()->doInitialization();
 }
+
+void CodeGenerator::OutputToObjectCode(std::string fileName){
+	InitializeObjectTargets();
+	std::string CPU = "generic";
+	std::string Features = "";
+
+	llvm::TargetOptions opt;
+	auto RM = llvm::Optional<llvm::Reloc::Model>();
+
+
+	auto TargetTriple = llvm::sys::getDefaultTargetTriple();
+	TheModule->get()->setTargetTriple(TargetTriple);
+	std::string Error;
+	auto Target = llvm::TargetRegistry::lookupTarget(TargetTriple,Error);
+	if(!Target){
+		llvm::errs() << Error;
+	}
+	auto TargetMachine = Target->createTargetMachine(TargetTriple,CPU,Features,opt,RM);
+
+	TheModule->get()->setDataLayout(TargetMachine->createDataLayout());
+	TheModule->get()->setTargetTriple(TargetTriple);
+
+	std::error_code EC;
+	llvm::raw_fd_ostream dest(fileName, EC, llvm::sys::fs::OF_None);
+	if(EC){
+		llvm::errs() << "Could not open file : " << EC.message();
+	}
+	llvm::legacy::PassManager pass;
+	auto FileType = llvm::CGFT_ObjectFile;
+	if(TargetMachine->addPassesToEmitFile(pass, dest, nullptr,FileType)){
+		llvm::errs() << "TargetMachine can't emit a file of this type";
+	}
+	pass.run(*(TheModule->get()));
+	dest.flush();
+	llvm::outs() << "Wrote " << fileName << "\n";
+
+}
+
+void CodeGenerator::InitializeOptimizations(){
+    //TheFPM->get()->add(llvm::createPromoteMemoryToRegisterPass());
+	TheFPM->get()->add(llvm::createInstructionCombiningPass());
+    TheFPM->get()->add(llvm::createReassociatePass());
+    TheFPM->get()->add(llvm::createGVNPass());
+    TheFPM->get()->add(llvm::createCFGSimplificationPass());
+}
+
+void CodeGenerator::InitializeObjectTargets(){
+	llvm::InitializeAllTargetInfos();
+	llvm::InitializeAllTargets();
+	llvm::InitializeAllTargetMCs();
+	llvm::InitializeAllAsmParsers();
+	llvm::InitializeAllAsmPrinters();
+	
+}
+
 llvm::Function *CodeGenerator::getFunction(std::string Name){
     if(auto *F = TheModule->get()->getFunction(Name)){
         return F;
