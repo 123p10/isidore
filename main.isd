@@ -13,10 +13,6 @@ int init(Array arr){
 	return 0;
 }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> e61b8c863af3976a63f4bf3a485b03cb534eb498
 int input(Node curr, Node insert, int size){
 	if(size == 1){
 		curr.next = insert;
@@ -75,7 +71,6 @@ int print(Array arr){
 }
 
 
-<<<<<<< HEAD
 double run(){
 	Array arr;
 	init(arr);
@@ -86,23 +81,3 @@ double run(){
 	print(arr);
 	return get_val(arr,1);
 }
-=======
-double main(){
-	Array arr;
-	init(arr);
-	Node a;
-	Node b;
-	Node c;
-	a.val = 1;
-	b.val = 3;
-	c.val = 2;
-	add(arr,a);
-	add(arr,b);
-	add(arr,c);
-	Node e;
-	//e = push_back(arr,5);
-	print(arr);
-	return 0;// e.val;
-}
-main();
->>>>>>> e61b8c863af3976a63f4bf3a485b03cb534eb498
