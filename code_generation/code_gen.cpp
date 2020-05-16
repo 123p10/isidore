@@ -17,14 +17,14 @@ llvm::Value *LogErrorV(const char *Str){
 CodeGenerator::CodeGenerator(bool optimizations){
 	(*this).optimizations = optimizations;
     initPrecedence();
-    llvm::InitializeNativeTarget();
-    llvm::InitializeNativeTargetAsmPrinter();
-    llvm::InitializeNativeTargetAsmParser();
+   // llvm::InitializeNativeTarget();
+   // llvm::InitializeNativeTargetAsmPrinter();
+   // llvm::InitializeNativeTargetAsmParser();
     TheContext = new llvm::LLVMContext();
     Builder = new llvm::IRBuilder<>(*TheContext);
     typeManager = new TypeManager(TheContext,Builder);
-    TheJIT = new std::unique_ptr<llvm::orc::KaleidoscopeJIT>;
-    *TheJIT = std::make_unique<llvm::orc::KaleidoscopeJIT>();
+    //TheJIT = new std::unique_ptr<llvm::orc::KaleidoscopeJIT>;
+    //*TheJIT = std::make_unique<llvm::orc::KaleidoscopeJIT>();
     FunctionProtos = new std::map<std::string, std::unique_ptr<PrototypeAST>>;
     Classes = new std::map<std::string,std::unique_ptr<ClassDeclarationAST>>;
     InitializeModuleAndPassManager();
@@ -61,7 +61,7 @@ CodeGenerator::~CodeGenerator(){
 void CodeGenerator::InitializeModuleAndPassManager(){
     TheModule = new std::unique_ptr<llvm::Module>;
     *TheModule = std::make_unique<llvm::Module>("my cool jit", *TheContext);
-    TheModule->get()->setDataLayout(TheJIT->get()->getTargetMachine().createDataLayout());
+    //TheModule->get()->setDataLayout(TheJIT->get()->getTargetMachine().createDataLayout());
     TheFPM = new std::unique_ptr<llvm::legacy::FunctionPassManager>;
     *TheFPM = std::make_unique<llvm::legacy::FunctionPassManager>(TheModule->get());
     if(optimizations){

@@ -8,6 +8,7 @@
 #include "code_generation/code_gen.h"
 #include "llvm/Support/raw_ostream.h"
 #include "extern/extern.h"
+#include "runtime/runtime.h"
 int main(int argc, char* argv[]){
     bool showCode = false;
     bool optimizations = true;
@@ -34,7 +35,9 @@ int main(int argc, char* argv[]){
     tokenize_file(test_file);
     ASTTree source_tree(test_file,code_gen);
     Driver my_driver(showCode);
-    while(1){
+    Runtime runtime(code_gen);
+	runtime.createPrototypes();
+	while(1){
         if(source_tree.getCurrToken().value == "EOF"){
             break;
         }

@@ -21,6 +21,15 @@ public:
     virtual llvm::Value *codegen() = 0;
     virtual llvm::Value * getAlloca();
 };
+
+class ValueAsExprAST : public ExprAST{
+	llvm::Value * val;
+	public:
+		CodeGenerator * code_gen;
+		ValueAsExprAST(llvm::Value * val): val(val){}
+		llvm::Value * codegen(){return val;}
+};
+
 class NumberExprAST : public ExprAST {
     CodeGenerator *code_gen;
     double Val;

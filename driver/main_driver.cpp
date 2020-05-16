@@ -13,8 +13,8 @@ void Driver::HandleDefinition(ASTTree & source_tree, CodeGenerator * code_gen){
                 FnIR->print(llvm::errs());
                 fprintf(stderr, "\n");
             }
-            code_gen->TheJIT->get()->addModule(std::move(*(code_gen->TheModule)));
-            code_gen->InitializeModuleAndPassManager();
+           // code_gen->TheJIT->get()->addModule(std::move(*(code_gen->TheModule)));
+           // code_gen->InitializeModuleAndPassManager();
         }
     }
     else{
@@ -29,8 +29,8 @@ void Driver::HandleClassDeclaration(ASTTree & source_tree, CodeGenerator * code_
                 ClassIR->print(llvm::errs());
                 fprintf(stderr, "\n");
             }
-            code_gen->TheJIT->get()->addModule(std::move(*(code_gen->TheModule)));
-            code_gen->InitializeModuleAndPassManager();
+            //code_gen->TheJIT->get()->addModule(std::move(*(code_gen->TheModule)));
+            //code_gen->InitializeModuleAndPassManager();
             (*(code_gen->Classes))[ClassAST->getName()] = std::move(ClassAST);
         }
     }
@@ -57,14 +57,14 @@ void Driver::HandleExtern(ASTTree & source_tree,CodeGenerator * code_gen){
 void Driver::HandleTopLevelExpression(ASTTree & source_tree, CodeGenerator * code_gen){
     if(auto FnAST = source_tree.ParseTopLevelExpr()){
         if(FnAST->codegen()){
-            auto H = code_gen->TheJIT->get()->addModule(std::move(*(code_gen->TheModule)));
-            code_gen->InitializeModuleAndPassManager();
+           // auto H = code_gen->TheJIT->get()->addModule(std::move(*(code_gen->TheModule)));
+           // code_gen->InitializeModuleAndPassManager();
 
-            auto ExprSymbol = code_gen->TheJIT->get()->findSymbol("__anon__expr");
-            assert(ExprSymbol && "Function not found");
-            double (*FP)() = (double(*)())(intptr_t)llvm::cantFail(ExprSymbol.getAddress());
-            fprintf(stderr,"\nTop Level Expression Evaluated to %f \n",FP());
-            code_gen->TheJIT->get()->removeModule(H);
+           // auto ExprSymbol = code_gen->TheJIT->get()->findSymbol("__anon__expr");
+           // assert(ExprSymbol && "Function not found");
+           // double (*FP)() = (double(*)())(intptr_t)llvm::cantFail(ExprSymbol.getAddress());
+            //fprintf(stderr,"\nTop Level Expression Evaluated to %f \n",FP());
+            //code_gen->TheJIT->get()->removeModule(H);
         }
     }
     else{

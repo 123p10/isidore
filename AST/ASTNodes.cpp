@@ -6,6 +6,7 @@
 #include "llvm/IR/BasicBlock.h"
 #include "llvm/IR/Verifier.h"
 #include "../code_generation/code_gen.h"
+#include "llvm/IR/InstrTypes.h"
 #include "ASTTree.h"
 NumberExprAST::NumberExprAST(std::string numString, CodeGenerator * code_gen){
     Val = stod(numString);
@@ -51,7 +52,7 @@ FunctionAST::FunctionAST(std::unique_ptr<PrototypeAST> Proto,
 //To improve this remove these persistent references to getContext or getModule, replace with temp variables or better method, pointers
 
 llvm::Value * ExprAST::getAlloca(){
-	return LogErrorV("Improperly Address Request");
+	return LogErrorV("Improper Address Request");
 }
 
 llvm::Value *NumberExprAST::codegen(){
@@ -325,9 +326,23 @@ llvm::Value *VarExprAST::codegen(){
             code_gen->Builder->CreateStore(InitVal, Alloca);
         }
 		else{
-			llvm::AllocaInst *StorageAlloca = code_gen->CreateEntryBlockAlloca(TheFunction,static_cast<llvm::PointerType*>(type)->getElementType(),VarName);;
+			//This is about to get ugly, we need to look into this if there are
+			//variable length structs
+			//llvm::AllocaInst *StorageAlloca = code_gen->CreateEntryBlockAlloca(TheFunction,static_cast<llvm::PointerType*>(type)->getElementType(),VarName);;
+			llvm::Value * index_list[1];
+			index_list[0] = llvm::ConstantInt::get(*(code_gen->TheContext),llvm::APInt(8,1));
+			llvm::ArrayRef<llvm::Value *> indices(index_list);	
+			
+			llvm::Value * sizeOfAbstract = code_gen->Builder->CreatePtrToInt(code_gen->Builder->CreateGEP(llvm::ConstantPointerNull::get(static_cast<llvm::PointerType*>(type)),indices),llvm::Type::getInt8Ty(*(code_gen->TheContext)));
+			std::vector<std::unique_ptr<ExprAST>> size_list;
+			size_list.push_back(std::make_unique<ValueAsExprAST>(sizeOfAbstract));
+			std::unique_ptr<CallExprAST> objMallocCall = std::make_unique<CallExprAST>("GC_malloc",std::move(size_list),code_gen);
+			llvm::Value * objLocationGC = objMallocCall->codegen();
+
+			objLocationGC = code_gen->Builder->CreatePointerCast(objLocationGC, type);
+
 			llvm::AllocaInst *PointerAlloca = code_gen->CreateEntryBlockAlloca(TheFunction,type,VarName + "__ptr");
-			code_gen->Builder->CreateStore(StorageAlloca,PointerAlloca);
+			code_gen->Builder->CreateStore(objLocationGC,PointerAlloca);
 			Alloca = PointerAlloca;
 		}
         code_gen->NamedValues[VarName] = Variable{Alloca,type};
