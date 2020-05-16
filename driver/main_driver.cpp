@@ -13,8 +13,13 @@ void Driver::HandleDefinition(ASTTree & source_tree, CodeGenerator * code_gen){
                 FnIR->print(llvm::errs());
                 fprintf(stderr, "\n");
             }
+<<<<<<< HEAD
            // code_gen->TheJIT->get()->addModule(std::move(*(code_gen->TheModule)));
            // code_gen->InitializeModuleAndPassManager();
+=======
+            code_gen->TheJIT->get()->addModule(std::move(*(code_gen->TheModule)));
+            code_gen->InitializeModuleAndPassManager();
+>>>>>>> e61b8c863af3976a63f4bf3a485b03cb534eb498
         }
     }
     else{
@@ -29,8 +34,13 @@ void Driver::HandleClassDeclaration(ASTTree & source_tree, CodeGenerator * code_
                 ClassIR->print(llvm::errs());
                 fprintf(stderr, "\n");
             }
+<<<<<<< HEAD
             //code_gen->TheJIT->get()->addModule(std::move(*(code_gen->TheModule)));
             //code_gen->InitializeModuleAndPassManager();
+=======
+            code_gen->TheJIT->get()->addModule(std::move(*(code_gen->TheModule)));
+            code_gen->InitializeModuleAndPassManager();
+>>>>>>> e61b8c863af3976a63f4bf3a485b03cb534eb498
             (*(code_gen->Classes))[ClassAST->getName()] = std::move(ClassAST);
         }
     }
@@ -60,11 +70,19 @@ void Driver::HandleTopLevelExpression(ASTTree & source_tree, CodeGenerator * cod
            // auto H = code_gen->TheJIT->get()->addModule(std::move(*(code_gen->TheModule)));
            // code_gen->InitializeModuleAndPassManager();
 
+<<<<<<< HEAD
            // auto ExprSymbol = code_gen->TheJIT->get()->findSymbol("__anon__expr");
            // assert(ExprSymbol && "Function not found");
            // double (*FP)() = (double(*)())(intptr_t)llvm::cantFail(ExprSymbol.getAddress());
             //fprintf(stderr,"\nTop Level Expression Evaluated to %f \n",FP());
             //code_gen->TheJIT->get()->removeModule(H);
+=======
+            auto ExprSymbol = code_gen->TheJIT->get()->findSymbol("__anon__expr");
+            assert(ExprSymbol && "Function not found");
+            double (*FP)() = (double(*)())(intptr_t)llvm::cantFail(ExprSymbol.getAddress());
+            fprintf(stderr,"\nTop Level Expression Evaluated to %f \n",FP());
+            code_gen->TheJIT->get()->removeModule(H);
+>>>>>>> e61b8c863af3976a63f4bf3a485b03cb534eb498
         }
     }
     else{

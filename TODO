@@ -11,12 +11,21 @@ High Level TODO
             deprecate TopLevelExpressions
         foreach loop
     Workflow/compilation
+<<<<<<< HEAD
+=======
+        Allow toggling of code optimizations
+>>>>>>> e61b8c863af3976a63f4bf3a485b03cb534eb498
         Debugger
         Compile to executables
     Data
         Take certain constructs out of expressions, make instructions(if,var,for)
+            Then make it so we don't need semicolons for these constructs in statement lists, (no if(){};)
         Fix variable scopage(vars declared inside ifs should not be accessible after)
             Probably going to have to adjust NamedValues to have other elements
+<<<<<<< HEAD
+=======
+        String
+>>>>>>> e61b8c863af3976a63f4bf3a485b03cb534eb498
         Function prototypes
         Garbage Collection
         void type
@@ -33,12 +42,21 @@ High Level TODO
         Show outputs of example file
         Define Isidore, purpose of naming and why certain features are the way they are
     Linting
+<<<<<<< HEAD
     Add direct or implicit casting for stuff like return types
     Scan files for function prototypes
 
 
 
 
+=======
+    Put micro compiler in browser
+        Pretty simple
+        Page with textbox press compile
+            python/go script then runs constantly pulling git repo and posts the terminal output
+    Add direct or implicit casting for stuff like return types
+    Scan files for funciton prototypes
+>>>>>>> e61b8c863af3976a63f4bf3a485b03cb534eb498
 Low Level TODO
     Function/operators(very easy to make but develop a proper way to insert into standard library)
         ++/--
@@ -57,7 +75,10 @@ Low Level TODO
         Fix for statements always running once
         Cast function calls to proper types
     Not so quick Fixes
+<<<<<<< HEAD
 		Consider moving weird booleans to ENUMS
+=======
+>>>>>>> e61b8c863af3976a63f4bf3a485b03cb534eb498
         Add arrays to parameters of functions
         Should we keep overflows 
         Develop proper handling of semi colons(right now they are checked on a case by case basis)
@@ -65,3 +86,8 @@ Low Level TODO
         Short circuit boolean evaluation
         Fix boolean expressions(|| &&)
 
+<<<<<<< HEAD
+=======
+Examples
+    Sorting Algorithm
+>>>>>>> e61b8c863af3976a63f4bf3a485b03cb534eb498

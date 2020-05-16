@@ -52,7 +52,11 @@ FunctionAST::FunctionAST(std::unique_ptr<PrototypeAST> Proto,
 //To improve this remove these persistent references to getContext or getModule, replace with temp variables or better method, pointers
 
 llvm::Value * ExprAST::getAlloca(){
+<<<<<<< HEAD
 	return LogErrorV("Improper Address Request");
+=======
+	return LogErrorV("Improperly Address Request");
+>>>>>>> e61b8c863af3976a63f4bf3a485b03cb534eb498
 }
 
 llvm::Value *NumberExprAST::codegen(){
@@ -317,6 +321,7 @@ llvm::Value *VarExprAST::codegen(){
             else if(type->isIntegerTy()){
                 InitVal = llvm::ConstantInt::get(*code_gen->TheContext,llvm::APInt(64,0));
             }
+<<<<<<< HEAD
         }
         llvm::AllocaInst *Alloca;
         OldBindings.push_back(code_gen->NamedValues[VarName]); 
@@ -343,6 +348,20 @@ llvm::Value *VarExprAST::codegen(){
 
 			llvm::AllocaInst *PointerAlloca = code_gen->CreateEntryBlockAlloca(TheFunction,type,VarName + "__ptr");
 			code_gen->Builder->CreateStore(objLocationGC,PointerAlloca);
+=======
+        }
+        llvm::AllocaInst *Alloca;
+        OldBindings.push_back(code_gen->NamedValues[VarName]); 
+		if(!isAbstractType){
+			Alloca = code_gen->CreateEntryBlockAlloca(TheFunction,type,VarName);	
+            InitVal = code_gen->typeManager->castToType(InitVal,type);
+            code_gen->Builder->CreateStore(InitVal, Alloca);
+        }
+		else{
+			llvm::AllocaInst *StorageAlloca = code_gen->CreateEntryBlockAlloca(TheFunction,static_cast<llvm::PointerType*>(type)->getElementType(),VarName);;
+			llvm::AllocaInst *PointerAlloca = code_gen->CreateEntryBlockAlloca(TheFunction,type,VarName + "__ptr");
+			code_gen->Builder->CreateStore(StorageAlloca,PointerAlloca);
+>>>>>>> e61b8c863af3976a63f4bf3a485b03cb534eb498
 			Alloca = PointerAlloca;
 		}
         code_gen->NamedValues[VarName] = Variable{Alloca,type};

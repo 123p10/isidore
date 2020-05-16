@@ -20,6 +20,7 @@ public:
     virtual const bool requireSemiColon(){return true;};
     virtual llvm::Value *codegen() = 0;
     virtual llvm::Value * getAlloca();
+<<<<<<< HEAD
 };
 
 class ValueAsExprAST : public ExprAST{
@@ -28,6 +29,8 @@ class ValueAsExprAST : public ExprAST{
 		CodeGenerator * code_gen;
 		ValueAsExprAST(llvm::Value * val): val(val){}
 		llvm::Value * codegen(){return val;}
+=======
+>>>>>>> e61b8c863af3976a63f4bf3a485b03cb534eb498
 };
 
 class NumberExprAST : public ExprAST {

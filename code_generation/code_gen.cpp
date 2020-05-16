@@ -8,8 +8,14 @@
 #include "../types/type_manager.h"
 #include "llvm/Support/TargetRegistry.h"
 #include "llvm/Support/TargetSelect.h"
+<<<<<<< HEAD
 #include "llvm/Support/Host.h"
 using namespace llvm::sys;
+=======
+#include "llvm/IR/Type.h"
+#include "llvm/Transforms/Utils.h"
+#include "../types/type_manager.h"
+>>>>>>> e61b8c863af3976a63f4bf3a485b03cb534eb498
 llvm::Value *LogErrorV(const char *Str){
     LogError(Str);
     return nullptr;
@@ -23,8 +29,13 @@ CodeGenerator::CodeGenerator(bool optimizations){
     TheContext = new llvm::LLVMContext();
     Builder = new llvm::IRBuilder<>(*TheContext);
     typeManager = new TypeManager(TheContext,Builder);
+<<<<<<< HEAD
     //TheJIT = new std::unique_ptr<llvm::orc::KaleidoscopeJIT>;
     //*TheJIT = std::make_unique<llvm::orc::KaleidoscopeJIT>();
+=======
+    TheJIT = new std::unique_ptr<llvm::orc::KaleidoscopeJIT>;
+    *TheJIT = std::make_unique<llvm::orc::KaleidoscopeJIT>();
+>>>>>>> e61b8c863af3976a63f4bf3a485b03cb534eb498
     FunctionProtos = new std::map<std::string, std::unique_ptr<PrototypeAST>>;
     Classes = new std::map<std::string,std::unique_ptr<ClassDeclarationAST>>;
     InitializeModuleAndPassManager();
@@ -61,12 +72,25 @@ CodeGenerator::~CodeGenerator(){
 void CodeGenerator::InitializeModuleAndPassManager(){
     TheModule = new std::unique_ptr<llvm::Module>;
     *TheModule = std::make_unique<llvm::Module>("my cool jit", *TheContext);
+<<<<<<< HEAD
     //TheModule->get()->setDataLayout(TheJIT->get()->getTargetMachine().createDataLayout());
     TheFPM = new std::unique_ptr<llvm::legacy::FunctionPassManager>;
     *TheFPM = std::make_unique<llvm::legacy::FunctionPassManager>(TheModule->get());
     if(optimizations){
 		InitializeOptimizations();
 	}
+=======
+    TheModule->get()->setDataLayout(TheJIT->get()->getTargetMachine().createDataLayout());
+    TheFPM = new std::unique_ptr<llvm::legacy::FunctionPassManager>;
+    *TheFPM = std::make_unique<llvm::legacy::FunctionPassManager>(TheModule->get());
+    if(optimizations){
+        //TheFPM->get()->add(llvm::createPromoteMemoryToRegisterPass());
+        TheFPM->get()->add(llvm::createInstructionCombiningPass());
+        TheFPM->get()->add(llvm::createReassociatePass());
+        TheFPM->get()->add(llvm::createGVNPass());
+        TheFPM->get()->add(llvm::createCFGSimplificationPass());
+    }
+>>>>>>> e61b8c863af3976a63f4bf3a485b03cb534eb498
     TheFPM->get()->doInitialization();
 }
 
