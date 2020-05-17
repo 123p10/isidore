@@ -17,6 +17,7 @@ int main(int argc, char* argv[]){
     for(int i = 0;i < argc;i++){
         if(strcmp(argv[i],"-f") == 0){
             file_name = argv[i+1];
+			output_file_name = argv[i+1] + ".o";
         }
         else if(strcmp(argv[i],"-o") == 0){
 			output_file_name = argv[i+1];
@@ -37,26 +38,7 @@ int main(int argc, char* argv[]){
     Driver my_driver(showCode);
     Runtime runtime(code_gen);
 	runtime.createPrototypes();
-	while(1){
-        if(source_tree.getCurrToken().value == "EOF"){
-            break;
-        }
-        else if(source_tree.getCurrToken().type == "semicolon"){
-            source_tree.nextToken();
-        }
-        else if(source_tree.isType(source_tree.getCurrToken())){
-            my_driver.HandleDefinition(source_tree,code_gen);
-        }
-        else if(source_tree.getCurrToken().type == "extern"){
-            my_driver.HandleExtern(source_tree,code_gen);
-        }
-        else if(source_tree.getCurrToken().type == "class"){
-            my_driver.HandleClassDeclaration(source_tree,code_gen);
-        }
-        else{
-            my_driver.HandleTopLevelExpression(source_tree,code_gen);
-        }
-    }
+	my_driver.ParseLoop(source_tree,code_gen);
 	code_gen->OutputToObjectCode(output_file_name);
     //code_gen->TheModule->get()->print(llvm::errs(), nullptr);
     //wonder if this will cause memory leak?

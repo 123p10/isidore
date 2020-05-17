@@ -5,6 +5,33 @@ Driver::Driver(bool showCode_t){
     showCode = showCode_t;
 }
 
+void Driver::ParseLoop(ASTTree & source_tree, CodeGenerator * code_gen){
+	while(1){
+        if(source_tree.getCurrToken().value == "EOF"){
+            break;
+        }
+        else if(source_tree.getCurrToken().type == "semicolon"){
+            source_tree.nextToken();
+        }
+        else if(source_tree.isType(source_tree.getCurrToken())){
+            HandleDefinition(source_tree,code_gen);
+        }
+        else if(source_tree.getCurrToken().type == "extern"){
+            HandleExtern(source_tree,code_gen);
+        }
+        else if(source_tree.getCurrToken().type == "class"){
+            HandleClassDeclaration(source_tree,code_gen);
+        }
+		else if(source_tree.getCurrToken().type == "import"){
+			HandleImport(source_tree,code_gen);
+		}
+        else{
+            HandleTopLevelExpression(source_tree,code_gen);
+        }
+    }
+}
+
+
 void Driver::HandleDefinition(ASTTree & source_tree, CodeGenerator * code_gen){
     if(auto FnAST = source_tree.ParseDefinition()){
         if(auto *FnIR = FnAST->codegen()){
@@ -54,6 +81,16 @@ void Driver::HandleExtern(ASTTree & source_tree,CodeGenerator * code_gen){
         source_tree.nextToken();
     }
 }
+
+void Driver::HandleImport(ASTTree & source_tree, CodeGenerator * code_gen){
+	if(auto ImportAST = source_tree.ParseImport()){
+		ImportAST->codegen(showCode);
+	}
+	else{
+		source_tree.nextToken();
+	}
+}
+
 void Driver::HandleTopLevelExpression(ASTTree & source_tree, CodeGenerator * code_gen){
     if(auto FnAST = source_tree.ParseTopLevelExpr()){
         if(FnAST->codegen()){

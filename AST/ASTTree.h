@@ -38,12 +38,13 @@ class ASTTree{
         std::unique_ptr<ExprAST> ParseStringExpr();
         std::unique_ptr<ClassDeclarationAST> ParseClassDef();
         std::unique_ptr<ExprAST> ParseClassInit();
+		std::unique_ptr<ImportAST> ParseImport();
         int GetTokPrecedence();
         Token getCurrToken();
         Token nextToken();
         std::vector<std::unique_ptr<ExprAST>> ParseStatementList();
         llvm::Type * type_from_name(Token data_token);
-	bool isType(Token data_token);
+		bool isType(Token data_token);
 };
 
 std::unique_ptr<ExprAST> LogError(const char *Str);

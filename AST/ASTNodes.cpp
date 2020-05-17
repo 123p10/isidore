@@ -2,6 +2,7 @@
 #include "llvm/IR/Constants.h"
 #include "llvm/ADT/APFloat.h"
 #include <iostream>
+#include <fstream>
 #include "llvm/IR/Type.h"
 #include "llvm/IR/BasicBlock.h"
 #include "llvm/IR/Verifier.h"
@@ -405,6 +406,9 @@ llvm::Function *FunctionAST::codegen(){
     return TheFunction;
 
 }
+std::string FunctionAST::getFnName(){
+	return Proto->getName();
+}
 llvm::Value *ReturnExprAST::codegen(){
     llvm::Value * return_val = returnExpr->codegen();
     llvm::Function *TheFunction = code_gen->Builder->GetInsertBlock()->getParent();
@@ -476,4 +480,74 @@ llvm::Value * ClassAccessorAST::getAlloca(){
     llvm::ArrayRef<llvm::Value *> indices(index_list);
     llvm::Value* element_value = code_gen->Builder->CreateGEP(V,indices);
     return element_value;
+}
+
+void ImportAST::codegen(bool showCode){
+	std::ifstream importFs(fileLocation);
+	ProgramFile file(importFs);
+	tokenize_file(file);
+	ASTTree source_tree(file,code_gen);
+	if(showCode){
+		fprintf(stderr, ("Start Import of: " + fileLocation + " {").c_str());
+	}
+	while(1){
+		if(source_tree.getCurrToken().value == "EOF"){
+			break;
+		}
+		else if(source_tree.isType(source_tree.getCurrToken())){
+			if(auto FnAST = source_tree.ParseDefinition()){
+				auto Proto = FnAST->getProto();
+				for(unsigned int i = 0;i < imports.size();i++){
+					if(imports.at(i) == "*" || imports.at(i) == Proto->getName()){
+						if(auto *ProtoIR = Proto->codegen()){
+							if(showCode){
+								fprintf(stderr, "Read prototype definition:");
+								ProtoIR->print(llvm::errs());
+								fprintf(stderr, "\n");
+							}
+							(*(code_gen->FunctionProtos))[Proto->getName()] = std::move(Proto); 
+						}
+						break;
+					}
+				}
+			}
+		}
+		else if(source_tree.getCurrToken().type == "class"){
+			if(auto ClassAST = source_tree.ParseClassDef()){
+		        std::string className = ClassAST->getName();
+				for(unsigned int i = 0;i < imports.size();i++){
+					if(imports.at(i) == "*" || imports.at(i) == className){
+						if(auto *ClassIR = ClassAST->codegen()){
+							if(showCode){
+								fprintf(stderr, "Read class definition:");
+								ClassIR->print(llvm::errs());
+								fprintf(stderr, "\n");
+							}
+							(*(code_gen->Classes))[ClassAST->getName()] = std::move(ClassAST);
+						}
+						break;
+					}
+				}
+			}
+		}
+		else if(source_tree.getCurrToken().type == "extern"){
+			if(auto ExternAST = source_tree.ParseExtern()){
+				if(auto *ExternIR = ExternAST->codegen()){
+					if(showCode){
+						fprintf(stderr, "Read extern: ");
+						ExternIR->print(llvm::errs());
+						fprintf(stderr, "\n");
+					}
+					(*(code_gen->FunctionProtos))[ExternAST->getName()] = std::move(ExternAST); 
+				}
+			}
+		}
+		else{
+			source_tree.nextToken();
+		}
+		//Add recursive imports, yikes
+	}
+	if(showCode){
+		fprintf(stderr,("} Ended Import of " + fileLocation).c_str());
+	}
 }

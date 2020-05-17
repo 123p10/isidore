@@ -115,6 +115,7 @@ std::unique_ptr<ExprAST> ASTTree::ParsePrimary() {
     else if(getCurrToken().type == "return"){
         return ParseReturnExpr();
     }
+		
     else if(getCurrToken().type == "semicolon"){
         return nullptr;
     }
@@ -455,6 +456,38 @@ std::unique_ptr<ClassDeclarationAST> ASTTree::ParseClassDef(){
     return std::make_unique<ClassDeclarationAST>(name,args,code_gen);
 }
 
+
+std::unique_ptr<ImportAST> ASTTree::ParseImport(){
+	if(getCurrToken().type != "import"){
+		LogError("ParseImport called without import keyword");
+		return nullptr;
+	}
+	std::vector<std::string> imports;
+	nextToken();
+	while(getCurrToken().type == "identifier" || getCurrToken().value == "*"){
+		imports.push_back(getCurrToken().value);
+		if(nextToken().type != "comma"){
+			break;
+		}
+		//Eat Comma
+		nextToken();
+	}
+	std::string fileLocation;
+	if(getCurrToken().type != "from"){
+		LogError("Missing 'from' in import statement");
+		return nullptr;
+	}
+	fileLocation = nextToken().value;
+	if(nextToken().value != ";"){
+		LogError("Missing ';' after import statement");
+		return nullptr;
+	}
+	return std::make_unique<ImportAST>(fileLocation,imports,code_gen);
+
+}
+
+
+
 //Just adjust this to find locally defined ones
 llvm::Type * ASTTree::type_from_name(Token data_token){
     llvm::Type * type = std::move(llvm::Type::getDoubleTy(*code_gen->TheContext));
@@ -482,6 +515,9 @@ llvm::Type * ASTTree::type_from_name(Token data_token){
     LogError("No type specified for declaration");
     return nullptr;
 }
+
+
+
 bool ASTTree::isType(Token data_token){
 	return data_token.type == "data_type" || code_gen->Classes->count(data_token.value) > 0;
 }

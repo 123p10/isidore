@@ -22,6 +22,8 @@ std::map<std::string,std::string> keywords_list = {
     {"var","var"},
     {"return","return"},
     {"class","class"},
+	{"import", "import"},
+	{"from","from"},
     
 };
 

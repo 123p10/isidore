@@ -161,6 +161,8 @@ public:
   FunctionAST(std::unique_ptr<PrototypeAST> Proto,
               std::vector<std::unique_ptr<ExprAST>> Body, CodeGenerator * code_gen);
   llvm::Function *codegen();
+  std::unique_ptr<PrototypeAST> getProto(){return std::move(Proto);}
+	std::string getFnName();
 };
 
 class ArrayElementAST : public VariableExprAST{
@@ -203,5 +205,13 @@ class ClassAccessorAST : public VariableExprAST{
       llvm::Value * codegen();
       llvm::Value * getAlloca() override;
 
+};
+class ImportAST{
+	std::string fileLocation;
+	std::vector<std::string> imports;
+	CodeGenerator * code_gen;
+	public:
+		ImportAST(std::string fL, std::vector<std::string> ims, CodeGenerator * code_gen): fileLocation(fL), imports(ims), code_gen(code_gen){}
+		void codegen(bool showCode);
 };
 #endif

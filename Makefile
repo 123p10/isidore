@@ -1,5 +1,7 @@
 CXX = g++
-LLVMFLAGS = `llvm-config --cxxflags --ldflags --system-libs --libs all`
+LIBS = native core all-targets orcjit
+LLVMFLAGS = `llvm-config --cxxflags --ldflags --system-libs --libs $(LIBS)`
+
 INC = -I/usr/local/include/llvm
 CXXFLAGS = -Wall -g -O0 -rdynamic -lgc $(LLVMFLAGS)
 OBJFILES = main.o AST/ASTNodes.o AST/ASTTree.o code_generation/code_gen.o \
