@@ -9,6 +9,7 @@
 #include "../code_generation/code_gen.h"
 #include "llvm/IR/InstrTypes.h"
 #include "ASTTree.h"
+#include "../utils/StringUtils.h"
 NumberExprAST::NumberExprAST(std::string numString, CodeGenerator * code_gen){
     Val = stod(numString);
     (*this).code_gen = code_gen;
@@ -482,6 +483,10 @@ llvm::Value * ClassAccessorAST::getAlloca(){
     return element_value;
 }
 
+void ImportAST::prependFileLocation(std::string prepend){
+	(*this).fileLocation = prepend + (*this).fileLocation;
+}
+
 void ImportAST::codegen(bool showCode){
 	std::ifstream importFs(fileLocation);
 	ProgramFile file(importFs);
@@ -490,6 +495,9 @@ void ImportAST::codegen(bool showCode){
 	if(showCode){
 		fprintf(stderr, ("Start Import of: " + fileLocation + " {").c_str());
 	}
+	// We should probably deprecate Driver class and make these all Driver calls
+	// I also need to add a dependency tracker to ensure that we do not include the same files twice, and we can handle cyclic loading
+	// We should probably make every file a namespace
 	while(1){
 		if(source_tree.getCurrToken().value == "EOF"){
 			break;
@@ -540,6 +548,17 @@ void ImportAST::codegen(bool showCode){
 					}
 					(*(code_gen->FunctionProtos))[ExternAST->getName()] = std::move(ExternAST); 
 				}
+			}
+		}
+		else if(source_tree.getCurrToken().type == "import"){
+			if(auto ImportAST = source_tree.ParseImport()){
+				
+				fileLocation = ParseOutFileName(fileLocation);
+				ImportAST->prependFileLocation(fileLocation);
+				ImportAST->codegen(showCode);
+			}
+			else{
+				source_tree.nextToken();
 			}
 		}
 		else{

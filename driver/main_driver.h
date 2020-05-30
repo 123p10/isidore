@@ -7,11 +7,11 @@ class Driver{
     bool showCode = false;
     public:
         Driver(bool showCode_t);
-		void ParseLoop(ASTTree & source_tree, CodeGenerator * code_gen);
+		void ParseLoop(ASTTree & source_tree, CodeGenerator * code_gen,std::string fileLocation);
         void HandleDefinition(ASTTree & source_tree, CodeGenerator * code_gen);
         void HandleExtern(ASTTree & source_tree, CodeGenerator * code_gen);
         void HandleTopLevelExpression(ASTTree & source_tree, CodeGenerator * code_gen);
         void HandleClassDeclaration(ASTTree & source_tree, CodeGenerator * code_gen);
-		void HandleImport(ASTTree & source_tree, CodeGenerator * code_gen);
+		void HandleImport(ASTTree & source_tree, CodeGenerator * code_gen,std::string fileLocation);
 };
 #endif

@@ -97,8 +97,10 @@ int remove(Array arr, int n){
 	}
 	else{
 		if(n < arr.size-1){
-			Node before = get(arr,n-1);
-			Node c = before.next;
+			Node before;
+			before = get(arr,n-1);
+			Node c; 
+			c = before.next;
 			before.next = c.next;
 		}
 	}

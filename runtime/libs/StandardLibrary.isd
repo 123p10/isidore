@@ -1,0 +1,5 @@
+import * from "Data_Structures.isd";
+double print_u(){
+	return 5;
+}
+

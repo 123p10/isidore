@@ -213,5 +213,6 @@ class ImportAST{
 	public:
 		ImportAST(std::string fL, std::vector<std::string> ims, CodeGenerator * code_gen): fileLocation(fL), imports(ims), code_gen(code_gen){}
 		void codegen(bool showCode);
+		void prependFileLocation(std::string prepend);
 };
 #endif

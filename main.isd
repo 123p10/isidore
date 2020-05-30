@@ -1,12 +1,6 @@
-import * from "runtime/libs/Data_Structures.isd";
-
+import * from "runtime/libs/StandardLibrary.isd";
 double run(){
-	Array arr;
-	push_back(arr,2);
-	push_back(arr,1);
-	push_back(arr,4);
-	remove(arr,2);
-	print(arr);
-	return 0;
+	Array a;
+	return print_u();
 }
 

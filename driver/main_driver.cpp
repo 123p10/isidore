@@ -1,11 +1,12 @@
 #include "main_driver.h"
 #include "llvm/Support/raw_ostream.h"
 #include <cstdint>
+#include "../utils/StringUtils.h"
 Driver::Driver(bool showCode_t){
     showCode = showCode_t;
 }
 
-void Driver::ParseLoop(ASTTree & source_tree, CodeGenerator * code_gen){
+void Driver::ParseLoop(ASTTree & source_tree, CodeGenerator * code_gen,std::string fileLocation){
 	while(1){
         if(source_tree.getCurrToken().value == "EOF"){
             break;
@@ -23,7 +24,7 @@ void Driver::ParseLoop(ASTTree & source_tree, CodeGenerator * code_gen){
             HandleClassDeclaration(source_tree,code_gen);
         }
 		else if(source_tree.getCurrToken().type == "import"){
-			HandleImport(source_tree,code_gen);
+			HandleImport(source_tree,code_gen,fileLocation);
 		}
         else{
             HandleTopLevelExpression(source_tree,code_gen);
@@ -82,8 +83,10 @@ void Driver::HandleExtern(ASTTree & source_tree,CodeGenerator * code_gen){
     }
 }
 
-void Driver::HandleImport(ASTTree & source_tree, CodeGenerator * code_gen){
+void Driver::HandleImport(ASTTree & source_tree, CodeGenerator * code_gen, std::string fileLocation){
 	if(auto ImportAST = source_tree.ParseImport()){
+		fileLocation = ParseOutFileName(fileLocation);
+		ImportAST->prependFileLocation(fileLocation);
 		ImportAST->codegen(showCode);
 	}
 	else{
