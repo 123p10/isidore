@@ -51,12 +51,6 @@ std::unique_ptr<ExprAST> ASTTree::ParseIdentifierExpr() {
             nextToken();
             return std::make_unique<ArrayElementAST>(IdName,code_gen,std::move(index));
         }
-        else if(getCurrToken().value == "."){
-            nextToken();
-            std::string key = getCurrToken().value;
-            nextToken();
-            return std::make_unique<ClassAccessorAST>(IdName,code_gen,key);
-        }
         return std::make_unique<VariableExprAST>(IdName,code_gen);
         
     }

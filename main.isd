@@ -1,6 +1,20 @@
-import * from "runtime/libs/StandardLibrary.isd";
+//import * from "runtime/libs/StandardLibrary.isd";
+class ABC = {
+	int a;
+}
+
+class DEF = {
+	ABC f;
+	int val;
+}
+
 double run(){
-	Array a;
-	return print_u();
+//	Array a;
+	ABC d;
+	DEF k;
+	k.val = 1;
+	d.a = 3;
+	k.f = d;
+	return k.f.a;
 }
 

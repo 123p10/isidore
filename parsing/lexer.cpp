@@ -176,7 +176,7 @@ bool isMultiLineComment(std::vector<char> current_line, std::string & char_stack
     return false;
 }
 bool isOperator(char op){
-    if(op == '*' || op == '+' || op == '-' || op == ':' || op == '=' || op == '/' || op == '%'  || op == '&' || op == '|' || op == '!' || op == '<' || op == '>' || op == '='){
+    if(op == '*' || op == '.' || op == '+' || op == '-' || op == ':' || op == '=' || op == '/' || op == '%'  || op == '&' || op == '|' || op == '!' || op == '<' || op == '>' || op == '='){
         return true;
     }
     return false;
@@ -186,7 +186,6 @@ bool isSpecialChar(char specialChar){
     if(specialChar == '(' || specialChar == ')'){return true;}
     if(specialChar == '[' || specialChar == ']'){return true;}
     if(specialChar == '\'' || specialChar == '\"'){return true;}
-    if(specialChar == '.'){return true;}
     if(specialChar == ','){return true;}
 
 

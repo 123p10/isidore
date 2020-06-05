@@ -61,6 +61,7 @@ class BinaryExprAST : public ExprAST {
         BinaryExprAST(std::string op, std::unique_ptr<ExprAST> LHS,
                         std::unique_ptr<ExprAST> RHS, CodeGenerator * code_gen);
         llvm::Value *codegen() override;
+		llvm::Value * getAlloca() override;
 };
 class CallExprAST : public ExprAST {
     std::string Callee;
@@ -198,11 +199,12 @@ class ClassDeclarationAST{
     int indexOfArg(std::string key);
 };
 class ClassAccessorAST : public VariableExprAST{
+  VariableExprAST * LHS;
   std::string accessKey;
   public:
-      ClassAccessorAST(const std::string &Name, CodeGenerator * code_gen, std::string accessKey):
-      VariableExprAST(Name,code_gen,false), accessKey(accessKey){}
-      llvm::Value * codegen();
+      ClassAccessorAST(CodeGenerator * code_gen,VariableExprAST * LHS, std::string accessKey):
+      VariableExprAST("",code_gen), LHS(LHS), accessKey(accessKey){}
+      llvm::Value * codegen() override;
       llvm::Value * getAlloca() override;
 
 };

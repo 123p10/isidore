@@ -48,9 +48,10 @@ void CodeGenerator::initPrecedence(){
     BinopPrecedence["!="] = 10;
     BinopPrecedence["+"] = 20;
     BinopPrecedence["-"] = 20;
-    BinopPrecedence["%"] = 40; // highest.
-    BinopPrecedence["/"] = 40; // highest.
-    BinopPrecedence["*"] = 40; // highest.
+    BinopPrecedence["%"] = 40;
+    BinopPrecedence["/"] = 40; 
+    BinopPrecedence["*"] = 40;
+	BinopPrecedence["."] = 60;
 }
 CodeGenerator::~CodeGenerator(){
     delete TheContext;

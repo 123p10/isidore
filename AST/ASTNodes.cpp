@@ -89,9 +89,21 @@ llvm::Value *UnaryExprAST::codegen(){
         return code_gen->Builder->CreateCall(F,OperandV,"unop");
     }
 }
+
+llvm::Value *BinaryExprAST::getAlloca(){
+	if(Op == "."){
+	    VariableExprAST *RHSE = static_cast<VariableExprAST*>(RHS.get());
+		std::string R = RHSE->getName();
+		VariableExprAST *LHSE = static_cast<VariableExprAST*>(LHS.get());
+		std::unique_ptr<ClassAccessorAST> gen = std::make_unique<ClassAccessorAST>(code_gen,LHSE,R);
+		return gen->getAlloca();
+	}
+	return LogErrorV("Tried to get an Alloca of an improper value");
+}
+
 llvm::Value *BinaryExprAST::codegen() {
     if(Op == "=" || Op == "+=" || Op == "-=" || Op == "*=" || Op == "/="){
-        VariableExprAST *LHSE = reinterpret_cast<VariableExprAST*>(LHS.get());
+        ExprAST *LHSE = LHS.get();
         if(!LHSE){
             return LogErrorV("destination of '=' must be a variable");
         }
@@ -124,6 +136,15 @@ llvm::Value *BinaryExprAST::codegen() {
 
         return Val;
     }
+
+	if(Op == "."){
+		VariableExprAST *RHSE = static_cast<VariableExprAST*>(RHS.get());
+		std::string R = RHSE->getName();
+		VariableExprAST *LHSE = static_cast<VariableExprAST*>(LHS.get());
+		std::unique_ptr<ClassAccessorAST> gen = std::make_unique<ClassAccessorAST>(code_gen,LHSE,R);
+		return gen->codegen();
+	}
+
     llvm::Value *L = LHS->codegen();
     llvm::Value *R = RHS->codegen();
     if (!L || !R)
@@ -464,13 +485,12 @@ int ClassDeclarationAST::indexOfArg(std::string key){
     return -1;
 }
 llvm::Value *ClassAccessorAST::codegen(){	
-    llvm::LoadInst * load = code_gen->Builder->CreateLoad(getAlloca(),(Name + "i").c_str());
+    llvm::Value * load = code_gen->Builder->CreateLoad(getAlloca(),(Name + "i").c_str());
 	return load;
 }
 llvm::Value * ClassAccessorAST::getAlloca(){
-    llvm::Value *ptr = code_gen->NamedValues[Name].value;
-    llvm::Value *V = code_gen->Builder->CreateLoad(ptr,(Name + "_load_ptr").c_str());
-	llvm::PointerType *pT = static_cast<llvm::PointerType*>(code_gen->NamedValues[Name].type);
+    llvm::Value *V = LHS->codegen();
+	llvm::PointerType *pT = static_cast<llvm::PointerType*>(V->getType());
     int index = (*code_gen->Classes)[pT->getElementType()->getStructName().str()]->indexOfArg(accessKey);
     if(!V){
         LogErrorV("Unknown Variable Name");
