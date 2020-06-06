@@ -7,6 +7,7 @@
 #include "llvm/IR/LegacyPassManager.h"
 #include "../JIT/KaleidoscopeJIT.h"
 #include "../types/type_manager.h"
+#include <unordered_map>
 class PrototypeAST;
 class ClassDeclarationAST;
 class TypeManager;
@@ -22,7 +23,8 @@ struct Argument
 };
 class CodeGenerator{
 	bool optimizations;
-    public:
+    std::unordered_map<std::string,bool> included_files;
+	public:
         TypeManager * typeManager;
         void initPrecedence();
         std::map<std::string, int> BinopPrecedence;
@@ -41,6 +43,10 @@ class CodeGenerator{
 		void OutputToObjectCode(std::string fileName);
         llvm::AllocaInst *CreateEntryBlockAlloca(llvm::Function *TheFunction,llvm::Type * type, const std::string &VarName);
         llvm::Value * operator_instructions(std::string instruction, llvm::Value *L, llvm::Value *R);
+		
+		bool fileIncluded(std::string path);
+		void addFileToIncluded(std::string path);
+
 		CodeGenerator(bool optimizations);
         ~CodeGenerator();
 

@@ -15,3 +15,7 @@ std::string ParseOutExtension(std::string input){
 	input = input.substr(0,lastDot);
 	return input;
 }
+
+std::string SimplifyPath(std::string path){
+	return path;
+}

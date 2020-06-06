@@ -13,6 +13,7 @@ using namespace llvm::sys;
 #include "llvm/IR/Type.h"
 #include "llvm/Transforms/Utils.h"
 #include "../types/type_manager.h"
+#include "../utils/StringUtils.h"
 llvm::Value *LogErrorV(const char *Str){
     LogError(Str);
     return nullptr;
@@ -194,4 +195,18 @@ llvm::Value * CodeGenerator::operator_instructions(std::string instruction, llvm
     }
 
     return nullptr;
+}
+
+
+bool CodeGenerator::fileIncluded(std::string path){
+	path = SimplifyPath(path);
+	if(included_files.find(path) == included_files.end()){
+		return false;
+	}
+	return true;
+}
+void CodeGenerator::addFileToIncluded(std::string path){
+	path = SimplifyPath(path);
+	included_files[path] = true;
+
 }

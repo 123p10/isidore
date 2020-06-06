@@ -508,13 +508,18 @@ void ImportAST::prependFileLocation(std::string prepend){
 }
 
 void ImportAST::codegen(bool showCode){
+	if(code_gen->fileIncluded(fileLocation)){
+		return;
+	}
 	std::ifstream importFs(fileLocation);
 	ProgramFile file(importFs);
 	tokenize_file(file);
 	ASTTree source_tree(file,code_gen);
 	if(showCode){
-		fprintf(stderr, ("Start Import of: " + fileLocation + " {").c_str());
+		fprintf(stderr, ("Start Import of: " + fileLocation + " {\n").c_str());
 	}
+	//Run check for module stuff
+	code_gen->addFileToIncluded(fileLocation);
 	// We should probably deprecate Driver class and make these all Driver calls
 	// I also need to add a dependency tracker to ensure that we do not include the same files twice, and we can handle cyclic loading
 	// We should probably make every file a namespace
@@ -584,9 +589,8 @@ void ImportAST::codegen(bool showCode){
 		else{
 			source_tree.nextToken();
 		}
-		//Add recursive imports, yikes
 	}
 	if(showCode){
-		fprintf(stderr,("} Ended Import of " + fileLocation).c_str());
+		fprintf(stderr,("} Ended Import of " + fileLocation + "\n").c_str());
 	}
 }

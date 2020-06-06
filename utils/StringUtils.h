@@ -3,4 +3,5 @@
 #include <string>
 std::string ParseOutFileName(std::string input);
 std::string ParseOutExtension(std::string input);
+std::string SimplifyPath(std::string input);
 #endif
