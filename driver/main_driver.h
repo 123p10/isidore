@@ -8,10 +8,10 @@ class Driver{
     public:
         Driver(bool showCode_t);
 		void ParseLoop(ASTTree & source_tree, CodeGenerator * code_gen,std::string fileLocation);
-        void HandleDefinition(ASTTree & source_tree, CodeGenerator * code_gen);
+        void HandleDefinition(ASTTree & source_tree);
         void HandleExtern(ASTTree & source_tree, CodeGenerator * code_gen);
-        void HandleTopLevelExpression(ASTTree & source_tree, CodeGenerator * code_gen);
+        void HandleTopLevelExpression(ASTTree & source_tree);
         void HandleClassDeclaration(ASTTree & source_tree, CodeGenerator * code_gen);
-		void HandleImport(ASTTree & source_tree, CodeGenerator * code_gen,std::string fileLocation);
+		void HandleImport(ASTTree & source_tree,std::string fileLocation);
 };
 #endif

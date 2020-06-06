@@ -17,7 +17,7 @@ public:
     CodeGenerator * code_gen;
     virtual ~ExprAST() = default;
     bool isReturn = false;
-    virtual const bool requireSemiColon(){return true;};
+    virtual bool requireSemiColon(){return true;};
     virtual llvm::Value *codegen() = 0;
     virtual llvm::Value * getAlloca();
 };
@@ -83,7 +83,7 @@ class IfExprAST : public ExprAST{
   public:
     IfExprAST(std::unique_ptr<ExprAST> Cond,std::vector<std::unique_ptr<ExprAST>> Then, std::vector<std::unique_ptr<ExprAST>> ElseThen, CodeGenerator * code_gen);
     llvm::Value *codegen() override;
-    const bool requireSemiColon(){return false;};
+	bool requireSemiColon(){return false;};
 
 };
 class ForExprAST : public ExprAST{
@@ -94,7 +94,7 @@ class ForExprAST : public ExprAST{
     ForExprAST(std::unique_ptr<ExprAST> Start, std::unique_ptr<ExprAST> End, std::unique_ptr<ExprAST> Step, std::vector<std::unique_ptr<ExprAST>> BodyList, CodeGenerator * code_gen)
     : Start(std::move(Start)), End(std::move(End)), Step(std::move(Step)), BodyList(std::move(BodyList)),code_gen(code_gen){}
     llvm::Value *codegen() override;
-    const bool requireSemiColon(){return false;};
+    bool requireSemiColon(){return false;};
 
 };
 

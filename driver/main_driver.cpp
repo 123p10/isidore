@@ -15,7 +15,7 @@ void Driver::ParseLoop(ASTTree & source_tree, CodeGenerator * code_gen,std::stri
             source_tree.nextToken();
         }
         else if(source_tree.isType(source_tree.getCurrToken())){
-            HandleDefinition(source_tree,code_gen);
+            HandleDefinition(source_tree);
         }
         else if(source_tree.getCurrToken().type == "extern"){
             HandleExtern(source_tree,code_gen);
@@ -24,16 +24,16 @@ void Driver::ParseLoop(ASTTree & source_tree, CodeGenerator * code_gen,std::stri
             HandleClassDeclaration(source_tree,code_gen);
         }
 		else if(source_tree.getCurrToken().type == "import"){
-			HandleImport(source_tree,code_gen,fileLocation);
+			HandleImport(source_tree,fileLocation);
 		}
         else{
-            HandleTopLevelExpression(source_tree,code_gen);
+            HandleTopLevelExpression(source_tree);
         }
     }
 }
 
 
-void Driver::HandleDefinition(ASTTree & source_tree, CodeGenerator * code_gen){
+void Driver::HandleDefinition(ASTTree & source_tree){
     if(auto FnAST = source_tree.ParseDefinition()){
         if(auto *FnIR = FnAST->codegen()){
             if(showCode == true){
@@ -83,7 +83,7 @@ void Driver::HandleExtern(ASTTree & source_tree,CodeGenerator * code_gen){
     }
 }
 
-void Driver::HandleImport(ASTTree & source_tree, CodeGenerator * code_gen, std::string fileLocation){
+void Driver::HandleImport(ASTTree & source_tree, std::string fileLocation){
 	if(auto ImportAST = source_tree.ParseImport()){
 		fileLocation = ParseOutFileName(fileLocation);
 		ImportAST->prependFileLocation(fileLocation);
@@ -94,7 +94,7 @@ void Driver::HandleImport(ASTTree & source_tree, CodeGenerator * code_gen, std::
 	}
 }
 
-void Driver::HandleTopLevelExpression(ASTTree & source_tree, CodeGenerator * code_gen){
+void Driver::HandleTopLevelExpression(ASTTree & source_tree){
     if(auto FnAST = source_tree.ParseTopLevelExpr()){
         if(FnAST->codegen()){
            // auto H = code_gen->TheJIT->get()->addModule(std::move(*(code_gen->TheModule)));

@@ -44,8 +44,8 @@ class CodeGenerator{
         llvm::AllocaInst *CreateEntryBlockAlloca(llvm::Function *TheFunction,llvm::Type * type, const std::string &VarName);
         llvm::Value * operator_instructions(std::string instruction, llvm::Value *L, llvm::Value *R);
 		
-		bool fileIncluded(std::string path);
-		void addFileToIncluded(std::string path);
+		bool fileIncluded(std::string & path);
+		void addFileToIncluded(std::string & path);
 
 		CodeGenerator(bool optimizations);
         ~CodeGenerator();

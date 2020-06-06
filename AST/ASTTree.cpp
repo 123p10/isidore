@@ -25,7 +25,7 @@ ASTTree::ASTTree(ProgramFile source_file, CodeGenerator *code_gen){
 std::unique_ptr<ExprAST> ASTTree::ParseNumberExpr() {
     auto Result = std::make_unique<NumberExprAST>(getCurrToken().value,code_gen);
     nextToken();
-    return std::move(Result);
+    return Result;
 }
 
 std::unique_ptr<ExprAST> ASTTree::ParseParenExpr() {

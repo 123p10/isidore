@@ -198,14 +198,14 @@ llvm::Value * CodeGenerator::operator_instructions(std::string instruction, llvm
 }
 
 
-bool CodeGenerator::fileIncluded(std::string path){
+bool CodeGenerator::fileIncluded(std::string & path){
 	path = SimplifyPath(path);
 	if(included_files.find(path) == included_files.end()){
 		return false;
 	}
 	return true;
 }
-void CodeGenerator::addFileToIncluded(std::string path){
+void CodeGenerator::addFileToIncluded(std::string & path){
 	path = SimplifyPath(path);
 	included_files[path] = true;
 

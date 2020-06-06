@@ -52,12 +52,12 @@ void tokenize_file(ProgramFile & source_file){
                 char_stack="";
             }
             //We may want to put this in our parser but I will just ignore comment in lexer
-            else if(isOneLineComment(current_line,char_stack,char_number)){
+            else if(isOneLineComment(current_line,char_number)){
                 char_number = current_line.size();
                 char_stack="";
                 break;
             }
-            else if(isMultiLineComment(current_line,char_stack,char_number)){
+            else if(isMultiLineComment(current_line,char_number)){
                 char_stack = "";
                 while(current_line.size() != 0){
                     if(char_number+1 >= (int)current_line.size()){
@@ -165,12 +165,12 @@ void loadLetterToken(std::vector<char> current_line, std::string & char_stack , 
     }
     char_number-=2;
 }
-bool isOneLineComment(std::vector<char> current_line, std::string & char_stack , int & char_number){
+bool isOneLineComment(std::vector<char> current_line, int & char_number){
     if(char_number+1 >= (int)current_line.size()){return false;}
     if(current_line.at(char_number) == '/' && current_line.at(char_number+1) == '/'){return true;}
     return false;
 }
-bool isMultiLineComment(std::vector<char> current_line, std::string & char_stack , int & char_number){
+bool isMultiLineComment(std::vector<char> current_line, int & char_number){
     if(char_number+1 >= (int)current_line.size()){return false;}
     if(current_line.at(char_number) == '/' && current_line.at(char_number+1) == '*'){return true;}
     return false;
