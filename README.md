@@ -45,9 +45,9 @@ Isidore is currently under heavy development and is certainly not complete. The 
 		4. Add `PATH=$PATH:$ISIDORE`
 
 8. You can now use isidore directly from the command line.
-  - `isidore file_name.isd` will compile file_name.isd to an object file and create an executable
-  - `isidore build file_name.isd` will only compiled file_name.isd to an object file
-  - Use `isidore build` on your non entry program files, files without the main function run()
+	1.  `isidore file_name.isd` will compile file_name.isd to an object file and create an executable
+	2.  `isidore build file_name.isd` will only compiled file_name.isd to an object file
+	3.  Use `isidore build` on your non entry program files, files without the main function run()
 
 
 
