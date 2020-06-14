@@ -1,18 +1,19 @@
 #include <iostream>
 #include <fstream>
-#include "parsing/lexer.h"
-#include "files/file_handler.h"
-#include "AST/ASTTree.h"
-#include "AST/ASTNodes.h"
-#include "driver/main_driver.h"
-#include "code_generation/code_gen.h"
+#include "../../src/parsing/lexer.h"
+#include "../../src/files/file_handler.h"
+#include "../../src/AST/ASTTree.h"
+#include "../../src/AST/ASTNodes.h"
+#include "../../src/driver/main_driver.h"
+#include "../../src/code_generation/code_gen.h"
 #include "llvm/Support/raw_ostream.h"
-#include "extern/extern.h"
-#include "runtime/runtime.h"
-#include "utils/StringUtils.h"
+#include "../../src/extern/extern.h"
+#include "../../src/runtime/runtime.h"
+#include "../../src/utils/StringUtils.h"
 int main(int argc, char* argv[]){
     bool showCode = false;
     bool optimizations = true;
+	bool createDepFile = false;
     std::string file_name = "main.isd";
 	std::string output_file_name = ParseOutExtension(file_name) + ".o";
     for(int i = 0;i < argc;i++){
@@ -30,6 +31,9 @@ int main(int argc, char* argv[]){
         else if(strcmp(argv[i],"-c") == 0){
             showCode = true;
         }
+		else if(strcmp(argv[i],"-r") == 0){
+			createDepFile = true;
+		}
     }
     std::ifstream my_file(file_name);
     CodeGenerator * code_gen = new CodeGenerator(optimizations);
@@ -41,7 +45,10 @@ int main(int argc, char* argv[]){
 	runtime.createPrototypes();
 	my_driver.ParseLoop(source_tree,code_gen,file_name);
 	code_gen->OutputToObjectCode(output_file_name);
-    //code_gen->TheModule->get()->print(llvm::errs(), nullptr);
+	if(createDepFile){
+		code_gen->generateFileList(ParseOutExtension(output_file_name) + ".deps");
+	}
+	//code_gen->TheModule->get()->print(llvm::errs(), nullptr);
     //wonder if this will cause memory leak?
     //delete code_gen;
     return 0;

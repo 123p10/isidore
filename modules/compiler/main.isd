@@ -1,0 +1,6 @@
+import * from "../../src/runtime/libs/StandardLibrary.isd";
+import * from "../../src/runtime/libs/Data_Structures.isd";
+double run(){
+	return 0;
+}
+

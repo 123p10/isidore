@@ -1,6 +1,0 @@
-import * from "runtime/libs/StandardLibrary.isd";
-import * from "runtime/libs/Data_Structures.isd";
-double run(){
-	return 0;
-}
-

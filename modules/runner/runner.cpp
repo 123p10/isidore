@@ -1,7 +1,8 @@
 #include <iostream>
 #include <gc.h>
+#include <cstdlib>
 extern "C"{
-	double run();
+	int run();
 }
 int main(){
 	auto a = run();

@@ -1,7 +1,6 @@
+*
+!*.*
+!*/
 *.o
-main
-compile
 *.sh
 Makefile
-main.isd
-run

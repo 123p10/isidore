@@ -9,11 +9,13 @@
 #include "llvm/Support/TargetRegistry.h"
 #include "llvm/Support/TargetSelect.h"
 #include "llvm/Support/Host.h"
-using namespace llvm::sys;
 #include "llvm/IR/Type.h"
 #include "llvm/Transforms/Utils.h"
 #include "../types/type_manager.h"
 #include "../utils/StringUtils.h"
+#include <iostream>
+#include <fstream>
+using namespace llvm::sys;
 llvm::Value *LogErrorV(const char *Str){
     LogError(Str);
     return nullptr;
@@ -208,5 +210,14 @@ bool CodeGenerator::fileIncluded(std::string & path){
 void CodeGenerator::addFileToIncluded(std::string & path){
 	path = SimplifyPath(path);
 	included_files[path] = true;
-
+}
+void CodeGenerator::generateFileList(std::string path){
+	std::ofstream outputFile;
+	outputFile.open(path);
+	for(std::pair<std::string, bool> file : included_files){
+		if(file.second == true){
+			outputFile << " " << file.first << "\n";
+		}
+	}
+	std::cout << "\nWrote to " << path << "\n";
 }

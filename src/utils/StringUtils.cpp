@@ -19,6 +19,7 @@ std::string ParseOutExtension(std::string input){
 }
 
 std::string SimplifyPath(std::string path){
+	bool absPath = path.length() > 1 && path[0] == '/';
 	std::string out, tmp;
 	std::vector<std::string> stack;
 	std::stringstream ss(path);
@@ -26,14 +27,17 @@ std::string SimplifyPath(std::string path){
 		if(tmp == "" || tmp == "."){
 			continue;
 		}
-		if(tmp == ".." && !stack.empty()){
+		if(tmp == ".." && !stack.empty() && stack.back() != ".."){
 			stack.pop_back();
 		}
-		else if(tmp != ".."){
+		else{
 			stack.push_back(tmp);
 		}
 	}
-	out = ".";
+	out = "";
+	if(!absPath){
+		out = ".";
+	}
 	for(int i = 0;i < (int)stack.size();i++){
 		out += "/" + stack.at(i);
 	}

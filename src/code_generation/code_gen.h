@@ -46,7 +46,7 @@ class CodeGenerator{
 		
 		bool fileIncluded(std::string & path);
 		void addFileToIncluded(std::string & path);
-
+		void generateFileList(std::string path);
 		CodeGenerator(bool optimizations);
         ~CodeGenerator();
 

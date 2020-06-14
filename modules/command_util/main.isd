@@ -1,0 +1,9 @@
+import * from "../../src/runtime/libs/StandardLibrary.isd";
+int run(){
+	Array arr;
+	init(arr);
+	push_back(arr,1);
+	push_back(arr,2);
+	print(arr);
+	return 5;
+}
