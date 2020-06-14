@@ -1,5 +1,4 @@
 # Isidore
-You can run your own program at: OwenBrake.com/compiler
 ## Background
 ### Purpose
 Every day there is a hip, new programming language. The recent trend for the past 5-10 years has been moving towards more "beautiful" languages like Python and Golang. Isidore attempts to redirect this focus from beautiful code towards clear, readable, maintainable code.
@@ -21,21 +20,30 @@ Isidore is currently under heavy development and is certainly not complete. The 
 #### Dependencies
 1. libgc (Tested in GC-8.0.4)
 2. LLVM (Tested in LLVM-10)
-3. g++ or some other C++(14+) compiler, for other compilers you have to edit the Makefile
-
+3. g++ with std C++17 support
 #### How to Build Isidore Programs
-To run an Isidore program you require llvm-9 and g++. For linux users it is probably easiest to do
-`sudo apt-get install llvm` and `sudo apt-get install g++`. Once you have the dependencies installed you may proceed below.
-1. Pull this repo
-2. `cd` to the local repo
-3. Run `make`
-4. Run the output file main (Linux: ./main)
+1. git clone this repository
+2. cd modules/compiler
+3. make
+4. cd modules/command_util
+5. If the folder `exec` does not exist create it in modules/command_util
+6. run make in modules/command_util
+7. Setup the environment variables
+	a. ISIDORE_PATH="/path_to_isidore_folder/isidore/"
+	b. Add modules/command_util/exec to your path
+	c. EXAMPLE INSTRUCTIONS
+		i. Edit ~/.bashrc
+		ii. Add `export ISIDORE_PATH="/home/owen/Desktop/isidore/"`
+		iii. Add `ISIDORE=$ISIDORE_PATH"modules/command_util/exec"`
+		iv. Add `PATH=$PATH:$ISIDORE`
+8. You can now use isidore directly from the command line.
+	a. `isidore file_name.isd` will compile file_name.isd to an object file and create an executable
+	b. `isidore build file_name.isd` will only compiled file_name.isd to an object file
+	c. Use `isidore build` on your non entry program files, files without the main function run()
 
-*Note: this will compile and run the isidore program "main.isd"*
 
-*To run your own programs type `./main -f <relative path to .isd file>`*
 
-*Ex. `./main -f examples/HelloWorld.isd`*
+
 
 
 ### Plan
@@ -68,8 +76,4 @@ The things I am working on in the near future are listed in TODO. I won't be pos
 8. Raw pointers are dangerous and often improperly used
 9. Warnings should be treated as Errors
 10. No goto statements ever
-<<<<<<< HEAD
 11. Language should always remain portable and cross platform
-=======
-11. Language should always remain portable and cross platform
->>>>>>> e61b8c863af3976a63f4bf3a485b03cb534eb498
