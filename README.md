@@ -29,17 +29,17 @@ Isidore is currently under heavy development and is certainly not complete. The 
 5. If the folder `exec` does not exist create it in modules/command_util
 6. run make in modules/command_util
 7. Setup the environment variables
-	a. ISIDORE_PATH="/path_to_isidore_folder/isidore/"
-	b. Add modules/command_util/exec to your path
-	c. EXAMPLE INSTRUCTIONS
-		i. Edit ~/.bashrc
-		ii. Add `export ISIDORE_PATH="/home/owen/Desktop/isidore/"`
-		iii. Add `ISIDORE=$ISIDORE_PATH"modules/command_util/exec"`
-		iv. Add `PATH=$PATH:$ISIDORE`
+  - ISIDORE_PATH="/path_to_isidore_folder/isidore/"
+  -	b. Add modules/command_util/exec to your path
+  - EXAMPLE INSTRUCTIONS
+   - Edit ~/.bashrc
+   - Add `export ISIDORE_PATH="/home/owen/Desktop/isidore/"`
+   - Add `ISIDORE=$ISIDORE_PATH"modules/command_util/exec"`
+   - Add `PATH=$PATH:$ISIDORE`
 8. You can now use isidore directly from the command line.
-	a. `isidore file_name.isd` will compile file_name.isd to an object file and create an executable
-	b. `isidore build file_name.isd` will only compiled file_name.isd to an object file
-	c. Use `isidore build` on your non entry program files, files without the main function run()
+  - `isidore file_name.isd` will compile file_name.isd to an object file and create an executable
+  - `isidore build file_name.isd` will only compiled file_name.isd to an object file
+  - Use `isidore build` on your non entry program files, files without the main function run()
 
 
 
