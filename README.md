@@ -29,13 +29,21 @@ Isidore is currently under heavy development and is certainly not complete. The 
 5. If the folder `exec` does not exist create it in modules/command_util
 6. run make in modules/command_util
 7. Setup the environment variables
-  - ISIDORE_PATH="/path_to_isidore_folder/isidore/"
-  -	b. Add modules/command_util/exec to your path
-  - EXAMPLE INSTRUCTIONS
-   - Edit ~/.bashrc
-   - Add `export ISIDORE_PATH="/home/owen/Desktop/isidore/"`
-   - Add `ISIDORE=$ISIDORE_PATH"modules/command_util/exec"`
-   - Add `PATH=$PATH:$ISIDORE`
+
+	1. ISIDORE_PATH="/path_to_isidore_folder/isidore/"
+
+	2. Add modules/command_util/exec to your path
+
+	3. EXAMPLE INSTRUCTIONS
+
+		1. Edit ~/.bashrc
+
+		2. Add `export ISIDORE_PATH="/home/owen/Desktop/isidore/"`
+
+		3. Add `ISIDORE=$ISIDORE_PATH"modules/command_util/exec"`
+
+		4. Add `PATH=$PATH:$ISIDORE`
+
 8. You can now use isidore directly from the command line.
   - `isidore file_name.isd` will compile file_name.isd to an object file and create an executable
   - `isidore build file_name.isd` will only compiled file_name.isd to an object file
