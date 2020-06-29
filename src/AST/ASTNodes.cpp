@@ -348,6 +348,9 @@ llvm::Value *VarExprAST::codegen(){
             InitVal = code_gen->typeManager->castToType(InitVal,type);
             code_gen->Builder->CreateStore(InitVal, Alloca);
         }
+		else if(size != nullptr){
+			Alloca = code_gen->CreateEntryBlockAlloca(TheFunction,type,VarName);
+		}
 		else{
 			//This is about to get ugly, we need to look into this if there are
 			//variable length structs
