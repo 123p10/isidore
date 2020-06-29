@@ -7,13 +7,7 @@
 #include <iostream>
 #include <fstream>
 #include "../../src/utils/StringUtils.h"
-std::string getEnv(const std::string & var){
-	const char * val = std::getenv(var.c_str());
-	if(!val){
-		return "";
-	}
-	return val;
-}
+#include "../../src/utils/EnvUtils.h"
 
 std::string buildFiles(std::string ISIDORE_PATH,std::string input, std::string depsLocation){
 	input += " " + ISIDORE_PATH + "src/extern/extern.o";

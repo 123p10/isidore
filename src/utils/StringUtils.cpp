@@ -46,3 +46,4 @@ std::string SimplifyPath(std::string path){
 	}
 	return out;
 }
+

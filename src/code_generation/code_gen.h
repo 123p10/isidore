@@ -24,6 +24,10 @@ struct Argument
 class CodeGenerator{
 	bool optimizations;
     std::unordered_map<std::string,bool> included_files;
+	const std::unordered_map<std::string,std::string> libraryNameConverter = {
+		{"DataStructures","Data_Structures.isd"},
+		{"StandardLibrary","StandardLibrary.isd"}
+	};
 	public:
         TypeManager * typeManager;
         void initPrecedence();
@@ -47,6 +51,7 @@ class CodeGenerator{
 		bool fileIncluded(std::string & path);
 		void addFileToIncluded(std::string & path);
 		void generateFileList(std::string path);
+		std::string libraryNameToPath(std::string libName);
 		CodeGenerator(bool optimizations);
         ~CodeGenerator();
 

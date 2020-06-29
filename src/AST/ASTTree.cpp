@@ -472,6 +472,10 @@ std::unique_ptr<ImportAST> ASTTree::ParseImport(){
 		return nullptr;
 	}
 	fileLocation = nextToken().value;
+	if(getCurrToken().type == "identifier"){
+		//Is Standard Library Path
+		fileLocation = code_gen->libraryNameToPath(fileLocation);
+	}
 	if(nextToken().value != ";"){
 		LogError("Missing ';' after import statement");
 		return nullptr;

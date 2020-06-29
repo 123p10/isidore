@@ -579,7 +579,9 @@ void ImportAST::codegen(bool showCode){
 			if(auto ImportAST = source_tree.ParseImport()){
 				
 				fileLocation = ParseOutFileName(fileLocation);
-				ImportAST->prependFileLocation(fileLocation);
+				if(ImportAST->getFileLocation().length() <= 1 || ImportAST->getFileLocation()[0] != '/'){ 
+					ImportAST->prependFileLocation(fileLocation);
+				}
 				ImportAST->codegen(showCode);
 			}
 			else{

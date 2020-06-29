@@ -15,6 +15,7 @@
 #include "../utils/StringUtils.h"
 #include <iostream>
 #include <fstream>
+#include "../utils/EnvUtils.h"
 using namespace llvm::sys;
 llvm::Value *LogErrorV(const char *Str){
     LogError(Str);
@@ -220,4 +221,9 @@ void CodeGenerator::generateFileList(std::string path){
 		}
 	}
 	std::cout << "\nWrote to " << path << "\n";
+}
+std::string CodeGenerator::libraryNameToPath(std::string libName){
+	const std::string libPath = libraryNameConverter.at(libName);
+	if(libPath == ""){return "";}
+	return getEnv("ISIDORE_PATH") + "src/runtime/libs/" + libPath;
 }

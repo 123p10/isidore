@@ -86,7 +86,9 @@ void Driver::HandleExtern(ASTTree & source_tree,CodeGenerator * code_gen){
 void Driver::HandleImport(ASTTree & source_tree, std::string fileLocation){
 	if(auto ImportAST = source_tree.ParseImport()){
 		fileLocation = ParseOutFileName(fileLocation);
-		ImportAST->prependFileLocation(fileLocation);
+		if(ImportAST->getFileLocation().length() <= 1 || ImportAST->getFileLocation()[0] != '/'){ 
+			ImportAST->prependFileLocation(fileLocation);
+		}
 		ImportAST->codegen(showCode);
 	}
 	else{

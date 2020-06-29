@@ -11,7 +11,8 @@ OBJFILES = compiler.o $(SRC_LOCATION)AST/ASTNodes.o $(SRC_LOCATION)AST/ASTTree.o
 		   $(SRC_LOCATION)driver/main_driver.o $(SRC_LOCATION)extern/extern.o $(SRC_LOCATION)files/file_handler.o $(SRC_LOCATION)parsing/lexer.o \
 		   $(SRC_LOCATION)types/type_manager.o $(SRC_LOCATION)types/primitives/int64.o $(SRC_LOCATION)types/primitives/integer.o \
 		   $(SRC_LOCATION)types/primitives/type.o $(SRC_LOCATION)types/primitives/short.o $(SRC_LOCATION)types/primitives/floating_point.o \
-		   $(SRC_LOCATION)types/primitives/double.o $(SRC_LOCATION)runtime/runtime.o $(SRC_LOCATION)utils/StringUtils.o
+		   $(SRC_LOCATION)types/primitives/double.o $(SRC_LOCATION)runtime/runtime.o $(SRC_LOCATION)utils/StringUtils.o $(SRC_LOCATION)utils/EnvUtils.o
+
 HFILES = $(SRC_LOCATION)AST/ASTNodes.h
 BUILD = $(CXX) $(CXXFLAGS) -o compile $(OBJFILES) $(HFILES) $(LLVMFLAGS)
 main: $(OBJFILES)
